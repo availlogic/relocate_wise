@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+coverage/
+.netlify/
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+.idea/
+.vscode/
+pgdata/
+*.tsbuildinfo
+.agent_factory.db
+*.sqlite
+*.sqlite3

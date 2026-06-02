@@ -1,0 +1,19 @@
+{
+  "name": "@relocatewise/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "types.ts",
+  "types": "types.ts",
+  "exports": {
+    ".": "./types.ts",
+    "./climate": "./climate.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "echo 'no tests in shared'"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
