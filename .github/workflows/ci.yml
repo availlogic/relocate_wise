@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel a previous run on the same branch when a new commit lands.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    # The Postgres integration test uses testcontainers to spin up a
+    # throwaway postgis:16-3.4-alpine container. The GH-hosted runner
+    # has Docker, so the suite runs end-to-end here.
+    services:
+      # We could pre-start a `postgres` service for the API tests,
+      # but the testcontainers path is the more faithful one (PostGIS
+      # extension, the same image as production). Leaving this empty.
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        # In CI we expose the docker socket to testcontainers via the
+        # default /var/run/docker.sock mount.
+        run: npm test
+
+      - name: Build (shared + api + web)
+        run: npm run build
+
+      - name: Docker smoke build
+        # The api image build also re-runs `npm run -w @relocatewise/shared
+        # typecheck` and `npm run -w @relocatewise/api build` internally,
+        # so this doubles as a second build gate. The Dockerfile copies
+        # `db/` and `shared/` from the repo root, so the build context
+        # is the root, not `./api`.
+        run: docker build -f api/Dockerfile -t relocatewise-api:ci-smoke .

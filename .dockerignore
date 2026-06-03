@@ -1,0 +1,89 @@
+# Files excluded from the Docker build context.
+#
+# The `api/Dockerfile` is built with `context: .` (the repo root) so
+# it can `COPY shared/`, `api/`, and `db/`. Anything not explicitly
+# needed at build time — node_modules, build outputs, IDE state, VCS
+# metadata, docs — should stay out of the context to keep the upload
+# and build cache small.
+#
+# Reference: https://docs.docker.com/engine/reference/builder/#dockerignore-file
+
+# ─── Git / VCS ────────────────────────────────────────────────────────────
+.git/
+.gitignore
+.gitattributes
+
+# ─── Node ─────────────────────────────────────────────────────────────────
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+.pnp.*
+
+# ─── Build outputs ────────────────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.cache/
+*.tsbuildinfo
+
+# ─── Test output ──────────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+junit.xml
+
+# ─── Netlify ──────────────────────────────────────────────────────────────
+.netlify/
+netlify/functions/proxy.zip
+
+# ─── Editor / OS ──────────────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ─── Env / secrets ───────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+!.env.example
+*.pem
+*.key
+
+# ─── Local databases / caches ────────────────────────────────────────────
+*.sqlite
+*.sqlite3
+.agent_factory.db
+
+# ─── Docker / compose state (this file too) ──────────────────────────────
+docker-compose*.yml
+.dockerignore
+Dockerfile*
+
+# ─── CI / docs / scripts (not needed in the image) ───────────────────────
+.github/
+docs/
+README.md
+*.md
+
+# ─── Web frontend (built by Netlify, not by the API image) ───────────────
+# We only need `web/package.json` for `npm ci` to resolve the workspace;
+# the rest of the web tree is shipped to Netlify, not the API image.
+web/node_modules/
+web/dist/
+web/src/
+web/test/
+web/public/
+web/index.html
+web/vite.config.ts
+web/tsconfig*.json
+web/vitest.config.ts
+web/*.tsbuildinfo
+web/coverage/
+
+# ─── Netlify function (built by Netlify, not by the API image) ───────────
+netlify/

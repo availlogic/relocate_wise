@@ -14,7 +14,7 @@ import type { UserProfile } from '@relocatewise/shared';
  */
 export function withDefaults(profile: Partial<UserProfile>): UserProfile {
   return {
-    climate: profile.climate ?? 'no_preference',
+    climate: profile.climate ?? null,
     cost_importance: profile.cost_importance ?? 0,
     cost_ceiling: profile.cost_ceiling ?? null,
     housing_importance: profile.housing_importance ?? 0,

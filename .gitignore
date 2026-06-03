@@ -1,17 +1,119 @@
+# ─── Node / npm / pnpm / yarn ─────────────────────────────────────────────
+# Dependencies
 node_modules/
+.pnp/
+.pnp.js
+.pnpm-store/
+
+# Build output
 dist/
 build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+.turbo/
+.tsbuildinfo
+*.tsbuildinfo
+
+# Test output
 coverage/
-.netlify/
+.nyc_output/
+*.lcov
+junit.xml
+report.*.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Process / runtime artifacts
+*.pid
+*.seed
+*.pid.lock
+.tmp/
+tmp/
+
+# ─── Environment / secrets ───────────────────────────────────────────────
+# Real env files. The checked-in .env.example is the template; the
+# patterns below catch every variant of a local override.
 .env
 .env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
 .env.*.local
-*.log
-.DS_Store
-.idea/
-.vscode/
+!.env.example
+
+# Private keys / certs
+*.pem
+*.key
+*.crt
+credentials
+credentials.json
+secrets.json
+
+# ─── Netlify ──────────────────────────────────────────────────────────────
+.netlify/
+.netlify-dev/
+netlify/functions/proxy.zip
+
+# ─── Docker / Postgres ───────────────────────────────────────────────────
+# Named volume used by `docker compose` (the volume is created at runtime,
+# but ignore the path in case someone mounts a host dir with the same name).
 pgdata/
-*.tsbuildinfo
+postgis-data/
+docker-data/
+
+# ─── OS / editors ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+ehthumbs_vista.db
+.Trashes
+
+# IntelliJ / JetBrains
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# VS Code (keep .vscode/extensions.json + settings.json for shared config)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+
+# Vim / Emacs / Sublime
+*~
+*.swp
+*.swo
+\#*\#
+.\#*
+*.sublime-project
+*.sublime-workspace
+
+# ─── Local tooling state ──────────────────────────────────────────────────
+# RelocateWise-specific caches and machine-local DBs.
 .agent_factory.db
 *.sqlite
 *.sqlite3
+*.sqlite-journal
+
+# Caddy local self-signed data (in case someone runs the caddy container
+# with a host bind mount during dev).
+caddy_data/
+caddy_config/
+
+# Vitest cache (used when --cache is passed; harmless otherwise)
+.vitest/

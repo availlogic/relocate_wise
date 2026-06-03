@@ -1,0 +1,128 @@
+.compare-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.compare-page__header h1 {
+  margin-bottom: var(--space-2);
+}
+
+.compare-page__sub {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.compare-page__actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.compare-page__grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.compare-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.compare-card__header h2 {
+  margin: 0 0 var(--space-1) 0;
+  font-size: var(--text-xl);
+}
+
+.compare-card__country {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.compare-card__score {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.compare-card__score span {
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-text-muted);
+  margin-left: var(--space-1);
+}
+
+.compare-card__why {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.compare-page__table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.compare-page__table th,
+.compare-page__table td {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  font-variant-numeric: tabular-nums;
+}
+
+.compare-page__table thead th {
+  background: var(--color-bg);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.compare-page__table tbody th {
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+
+.compare-page__cell--best {
+  background: var(--color-highlight);
+  font-weight: 600;
+}
+
+.compare-page--empty {
+  text-align: center;
+  align-items: center;
+  padding-top: var(--space-8);
+  gap: var(--space-4);
+}
+
+.btn--link {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  align-self: flex-start;
+}
+
+.btn--link:hover,
+.btn--link:focus {
+  text-decoration: underline;
+}

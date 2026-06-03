@@ -1,0 +1,52 @@
+.landing {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  text-align: center;
+}
+
+.landing__hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.landing__title {
+  font-size: var(--text-3xl);
+  line-height: 1.2;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.landing__sub {
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  margin: 0;
+  max-width: 540px;
+}
+
+.landing__cta {
+  font-size: var(--text-lg);
+  padding: var(--space-3) var(--space-5);
+}
+
+.landing__note {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.landing__footer {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.landing__privacy-link {
+  color: var(--color-text-muted);
+}

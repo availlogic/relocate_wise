@@ -1,0 +1,34 @@
+# RelocateWise — Caddy reverse proxy in front of the Fastify API.
+#
+# Two configurations live in this file:
+#   1. Production (default) — `{$API_DOMAIN}` is set to e.g. api.example.com.
+#      Caddy provisions a Let's Encrypt cert automatically.
+#   2. Local dev — uncomment the bottom block and run with
+#      `caddy run --config Caddyfile` inside the container. Caddy
+#      generates a self-signed cert via `tls internal`.
+#
+# Architecture references: §2 (topology), §10.3 (deploy), §11 (TLS).
+
+# ----- Production -----
+{$API_DOMAIN:api.example.com} {
+    encode gzip zstd
+    reverse_proxy api:3000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+    }
+    log {
+        output stdout
+        format console
+    }
+}
+
+# ----- Local dev -----
+# Uncomment the block below to run with a self-signed cert at
+# https://localhost. Browsers will warn; that's expected in dev.
+#
+# https://localhost {
+#     tls internal
+#     reverse_proxy api:3000
+# }

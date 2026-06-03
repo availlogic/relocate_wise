@@ -1,0 +1,12 @@
+{
+  "extends": "../api/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "..",
+    "types": ["node"],
+    "paths": {
+      "@relocatewise/shared": ["../shared/types.ts"]
+    }
+  },
+  "include": ["./**/*.ts"]
+}

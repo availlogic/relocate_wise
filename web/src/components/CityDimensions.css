@@ -1,0 +1,64 @@
+.city-dims {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.city-dims__group h3 {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--text-lg);
+  color: var(--color-text);
+}
+
+.city-dims__group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.city-dims__row {
+  display: grid;
+  grid-template-columns: 180px 1fr 60px;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+.city-dims__label {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.city-dims__bar {
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.city-dims__fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  transition: width 200ms ease;
+}
+
+.city-dims__fill--high {
+  background: var(--color-success);
+}
+.city-dims__fill--mid {
+  background: var(--color-warning);
+}
+.city-dims__fill--low {
+  background: var(--color-text-muted);
+}
+
+.city-dims__value {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}

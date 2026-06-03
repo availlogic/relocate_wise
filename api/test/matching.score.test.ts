@@ -21,7 +21,7 @@ const baseUser: UserProfile = withDefaults({});
 describe('matching engine — defaults', () => {
   it('withDefaults returns a fully-populated profile', () => {
     const p = withDefaults({});
-    expect(p.climate).toBe('no_preference');
+    expect(p.climate).toBeNull();
     expect(p.cost_importance).toBe(0);
     expect(p.cost_ceiling).toBeNull();
     expect(p.housing_importance).toBe(0);
@@ -88,7 +88,7 @@ describe('matching engine — per-dimension match', () => {
       slug: 'a', name: 'A', country: 'X',
       dimensions: { ...makeCity({ slug: 'b', name: 'B', country: 'X' }).dimensions, climate: { label: 'Tropical' } },
     });
-    const c = scoreCity(city, withDefaults({ climate: 'no_preference' }));
+    const c = scoreCity(city, withDefaults({ climate: null }));
     const climateC = c.contributions.find((x) => x.dimension === 'climate')!;
     expect(climateC.match).toBe(1.0);
   });

@@ -1,0 +1,31 @@
+.consent-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-muted, #f3f4f6);
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+  color: var(--color-text, #1f2937);
+  font-size: var(--text-sm, 0.875rem);
+}
+
+.consent-banner__text {
+  flex: 1 1 auto;
+  margin: 0;
+}
+
+.consent-banner__link {
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.consent-banner__actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.consent-banner__btn {
+  padding: 0.4rem 0.9rem;
+  font-size: var(--text-sm, 0.875rem);
+}

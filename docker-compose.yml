@@ -1,0 +1,67 @@
+# Docker Compose for local development of the RelocateWise backend.
+#
+# One command: `docker compose up` brings up Postgres + PostGIS, the
+# Node API, and a Caddy reverse proxy with a self-signed cert for
+# local testing. The first boot applies migrations and seeds the
+# 40-city dataset automatically.
+#
+# Architecture references: §2 (topology), §4.4 (DB), §10.1 (local dev),
+# §10.3 (production deploy), §11 (secrets & CORS).
+
+services:
+  db:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: relocatewise-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-relocatewise}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-relocatewise}
+      POSTGRES_DB: ${POSTGRES_DB:-relocatewise}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-relocatewise} -d ${POSTGRES_DB:-relocatewise}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: relocatewise-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-relocatewise}:${POSTGRES_PASSWORD:-relocatewise}@db:5432/${POSTGRES_DB:-relocatewise}
+      PORT: 3000
+      HOST: 0.0.0.0
+      # Allowed CORS origin. In production this is the Netlify-hosted
+      # SPA domain. In dev it can be the Vite dev server.
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+      GIT_SHA: ${GIT_SHA:-dev}
+    ports:
+      - "3000:3000"
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: relocatewise-caddy
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    # In production the Caddyfile uses automatic Let's Encrypt. For local
+    # dev, override Caddyfile to use a self-signed cert or `tls internal`.
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

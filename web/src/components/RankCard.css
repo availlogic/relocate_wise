@@ -1,0 +1,111 @@
+.rank-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  border-left-width: 4px;
+}
+
+.rank-card--high {
+  border-left-color: var(--color-success);
+}
+.rank-card--medium {
+  border-left-color: var(--color-warning);
+}
+.rank-card--low {
+  border-left-color: var(--color-border);
+}
+
+.rank-card__header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.rank-card__rank {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rank-card__title h2 {
+  margin: 0;
+  font-size: var(--text-xl);
+}
+
+.rank-card__country {
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.rank-card__region {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.rank-card__score {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  min-width: 80px;
+  text-align: center;
+}
+
+.rank-card__score--high {
+  color: var(--color-success);
+  background: #f0fdf4;
+}
+.rank-card__score--medium {
+  color: var(--color-warning);
+  background: #fefce8;
+}
+.rank-card__score--low {
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+}
+
+.rank-card__why {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.rank-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.rank-card__compare {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.rank-card__compare input[type="checkbox"] {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  cursor: inherit;
+}
+
+.rank-card__compare input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

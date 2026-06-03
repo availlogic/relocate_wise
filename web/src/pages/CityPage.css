@@ -1,0 +1,62 @@
+.city-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.city-page__back {
+  display: inline-block;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.city-page__header h1 {
+  margin-bottom: var(--space-1);
+}
+
+.city-page__country {
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.city-page__region {
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.city-page__desc {
+  margin: 0 0 var(--space-4) 0;
+  line-height: 1.6;
+}
+
+.city-page__meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.city-page__meta dt {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.city-page__meta dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.city-page--error {
+  text-align: center;
+  padding-top: var(--space-8);
+  align-items: center;
+}
