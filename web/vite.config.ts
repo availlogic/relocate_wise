@@ -11,8 +11,8 @@ import react from '@vitejs/plugin-react';
  *   - No-Docker dev: the API listens directly on :3000.
  *   - Docker dev:   docker-compose.yml exposes the API on host:3000
  *                   (the `api.ports` mapping), so the same target works.
- *     To use Caddy on :80 instead, set
- *     `API_PROXY_TARGET=http://localhost npm run dev`.
+ *     To use Caddy on host :8080 instead, set
+ *     `API_PROXY_TARGET=http://localhost:8080 npm run dev`.
  *
  * The proxy only runs in the dev server, not in `vite build`. In
  * production, the Netlify function in `netlify/functions/proxy.ts`

@@ -24,7 +24,7 @@ npm install
 docker compose up -d
 ```
 
-The first boot applies the migration in `db/migrations/001_init.sql` and seeds the 40-city dataset automatically. The API listens on `:3000` (the `api.ports` mapping in `docker-compose.yml`) and Caddy listens on `:80`.
+The first boot applies the migration in `db/migrations/001_init.sql` and seeds the 40-city dataset automatically. The API listens on `:3000` (the `api.ports` mapping in `docker-compose.yml`) and     Caddy listens on `:8080` (mapped to container `:80`; use `:8443` for TLS).
 
 ```bash
 # 3. In another terminal, run the SPA in dev mode.
@@ -105,16 +105,16 @@ Now open <http://localhost:5173> in a browser. The expected first-visit flow:
 
 If step 2 or 3 fails, the issue is the API → Vite proxy. Check the `proxy: { '/api': … }` block in `web/vite.config.ts` and confirm the API is reachable on `localhost:3000`.
 
-### Optional: use Caddy on `:80` instead of the direct API port
+### Optional: use Caddy on `:8080` instead of the direct API port
 
-If you'd rather have the SPA talk to the production-shaped stack (Caddy-fronted), set the proxy target to the Caddy port. The Caddy container exposes `:80` (and `:443` for TLS in production):
+If you'd rather have the SPA talk to the production-shaped stack (Caddy-fronted), set the proxy target to the Caddy port. The Caddy container exposes host `:8080` (mapped to container `:80`; use `:8443` for TLS in production):
 
 ```bash
 cd web
-API_PROXY_TARGET=http://localhost npm run dev
+API_PROXY_TARGET=http://localhost:8080 npm run dev
 ```
 
-The SPA still uses relative URLs and Vite still proxies — but the target is now Caddy on `:80` instead of the API on `:3000`. In dev this only matters if you want to exercise Caddy's behaviour (e.g. response compression) before deploying.
+The SPA still uses relative URLs and Vite still proxies — but the target is now Caddy on `:8080` instead of the API on `:3000`. In dev this only matters if you want to exercise Caddy's behaviour (e.g. response compression) before deploying.
 
 ---
 
@@ -201,7 +201,7 @@ All responses are `application/json`. All errors return `{ error: string, messag
 | `GIT_SHA`         | API               |                   | auto via `git rev-parse` | Returned by `/api/health`                          |
 | `CORS_ORIGIN`     | API               | In production     | echo any (dev)           | Comma-separated allowed origins                    |
 | `VITE_API_BASE`   | SPA dev/build     |                   | unset → relative `/api/*` (uses Vite proxy or Netlify redirect) | Override the API base; set to a full URL to point at a remote API. |
-| `API_PROXY_TARGET` | Vite dev only     |                   | `http://localhost:3000`  | Where Vite forwards `/api/*` in dev. Set to `http://localhost` to use Caddy on :80 instead. |
+| `API_PROXY_TARGET` | Vite dev only     |                   | `http://localhost:3000`  | Where Vite forwards `/api/*` in dev. Set to `http://localhost:8080` to use Caddy on host :8080 instead. |
 | `API_ORIGIN`      | Netlify function  | Yes, in prod      | —                        | Where the proxy forwards `/api/*`                  |
 | `API_SECRET`      | Netlify function  | Yes, in prod      | —                        | Shared header secret to the Ubuntu API             |
 
