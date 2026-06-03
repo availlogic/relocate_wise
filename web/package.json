@@ -4,11 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "npm run -w @relocatewise/shared build",
     "dev": "vite",
+    "prebuild": "npm run -w @relocatewise/shared build",
     "build": "tsc -b && vite build",
     "preview": "vite preview --port 4173",
+    "pretest": "npm run -w @relocatewise/shared build",
     "test": "vitest run",
     "test:watch": "vitest",
+    "pretypecheck": "npm run -w @relocatewise/shared build",
     "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {

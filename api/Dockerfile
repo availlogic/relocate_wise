@@ -19,7 +19,7 @@ RUN npm ci --include=dev
 COPY shared/ ./shared/
 COPY api/ ./api/
 COPY db/ ./db/
-RUN npm run -w @relocatewise/shared typecheck
+RUN npm run -w @relocatewise/shared build
 RUN npm run -w @relocatewise/api build
 
 # Prune dev deps for a smaller runtime image.
@@ -34,6 +34,7 @@ ENV NODE_ENV=production
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/shared/package.json ./shared/package.json
+COPY --from=build /app/shared/dist ./shared/dist
 COPY --from=build /app/api/dist ./api/dist
 COPY --from=build /app/api/package.json ./api/package.json
 COPY --from=build /app/db ./db

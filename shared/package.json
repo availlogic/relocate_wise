@@ -3,13 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "types.ts",
-  "types": "types.ts",
+  "main": "./dist/types.js",
+  "types": "./dist/types.d.ts",
   "exports": {
-    ".": "./types.ts",
-    "./climate": "./climate.ts"
+    ".": {
+      "types": "./dist/types.d.ts",
+      "default": "./dist/types.js"
+    },
+    "./climate": {
+      "types": "./dist/climate.d.ts",
+      "default": "./dist/climate.js"
+    }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit",
     "test": "echo 'no tests in shared'"
   },
