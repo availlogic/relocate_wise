@@ -97,6 +97,54 @@ describe('<ProfileForm />', () => {
     expect(submit).not.toBeDisabled();
   });
 
+  it('gives the user visible feedback when they pick a Climate option', async () => {
+    // Regression test: previously the RadioGroup hid the radio input and
+    // didn't restyle the wrapping label, so the user could not tell which
+    // option they had selected. Now the selected label gets is-active.
+    const user = userEvent.setup();
+    renderForm();
+
+    // On first render with no initial profile, the climate is null so the
+    // "No preference" pseudo-option is the highlighted one.
+    const noPrefLabel = screen
+      .getByTestId('climate-null')
+      .closest('label')!;
+    const tropicalLabel = screen
+      .getByTestId('climate-tropical')
+      .closest('label')!;
+    expect(noPrefLabel.className).toMatch(/\bis-active\b/);
+    expect(tropicalLabel.className).not.toMatch(/\bis-active\b/);
+
+    // After clicking Tropical, the highlight must move to it.
+    await user.click(screen.getByTestId('climate-tropical'));
+    expect(
+      screen.getByTestId('climate-tropical').closest('label')!.className,
+    ).toMatch(/\bis-active\b/);
+    expect(
+      screen.getByTestId('climate-null').closest('label')!.className,
+    ).not.toMatch(/\bis-active\b/);
+
+    // Clicking a second option must move the highlight again — only one
+    // option can ever be is-active at a time.
+    await user.click(screen.getByTestId('climate-mediterranean'));
+    expect(
+      screen.getByTestId('climate-mediterranean').closest('label')!.className,
+    ).toMatch(/\bis-active\b/);
+    expect(
+      screen.getByTestId('climate-tropical').closest('label')!.className,
+    ).not.toMatch(/\bis-active\b/);
+
+    // The Career industry RadioGroup is also nullable, so the same
+    // highlighting contract must hold there.
+    await user.click(screen.getByTestId('career-finance'));
+    expect(
+      screen.getByTestId('career-finance').closest('label')!.className,
+    ).toMatch(/\bis-active\b/);
+    expect(
+      screen.getByTestId('career-null').closest('label')!.className,
+    ).not.toMatch(/\bis-active\b/);
+  });
+
   it('requires a cost_ceiling once cost_importance is moved above 0', async () => {
     const user = userEvent.setup();
     renderForm();

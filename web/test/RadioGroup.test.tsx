@@ -46,6 +46,108 @@ describe('<RadioGroup />', () => {
     expect(b.checked).toBe(false);
   });
 
+  it('applies the is-active class to the selected option label so the user sees their pick', () => {
+    render(
+      <RadioGroup
+        name="climate"
+        legend="Climate"
+        options={OPTIONS}
+        value={'a' as 'a' | 'b'}
+        onChange={vi.fn()}
+      />,
+    );
+    // The visible label that wraps the (hidden) radio input must carry
+    // the is-active class so it stands out from the unselected siblings.
+    const aLabel = screen.getByTestId('climate-a').closest('label')!;
+    const bLabel = screen.getByTestId('climate-b').closest('label')!;
+    expect(aLabel.className).toMatch(/\bis-active\b/);
+    expect(bLabel.className).not.toMatch(/\bis-active\b/);
+  });
+
+  it('moves the is-active class when the controlled value changes', () => {
+    const { rerender } = render(
+      <RadioGroup
+        name="climate"
+        legend="Climate"
+        options={OPTIONS}
+        value={'a' as 'a' | 'b'}
+        onChange={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByTestId('climate-a').closest('label')!.className,
+    ).toMatch(/\bis-active\b/);
+    expect(
+      screen.getByTestId('climate-b').closest('label')!.className,
+    ).not.toMatch(/\bis-active\b/);
+
+    rerender(
+      <RadioGroup
+        name="climate"
+        legend="Climate"
+        options={OPTIONS}
+        value={'b' as 'a' | 'b'}
+        onChange={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByTestId('climate-a').closest('label')!.className,
+    ).not.toMatch(/\bis-active\b/);
+    expect(
+      screen.getByTestId('climate-b').closest('label')!.className,
+    ).toMatch(/\bis-active\b/);
+  });
+
+  it('marks the "No preference" option as is-active when value is null and nullable', () => {
+    render(
+      <RadioGroup
+        name="climate"
+        legend="Climate"
+        options={OPTIONS}
+        value={null}
+        onChange={vi.fn()}
+        nullable
+      />,
+    );
+    const nullLabel = screen.getByTestId('climate-null').closest('label')!;
+    const aLabel = screen.getByTestId('climate-a').closest('label')!;
+    expect(nullLabel.className).toMatch(/\bis-active\b/);
+    expect(aLabel.className).not.toMatch(/\bis-active\b/);
+  });
+
+  it('moves is-active off "No preference" when a concrete option is selected', () => {
+    const { rerender } = render(
+      <RadioGroup
+        name="climate"
+        legend="Climate"
+        options={OPTIONS}
+        value={null}
+        onChange={vi.fn()}
+        nullable
+      />,
+    );
+    expect(
+      screen.getByTestId('climate-null').closest('label')!.className,
+    ).toMatch(/\bis-active\b/);
+
+    rerender(
+      <RadioGroup
+        name="climate"
+        legend="Climate"
+        options={OPTIONS}
+        value={'b' as 'a' | 'b'}
+        onChange={vi.fn()}
+        nullable
+      />,
+    );
+    expect(
+      screen.getByTestId('climate-null').closest('label')!.className,
+    ).not.toMatch(/\bis-active\b/);
+    expect(
+      screen.getByTestId('climate-b').closest('label')!.className,
+    ).toMatch(/\bis-active\b/);
+  });
+
   it('fires onChange with the chosen value', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();

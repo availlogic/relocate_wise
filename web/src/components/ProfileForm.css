@@ -112,6 +112,15 @@
   border-color: var(--color-primary);
 }
 
+.radio-option.is-active {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+}
+
+.radio-option.is-active strong {
+  color: var(--color-primary-strong);
+}
+
 .radio-option__desc {
   color: var(--color-text-muted);
   font-weight: 400;

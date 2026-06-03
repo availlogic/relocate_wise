@@ -56,7 +56,9 @@ export function RadioGroup<T extends string>({
       ) : null}
       <div className="radio-group__options" role="radiogroup">
         {nullable ? (
-          <label className="radio-option">
+          <label
+            className={`radio-option${value === null ? ' is-active' : ''}`}
+          >
             <input
               type="radio"
               name={name}
@@ -69,7 +71,10 @@ export function RadioGroup<T extends string>({
           </label>
         ) : null}
         {options.map((opt) => (
-          <label key={opt.value} className="radio-option">
+          <label
+            key={opt.value}
+            className={`radio-option${value === opt.value ? ' is-active' : ''}`}
+          >
             <input
               type="radio"
               name={name}
