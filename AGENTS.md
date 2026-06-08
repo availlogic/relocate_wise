@@ -39,6 +39,14 @@ docs/Research_Report.md
 
 docs/PRD.md
 
+docs/User-Flows.md
+
+docs/Screen-Specs.md
+
+docs/Visual-Guidelines.md
+
+docs/UI-Layouts.md
+
 docs/Architecture.md
 
 docs/Database.md
@@ -96,29 +104,31 @@ Always use the latest version of available documents.
 
 # PRIMARY RESPONSIBILITIES
 
-1. Analyse documentation
+1. Analyse product and technical documentation.
 
-2. Analyse existing implementation
+2. Analyse UI/UX specifications (User Flows, Screen Specs, Visual Guidelines, UI Layouts) to ensure complete user interface and frontend alignment.
 
-3. Identify implementation gaps
+3. Analyse existing implementation.
 
-4. Generate execution plans
+4. Identify implementation gaps.
 
-5. Implement required functionality
+5. Generate execution plans.
 
-6. Refactor when necessary
+6. Implement required functionality.
 
-7. Create tests
+7. Refactor when necessary.
 
-8. Update tests
+8. Create tests.
 
-9. Execute validation
+9. Update tests.
 
-10. Fix defects
+10. Execute validation.
 
-11. Repeat until stable
+11. Fix defects.
 
-12. Generate deployment documentation
+12. Repeat until stable.
+
+13. Generate deployment documentation.
 
 ---
 
@@ -214,6 +224,22 @@ Keep implementations modular.
 
 ---
 
+# UI/UX ALIGNMENT RULES
+
+The frontend implementation must strictly reflect the UI/UX specifications.
+
+Follow Screen-Specs.md for screen components, validation rules, interaction behaviors, and multi-state logic (loading, empty, error, success).
+
+Follow Visual-Guidelines.md for typography, colour palette, styling, accessibility (WCAG), and responsive rules.
+
+Follow UI-Layouts.md for page structure and layout positioning across mobile, tablet, and desktop viewports.
+
+Follow User-Flows.md to ensure application navigation paths and business workflows exactly match intended journeys.
+
+No UI implementation is complete if it deviates from the approved design documents or forces users into undocumented flows.
+
+---
+
 # TESTING RULES
 
 Every new feature requires tests.
@@ -262,6 +288,8 @@ Prioritise:
 
 Correctness
 
+UI/UX Consistency (adherence to Design System and tokens)
+
 Maintainability
 
 Readability
@@ -278,9 +306,9 @@ Unnecessary abstractions
 
 Dead code
 
-Duplicated logic
+Duplicated logic or redundant UI component styling
 
-Undocumented behaviour
+Undocumented behaviour or rogue UI layouts
 
 ---
 

@@ -24,6 +24,12 @@ Optional:
 
 docs/Architecture.md
 
+docs/Database.md
+
+docs/API_Spec.md
+
+docs/Module_Map.md
+
 # OUTPUTS
 
 docs/Architecture.md
@@ -36,15 +42,29 @@ docs/Module_Map.md
 
 # UPDATE STRATEGY
 
-If Architecture.md exists:
+If optional documents are provided:
 
-Treat it as approved architecture history.
+Treat them as approved project history.
 
-Preserve stable decisions.
+Preserve unchanged decisions.
 
 Modify only impacted areas.
 
-Avoid unnecessary redesign.
+Avoid unnecessary rewrites.
+
+# MODULE_MAP REQUIREMENTS
+
+Each module must define:
+
+Purpose
+
+Location
+
+Dependencies
+
+Public Interfaces
+
+Future Extension Points
 
 # RULES
 
@@ -62,16 +82,4 @@ Define module boundaries clearly.
 
 Optimise for long-term evolution.
 
-# MODULE_MAP REQUIREMENTS
-
-Each module must define:
-
-Purpose
-
-Location
-
-Dependencies
-
-Public Interfaces
-
-Future Extension Points
+All outputs must be written in Markdown format.

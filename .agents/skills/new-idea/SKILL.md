@@ -75,3 +75,5 @@ Do not generate architecture.
 Identify uncertainties.
 
 Prefer incremental updates.
+
+All outputs must be written in Markdown format.

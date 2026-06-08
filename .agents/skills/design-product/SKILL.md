@@ -67,3 +67,6 @@ Prefer smallest viable scope.
 Avoid feature creep.
 
 Prefer incremental updates.
+
+All outputs must be written in Markdown format.
+
