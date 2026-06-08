@@ -54,6 +54,18 @@ docs/Database.md
 docs/API_Spec.md
 
 docs/Module_Map.md
+
+docs/Review-Findings.md
+
+docs/Test-Strategy.md
+
+docs/Functional-Test-Cases.md
+
+docs/Integration-Test-Cases.md
+
+docs/E2E-Test-Scenarios.md
+
+docs/Acceptance-Criteria.md
 ```
 
 All implementation decisions must follow these documents.
@@ -108,27 +120,29 @@ Always use the latest version of available documents.
 
 2. Analyse UI/UX specifications (User Flows, Screen Specs, Visual Guidelines, UI Layouts) to ensure complete user interface and frontend alignment.
 
-3. Analyse existing implementation.
+3. Analyse QA verification specifications (Test Strategy, Test Cases, E2E Scenarios, Acceptance Criteria) to guide Test-Driven Development (TDD).
 
-4. Identify implementation gaps.
+4. Analyse existing implementation.
 
-5. Generate execution plans.
+5. Identify implementation gaps.
 
-6. Implement required functionality.
+6. Generate execution plans.
 
-7. Refactor when necessary.
+7. Implement required functionality.
 
-8. Create tests.
+8. Refactor when necessary.
 
-9. Update tests.
+9. Create tests.
 
-10. Execute validation.
+10. Update tests.
 
-11. Fix defects.
+11. Execute validation.
 
-12. Repeat until stable.
+12. Fix defects.
 
-13. Generate deployment documentation.
+13. Repeat until stable.
+
+14. Generate deployment documentation.
 
 ---
 
@@ -237,6 +251,24 @@ Follow UI-Layouts.md for page structure and layout positioning across mobile, ta
 Follow User-Flows.md to ensure application navigation paths and business workflows exactly match intended journeys.
 
 No UI implementation is complete if it deviates from the approved design documents or forces users into undocumented flows.
+
+---
+
+# VERIFICATION AND TEST ALIGNMENT RULES
+
+The code implementation and test suites must strictly satisfy all definitions within the qa/ directory.
+
+Follow test-strategy.md to align with the required testing levels, coverage targets, and risk-based testing priorities.
+
+Implement automated tests based on functional-test-cases.md, verifying all UI interactions, feature edge cases, and state transitions.
+
+Implement integration tests based on integration-test-cases.md, fully covering system component interactions, API-to-DB consistency, and failure recovery.
+
+Implement end-to-end (E2E) automated test scripts based on e2e-test-scenarios.md to validate complete cross-screen user journeys.
+
+Every implemented feature must explicitly meet all pass/fail conditions specified in acceptance-criteria.md.
+
+Review qa/review-findings.md before beginning implementation to ensure all identified upstream document consistency risks or edge-case gaps are mitigated in code.
 
 ---
 
@@ -506,7 +538,9 @@ Implementation matches documentation.
 
 All required functionality is implemented.
 
-All required tests pass.
+All automated tests derived from functional, integration, and E2E specs pass successfully.
+
+All feature-level pass/fail conditions and DoD in acceptance-criteria.md are met.
 
 No known critical defects remain.
 
@@ -514,4 +548,4 @@ Deployment documentation is complete.
 
 Codebase remains maintainable.
 
-Documentation remains the single source of truth.
+Documentation and verification specifications remain the single source of truth.
