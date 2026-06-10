@@ -28,7 +28,7 @@ RelocateWise is a web-based decision-support tool that helps individuals and fam
 
 ## Business Model
 
-**Revenue model:** Freemium with tiered subscription access. The free tier provides access to basic location matching, up to three location comparisons, and standard city profiles. Premium subscribers unlock unlimited comparisons, access to neighborhood-level data, advanced filtering options, and exclusive datasets such as commute-time heatmaps and school district quality indices.
+**Revenue model:** Freemium with tiered subscription access. The free tier provides access to basic location matching, up to three location comparisons, and standard city profiles. Premium subscribers unlock unlimited comparisons, access to neighborhood-level data, more cities and towns, advanced filtering options, and exclusive datasets such as commute-time heatmaps and school district quality indices.
 
 **Pricing approach:** Individual premium subscriptions priced at $12/month or $99/year, offering substantial value against the high stakes of a relocation decision worth thousands in moving costs and years of life quality.
 

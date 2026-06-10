@@ -536,3 +536,6 @@ If step 1 returns 200 but step 2 doesn't, the issue is on the Netlify side (func
 - `docs/PRD.md` — requirements, scope, and acceptance criteria.
 - `docs/Constraints.md` — the budget and technology boundaries.
 - `docs/Architecture.md` — the technical design (this README defers to it for depth).
+- `docs/Database.md` — PostgreSQL and PostGIS database schema and configuration.
+- `docs/API_Spec.md` — API endpoints, payloads, validation, caching, and rate limits.
+- `docs/Module_Map.md` — monorepo structure and package boundaries.

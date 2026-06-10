@@ -9,6 +9,9 @@ related_docs:
   - "docs/Vision.md"
   - "docs/Constraints.md"
   - "docs/PRD.md"
+  - "docs/Database.md"
+  - "docs/API_Spec.md"
+  - "docs/Module_Map.md"
 ---
 
 # RelocateWise — System Architecture
@@ -552,3 +555,4 @@ These are small and Day-1 resolvable. They are not blockers but should be answer
 | Date       | Version | Author             | Changes                                                                                            |
 | ---------- | ------- | ------------------ | -------------------------------------------------------------------------------------------------- |
 | 2026-06-02 | 1.0.0   | Architecture Agent | Initial version. Derived from `Vision.md` v1.0.0, `Constraints.md` v1.0.0, and `PRD.md` v2.0.0. Resolved CEO decisions from PRD §9: Netlify + Netlify Functions (frontend), Docker Compose on Ubuntu server (backend), global 40-city coverage, templated "why this fits you". Defined hybrid two-tier topology, deterministic matching algorithm, and the data model. |
+| 2026-06-10 | 1.1.0   | Architecture Agent | Updated related docs and references to align with Database.md, API_Spec.md, and Module_Map.md. |

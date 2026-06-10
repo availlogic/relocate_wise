@@ -37,7 +37,7 @@ related_docs:
 
 ## Additional Constraints
 
-- **Timeline**: MVP delivery within 3 days; focus on core location comparison features before extended data sources
+- **Timeline**: MVP delivery within 2 weeks; focus on core location comparison features before extended data sources
 - **Compliance**: GDPR-compliant data handling for EU users; privacy policy and user consent flows required before launch
 - **External dependencies**: Minimize third-party API reliance; cache external data where possible to reduce runtime costs and single points of failure
 

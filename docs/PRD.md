@@ -12,11 +12,43 @@ related_docs:
 
 # RelocateWise — Product Requirements
 
-This document defines the requirements for the **Minimum Viable Product (MVP)** of RelocateWise. It is intentionally short. The 3-day delivery window and the $0 tooling budget defined in `Constraints.md` are the dominant constraints; everything below is judged against them. Future-state features (premium tier, neighborhood data, partnerships, mobile apps) are mentioned only to clarify what is *not* being built.
+This document defines the requirements for the **Minimum Viable Product (MVP)** of RelocateWise. The delivery constraints and $0 tooling budget defined in `Constraints.md` are the dominant constraints; everything below is judged against them. Future-state features are mentioned only to clarify what is *not* being built.
 
-For product vision, target audience, and principles see `Vision.md`. For technology, infrastructure, and budget constraints see `Constraints.md`.
+For product vision, target audience, and principles see `Vision.md`. For technology, infrastructure, and budget constraints see `Constraints.md`. For detailed market and technology research see `Research_Report.md`.
 
-## 1. Goals
+## 1. Problem Statement
+
+Relocating is one of the most significant and stressful financial and lifestyle decisions an individual or family will make. When researching prospective cities, users face:
+- **Information Overload**: Extensive but fragmented public data (climate, schools, cost of living, healthcare) scattered across hundreds of websites.
+- **Lack of Personalization**: Standard "Top 10" lists steer users toward generic options and do not reflect individual trade-offs (e.g., matching a specific career sector, climate preference, or household budget).
+- **Comparison Complexity**: Users must manually build spreadsheets or parse tables of raw prices to compare candidate cities side-by-side.
+- **Trust Deficit**: Existing relocation guides are frequently sponsored by real estate developers or tourism boards, lacking objective, data-driven neutrality.
+
+## 2. Target Users
+
+Our target audience consists of adults aged 25–55 who are actively considering a major relocation within a 1–3 year horizon. This includes:
+- **Remote Workers / Freelancers**: Seeking optimal cost-of-living trade-offs, reliable infrastructure (high-speed internet), and specific lifestyle amenities (coastal/mountain access).
+- **Families with Children**: Prioritizing safety, healthcare quality, and school/education ratings.
+- **Career Professionals**: Seeking hubs with high industry-specific career opportunities (e.g., Tech, Finance, Creative).
+- **Pre-Retirees**: Researching stable, high-amenity lifestyle destinations before full retirement.
+
+These users are digitally literate, research-driven, and value objective, evidence-based recommendations over anecdotal advice.
+
+## 3. User Stories
+
+### US-1: Quiz matching (Remote Worker / Career Professional)
+*As a remote worker or professional, I want to answer a short questionnaire about my budget, industry sector, and climate preference, so that I can discover a ranked shortlist of cities that fit my lifestyle and professional goals.*
+
+### US-2: School and family prioritization (Family with Children)
+*As a parent planning a move, I want to specify education and healthcare as high priorities and housing as a strict constraint in my profile, so that the matching engine ranks family-friendly cities higher.*
+
+### US-3: Side-by-side comparison (All Users)
+*As a prospective relocator, I want to select 2 or 3 cities from my matches and compare their ratings side-by-side on a single screen, so that I can clearly understand the trade-offs between my top choices.*
+
+### US-4: Transparency of matches (All Users)
+*As a skeptical user, I want to see a clear justification ("why this fits you") for my matches, so that I can understand how my answers directly influenced the ranking.*
+
+## 4. Goals
 
 The MVP must validate one hypothesis: **adults planning a relocation will use a structured, questionnaire-driven tool to discover and compare candidate destinations more effectively than with general-purpose search.**
 
@@ -30,17 +62,16 @@ A first-time visitor should be able to:
 
 If the MVP does not deliver this single end-to-end loop, it has not shipped.
 
-## 2. Target User (Working Definition)
+## 5. Success Metrics
 
-Adults aged 25–55 who are actively considering a major relocation within a 1–3 year horizon. They are digitally literate, research-driven, time-pressed but willing to invest effort in consequential decisions, and skeptical of promotional content. They share three core pain points:
+The MVP's success and hypothesis validation will be evaluated using the following session-based metrics:
+1. **Questionnaire Completion Rate**: >= 60% of users who land on the page should complete the questionnaire and view results.
+2. **Shortlist Engagement**: >= 40% of users who view the ranked results should select at least one city to shortlist.
+3. **Comparison Rate**: >= 25% of users who view results should navigate to the side-by-side comparison screen.
+4. **Session Duration**: Average session duration should exceed 3 minutes, indicating meaningful interaction with city profiles and comparison metrics.
+5. **Zero PII Leakage**: 100% of user sessions must remain state-free on the server side, validating GDPR compliance.
 
-- **Information overload** — too much public data, no synthesis.
-- **Lack of personalization** — generic "best of" lists do not reflect their situation.
-- **Difficult comparisons** — no clean way to weigh multiple candidates across the same dimensions.
-
-The MVP uses a single questionnaire to handle life-stage variation (career-driven, family, location-independent, pre-retiree). The matching engine weights factors based on questionnaire answers; no separate user paths, branching flows, or persona-specific UIs.
-
-## 3. Scope
+## 6. Scope
 
 ### 3.1 In Scope (MVP)
 
@@ -75,7 +106,7 @@ The following are **not** built in the MVP and will not be retrofitted to the MV
 - AI assistant, chatbot, conversational Q&A
 - SEO-optimized public city pages (these can be added later; for MVP the city pages are reachable by URL but not optimized for organic acquisition)
 
-## 4. Core User Journey
+## 7. Core User Journey
 
 The MVP is a single linear loop. There are no alternate paths, no dashboards, no settings pages.
 
@@ -100,7 +131,7 @@ Landing → Questionnaire (≈10 questions) → Ranked Results (top 10)
 
 The questionnaire is the only input that can change the ranking. To re-rank, the user clicks "Start over" from the results page and re-answers the questionnaire. There is no "refine my answers" UI in the MVP.
 
-## 5. Functional Requirements
+## 8. Functional Requirements
 
 Numbered for easy reference. Each requirement is testable in a single user action.
 
@@ -120,7 +151,7 @@ Numbered for easy reference. Each requirement is testable in a single user actio
 - **FR-14**: A Privacy Policy page shall be linked from the site footer and from the consent banner.
 - **FR-15**: The application shall be deployable to the free tier of Cloudflare or Netlify, with HTTPS enforced, and shall run via Docker Compose locally with a documented one-command startup.
 
-## 6. Data Requirements
+## 9. Data Requirements
 
 ### 6.1 City Attributes (the 7 dimensions)
 
@@ -147,7 +178,7 @@ All indices are normalized to a 1–5 scale. Each city record also carries: name
 - PostgreSQL with PostGIS extensions. Schema is `cities` (one row per city) and `location_scores` (one row per city per dimension), joined at query time.
 - Seeded via a versioned SQL or JSON file in the repository; the app boots against an empty database by loading the seed.
 
-## 7. Non-Functional Requirements
+## 10. Non-Functional Requirements
 
 - **Performance**: Ranking results shall be returned in under 1 second (p95) after questionnaire submission on a standard broadband connection. Pages shall become interactive in under 2 seconds.
 - **Availability**: Best-effort, no formal SLA. The MVP is deployed on free-tier infrastructure; downtime is acceptable during the validation phase.
@@ -157,7 +188,7 @@ All indices are normalized to a 1–5 scale. Each city record also carries: name
 - **Cost**: $0. No paid third-party services, no paid data feeds, no paid monitoring.
 - **CI/CD**: GitHub Actions runs lint, unit tests, and a smoke build on every push to `main`. Manual deploy to the chosen free-tier host is acceptable for the MVP.
 
-## 8. Acceptance Criteria
+## 11. Acceptance Criteria
 
 The MVP is shippable when **all** of the following are true. Each criterion is verifiable in a single manual or automated test.
 
@@ -177,7 +208,7 @@ The MVP is shippable when **all** of the following are true. Each criterion is v
 - **AC-14**: The app is deployed to a public URL on the free tier of Cloudflare or Netlify, with HTTPS enforced.
 - **AC-15**: Lint, unit tests, and a smoke build pass in CI on the latest commit to `main`.
 
-## 9. Open Questions
+## 12. Open Questions
 
 These are the only questions that must be resolved before or during the 3-day build. Everything else is deferred.
 
@@ -188,7 +219,7 @@ CEO: Take the global coverage one.
 3. **"Why this fits you" generation**: Hand-authored per city (highest quality, more work) or templated from the matching weights (fast, less distinctive)? Default to templated for MVP; allow hand-authored overrides where the team has time.
 CEO: Yes, templated for MVP.
 
-## 10. Out of Scope (Post-MVP)
+## 13. Future Scope
 
 A single list. Items are sequenced roughly by expected priority but no dates are committed.
 
@@ -209,5 +240,6 @@ A single list. Items are sequenced roughly by expected priority but no dates are
 
 | Date       | Version | Author        | Changes                                                                                            |
 | ---------- | ------- | ------------- | -------------------------------------------------------------------------------------------------- |
-| 2026-06-01 | 1.0.0   | Human         | Initial version.                                                                                   |
+| 2026-06-01 | 1.0.0   | Human         | Initial version. |
 | 2026-06-02 | 2.0.0   | Product Agent | Rewritten to be MVP-only. Removed detailed personas, premium-tier features, multi-phase roadmap, business-model pricing, exhaustive data-source analysis, and 24 open questions. Resolved internal contradictions (database size, questionnaire length, account vs. session model). Reorganized into a single linear user journey, 15 functional requirements, and 15 acceptance criteria. Length reduced from 1,829 to 210 lines. |
+| 2026-06-10 | 3.0.0   | Product Agent | Updated to Stage 3. Added explicit Problem Statement, Target Users, User Stories (equally representing remote workers and families), and Success Metrics sections to satisfy design-product guidelines. |
