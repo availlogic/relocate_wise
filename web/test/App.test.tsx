@@ -10,7 +10,7 @@
  * only assert that the route plumbing points at the right component and
  * that the header wiring is correct.
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from '../src/App';
@@ -26,6 +26,12 @@ function city(slug: string, name: string) {
 }
 
 describe('<App /> — routing & header', () => {
+  beforeEach(() => {
+    // The ShortlistProvider now hydrates from sessionStorage; clear it
+    // before each test to avoid cross-test leakage.
+    window.sessionStorage.clear();
+  });
+
   it('renders the LandingPage at /', () => {
     render(<App />);
     // Header brand is always present; landing has its own h1.

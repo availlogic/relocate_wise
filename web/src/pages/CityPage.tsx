@@ -2,14 +2,20 @@
  * CityPage — full profile for a single city.
  *
  * Fetches `GET /api/cities/:slug` and renders the seven dimension scores
- * (per PRD FR-5). Handles loading, error (incl. 404), and a back link to
- * the previous page if any.
+ * (per FR-5). Handles loading skeleton, error (incl. 404), and a back
+ * link to /results.
+ *
+ * Adds an "Add to / Remove from Comparison" button (Acceptance-Criteria
+ * Feature 4) wired to the session-scoped shortlist.
  */
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { City } from '@relocatewise/shared';
 import { getCity, ApiError } from '../api';
 import { CityDimensions } from '../components/CityDimensions';
+import { ShortlistBar } from '../components/ShortlistBar';
+import { useShortlist } from '../state/shortlist';
+import { useToast } from '../components/Toast';
 import './CityPage.css';
 
 export function CityPage() {
@@ -18,6 +24,8 @@ export function CityPage() {
   const [city, setCity] = useState<City | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { has, toggle, count } = useShortlist();
+  const toast = useToast();
 
   useEffect(() => {
     let cancelled = false;
@@ -49,7 +57,11 @@ export function CityPage() {
   if (loading) {
     return (
       <div className="city-page" data-testid="city-loading">
-        <p>Loading city profile…</p>
+        <div className="skeleton skeleton--title" aria-hidden="true" />
+        <div className="skeleton skeleton--text" aria-hidden="true" />
+        <div className="skeleton skeleton--text" aria-hidden="true" />
+        <div className="skeleton skeleton--block" aria-hidden="true" />
+        <span className="visually-hidden">Loading city profile…</span>
       </div>
     );
   }
@@ -74,16 +86,54 @@ export function CityPage() {
     return null;
   }
 
+  const inShortlist = has(city.slug);
+  const wouldExceedCap = !inShortlist && count >= 3;
+
+  const handleShortlistToggle = () => {
+    if (wouldExceedCap) {
+      toast.push('You can compare up to 3 cities. Please remove one first.');
+      return;
+    }
+    toggle({
+      city: {
+        slug: city.slug,
+        name: city.name,
+        country: city.country,
+        country_code: city.country_code,
+        region: city.region,
+        lat: city.lat,
+        lng: city.lng,
+        description: city.description,
+        last_updated: city.last_updated,
+        dimensions: city.dimensions,
+      },
+      score: 0,
+      why: '',
+    });
+  };
+
   return (
     <article className="city-page" data-testid="city-page">
       <header className="city-page__header">
-        <Link to="/results" className="city-page__back">← Back to results</Link>
+        <Link to="/results" className="city-page__back" data-testid="city-page__back">← Back to results</Link>
         <h1>
           {city.name}
           <span className="city-page__country">, {city.country}</span>
         </h1>
         <p className="city-page__region">{city.region}</p>
         <p className="city-page__desc">{city.description}</p>
+        <div className="city-page__actions">
+          <button
+            type="button"
+            className="btn btn--primary"
+            onClick={handleShortlistToggle}
+            disabled={wouldExceedCap}
+            title={wouldExceedCap ? 'Shortlist full (max 3).' : undefined}
+            data-testid="city-toggle-shortlist"
+          >
+            {inShortlist ? 'Remove from Comparison' : 'Add to Comparison'}
+          </button>
+        </div>
         <dl className="city-page__meta">
           <div>
             <dt>Coordinates</dt>
@@ -103,6 +153,7 @@ export function CityPage() {
         <h2>Dimension scores</h2>
         <CityDimensions dimensions={city.dimensions} />
       </section>
+      <ShortlistBar />
     </article>
   );
 }

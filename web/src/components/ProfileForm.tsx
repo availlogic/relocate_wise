@@ -1,111 +1,142 @@
 /**
- * ProfileForm — the 6-dimension preference form described in PRD §5 (FR-2
- * and FR-3). All fields are optional except none — every dimension has a
- * neutral default that means "skip / no preference". The Submit button is
- * always enabled; the matching engine handles a fully-empty profile.
+ * ProfileForm — the 7-step wizard that implements the RelocateWise
+ * questionnaire.
  *
- * Validation:
- *  - When cost_importance > 0, cost_ceiling is required (1..5).
- *  - When housing_importance > 0, housing_ceiling is required (1..5).
+ * Implements PRD §5 (FR-1, FR-2, FR-3) and Acceptance-Criteria Feature 2:
+ *   - Exactly 7 steps, single question per screen.
+ *   - Progress bar (14.2% per step) with "Step N of 7" text.
+ *   - Back / Skip on every screen; "View Matches" on the final step.
+ *   - All fields are optional — a skipped question is recorded as the
+ *     neutral default per Architecture §6.3.
+ *   - On submit, the form posts the assembled UserProfile to
+ *     `POST /api/match` and navigates to /results with the response in
+ *     location.state (no PII in URLs — AC-10).
  *
- * On successful submit the form calls `postMatch(profile)` and navigates
- * to /results, passing the response via React Router location state so
- * the URL stays clean (AC-10 — no PII in URLs).
+ * HF-1 mapping (Review-Findings §2): step 2 is a single "Housing Budget"
+ * 1-5 slider. We map N → `cost_ceiling = housing_ceiling = N` and
+ * `cost_importance = housing_importance = 3` (High).
+ *
+ * MF-1 mapping (Review-Findings §2): step 7's Location Density choice
+ * (Urban / Suburban / Rural) is merged into `lifestyle_tags` so the
+ * back-end's single `lifestyle_tags` array sees the union.
  */
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CLIMATE_OPTIONS,
-  INDUSTRY_OPTIONS,
   EDUCATION_OPTIONS,
+  INDUSTRY_OPTIONS,
   LIFESTYLE_TAGS,
-  type UserProfile,
-  type Importance,
   type ClimatePreference,
-  type Industry,
   type EducationPriority,
+  type Industry,
   type LifestyleTag,
+  type UserProfile,
 } from '@relocatewise/shared';
 import { postMatch, ApiError, type MatchResponseFull } from '../api';
 import { RadioGroup } from './RadioGroup';
-import { ImportanceSlider } from './ImportanceSlider';
 import { CeilingSlider } from './CeilingSlider';
 import { TagPicker } from './TagPicker';
+import { ProgressBar } from './ProgressBar';
+import { writeCachedResults } from '../state/matchResults';
 import {
   CLIMATE_LABELS,
-  INDUSTRY_LABELS,
   EDUCATION_LABELS,
+  INDUSTRY_LABELS,
   LIFESTYLE_LABELS,
 } from '../formOptions';
 import './ProfileForm.css';
 
-/** Initial empty profile, used on mount. */
-function emptyProfile(): UserProfile {
+const TOTAL_STEPS = 7;
+
+/** Density choices for step 7 — merged into lifestyle_tags (MF-1). */
+type Density = 'urban' | 'suburban' | 'rural' | null;
+
+interface WizardState {
+  climate: ClimatePreference | null;
+  budget: number | null; // 1..5, single Housing Budget question (HF-1)
+  career: Industry | null;
+  healthcareImportance: 0 | 1 | 2 | 3;
+  education: EducationPriority;
+  communityTags: LifestyleTag[];
+  density: Density;
+}
+
+function emptyWizard(): WizardState {
   return {
     climate: null,
-    cost_importance: 0,
-    cost_ceiling: null,
-    housing_importance: 0,
-    housing_ceiling: null,
-    career_industry: null,
+    budget: null,
+    career: null,
+    healthcareImportance: 0,
     education: 'not_relevant',
-    healthcare_importance: 0,
-    lifestyle_tags: [],
+    communityTags: [],
+    density: null,
+  };
+}
+
+/**
+ * Project the wizard state into a `UserProfile` ready for the API.
+ * Handles the HF-1 mapping (single Housing Budget → 4 fields) and
+ * MF-1 merge (density → lifestyle_tags).
+ */
+export function toUserProfile(state: WizardState): UserProfile {
+  const tags: LifestyleTag[] = [...state.communityTags];
+  if (state.density && !tags.includes(state.density)) {
+    tags.push(state.density);
+  }
+  const costImportance: 0 | 1 | 2 | 3 = state.budget != null ? 3 : 0;
+  const costCeiling: number | null = state.budget;
+  return {
+    climate: state.climate,
+    cost_importance: costImportance,
+    cost_ceiling: costCeiling,
+    housing_importance: costImportance,
+    housing_ceiling: costCeiling,
+    career_industry: state.career,
+    education: state.education,
+    healthcare_importance: state.healthcareImportance,
+    lifestyle_tags: tags,
   };
 }
 
 export interface ProfileFormProps {
-  /** Optional initial values, used for tests and a "restore last draft" flow. */
-  initial?: Partial<UserProfile>;
+  /** Optional initial values for tests / future restore-flow. */
+  initial?: Partial<WizardState>;
 }
 
 export function ProfileForm({ initial }: ProfileFormProps) {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<UserProfile>(() => ({
-    ...emptyProfile(),
+  const [state, setState] = useState<WizardState>(() => ({
+    ...emptyWizard(),
     ...initial,
   }));
+  const [step, setStep] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Derived validation
-  const validationError = useMemo(() => {
-    if (profile.cost_importance > 0 && profile.cost_ceiling === null) {
-      return 'Pick a cost-of-living ceiling — importance is set above 0.';
-    }
-    if (profile.housing_importance > 0 && profile.housing_ceiling === null) {
-      return 'Pick a housing ceiling — importance is set above 0.';
-    }
-    return null;
-  }, [profile.cost_importance, profile.cost_ceiling, profile.housing_importance, profile.housing_ceiling]);
-
-  const update = <K extends keyof UserProfile>(key: K, value: UserProfile[K]) => {
-    setProfile((p) => ({ ...p, [key]: value }));
+  const update = <K extends keyof WizardState>(key: K, value: WizardState[K]) => {
+    setState((s) => ({ ...s, [key]: value }));
   };
 
-  // When the user drops importance back to 0, clear the ceiling so we
-  // never send a stale number into a dimension they no longer care about.
-  const setImportance = (key: 'cost' | 'housing', value: Importance) => {
-    setProfile((p) => {
-      const next: UserProfile = { ...p };
-      if (key === 'cost') {
-        next.cost_importance = value;
-        if (value === 0) next.cost_ceiling = null;
-      } else {
-        next.housing_importance = value;
-        if (value === 0) next.housing_ceiling = null;
-      }
-      return next;
-    });
+  const next = () => setStep((s) => Math.min(TOTAL_STEPS, s + 1));
+  const back = () => setStep((s) => Math.max(1, s - 1));
+
+  const skip = () => {
+    // Each step has a sensible neutral default; advancing without
+    // touching the field is the same as clicking "Skip".
+    next();
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validationError || submitting) return;
+  const handleSubmit = async () => {
+    if (submitting) return;
     setSubmitting(true);
     setError(null);
     try {
+      const profile = toUserProfile(state);
       const response: MatchResponseFull = await postMatch(profile);
+      // Persist the response so /results can rehydrate on a direct or
+      // back-navigation that doesn't carry the location.state forward.
+      writeCachedResults(response);
       navigate('/results', { state: response });
     } catch (err) {
       if (err instanceof ApiError) {
@@ -120,152 +151,207 @@ export function ProfileForm({ initial }: ProfileFormProps) {
     }
   };
 
-  // Build option lists (typed) for the form controls.
-  const climateOptions = CLIMATE_OPTIONS.map((v) => ({
-    value: v,
-    label: CLIMATE_LABELS[v],
-  }));
-  const industryOptions = INDUSTRY_OPTIONS.map((v) => ({
-    value: v,
-    label: INDUSTRY_LABELS[v],
-  }));
-  const educationOptions = EDUCATION_OPTIONS.map((v) => ({
-    value: v,
-    label: EDUCATION_LABELS[v],
-  }));
-  const lifestyleOptions = LIFESTYLE_TAGS.map((v) => ({
-    value: v,
-    label: LIFESTYLE_LABELS[v],
-  }));
+  const isLast = step === TOTAL_STEPS;
+
+  const densityOptions: ReadonlyArray<{ value: Density; label: string }> = [
+    { value: 'urban', label: 'Urban / big-city' },
+    { value: 'suburban', label: 'Suburban' },
+    { value: 'rural', label: 'Rural' },
+  ];
+
+  const communityOptions = LIFESTYLE_TAGS
+    .filter((t): t is Exclude<LifestyleTag, 'suburban' | 'rural'> =>
+      t !== 'suburban' && t !== 'rural',
+    )
+    .map((t) => ({ value: t, label: LIFESTYLE_LABELS[t] }));
+
+  // Stable titles keyed by step (used in the wizard header).
+  const stepTitle = useMemo(() => STEP_TITLES[step - 1] ?? '', [step]);
 
   return (
-    <form
-      className="profile-form"
-      onSubmit={handleSubmit}
-      noValidate
-      data-testid="profile-form"
-    >
-      <section className="profile-form__intro">
-        <h1>Tell us what matters</h1>
-        <p>
-          Answer only the questions you care about. Anything you skip is
-          treated as a soft “no preference” and won’t drag your score down.
-        </p>
-      </section>
+    <div className="profile-form" data-testid="profile-form">
+      <header className="profile-form__header">
+        <h1 className="profile-form__title">{stepTitle}</h1>
+        <ProgressBar step={step} total={TOTAL_STEPS} />
+      </header>
 
-      <section className="profile-form__section">
-        <RadioGroup<ClimatePreference>
-          name="climate"
-          legend="Climate"
-          options={climateOptions}
-          value={profile.climate}
-          onChange={(v) => update('climate', v)}
-          nullable
-          helpText="Pick the climate you’d most like to live in."
-        />
-      </section>
+      <section
+        className="profile-form__step"
+        data-testid={`profile-form-step-${step}`}
+        key={step}
+      >
+        {step === 1 ? (
+          <RadioGroup<ClimatePreference>
+            name="climate"
+            legend="Climate"
+            options={CLIMATE_OPTIONS.map((v) => ({
+              value: v,
+              label: CLIMATE_LABELS[v],
+            }))}
+            value={state.climate}
+            onChange={(v) => update('climate', v)}
+            nullable
+            helpText="Pick the climate you’d most like to live in."
+          />
+        ) : null}
 
-      <section className="profile-form__section">
-        <ImportanceSlider
-          name="cost"
-          legend="Cost of living"
-          value={profile.cost_importance}
-          onChange={(v) => setImportance('cost', v)}
-          helpText="How much should the day-to-day cost matter?"
-        />
-        {profile.cost_importance > 0 ? (
+        {step === 2 ? (
           <CeilingSlider
-            name="cost-ceiling"
-            legend="Maximum cost level (1 = very cheap, 5 = very expensive)"
-            value={profile.cost_ceiling}
-            onChange={(v) => update('cost_ceiling', v)}
+            name="budget"
+            legend="Housing budget range"
+            value={state.budget}
+            onChange={(v) => update('budget', v)}
+            levelLabels={['Very cheap', 'Cheap', 'Average', 'Pricey', 'Very pricey']}
+            helpText="Pick a level (1 = very cheap, 5 = very pricey). Skipping means cost doesn’t factor in."
+          />
+        ) : null}
+
+        {step === 3 ? (
+          <RadioGroup<Industry>
+            name="career"
+            legend="Career industry"
+            options={INDUSTRY_OPTIONS.map((v) => ({ value: v, label: INDUSTRY_LABELS[v] }))}
+            value={state.career}
+            onChange={(v) => update('career', v)}
+            nullable
+            helpText="Pick the industry you’d most like to work in."
+          />
+        ) : null}
+
+        {step === 4 ? (
+          <fieldset
+            className="profile-form__healthcare"
+            data-testid="healthcare-step"
+          >
+            <legend className="profile-form__step-legend">Healthcare priority</legend>
+            <p className="profile-form__step-help">
+              How important is access to good healthcare?
+            </p>
+            <div className="profile-form__levels" role="radiogroup" aria-label="Healthcare priority">
+              {[0, 1, 2, 3].map((level) => (
+                <label
+                  key={level}
+                  className={
+                    'profile-form__level' +
+                    (state.healthcareImportance === level ? ' is-active' : '')
+                  }
+                  data-testid={`healthcare-${level}`}
+                >
+                  <input
+                    type="radio"
+                    name="healthcare"
+                    value={level}
+                    checked={state.healthcareImportance === level}
+                    onChange={() => update('healthcareImportance', level as 0 | 1 | 2 | 3)}
+                  />
+                  <span className="profile-form__level-num">{level}</span>
+                  <span className="profile-form__level-label">
+                    {level === 0
+                      ? 'Skip'
+                      : level === 1
+                        ? 'Nice to have'
+                        : level === 2
+                          ? 'Important'
+                          : 'Critical'}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ) : null}
+
+        {step === 5 ? (
+          <RadioGroup<EducationPriority>
+            name="education"
+            legend="Education quality"
+            options={EDUCATION_OPTIONS.map((v) => ({ value: v, label: EDUCATION_LABELS[v] }))}
+            value={state.education}
+            onChange={(v) => update('education', v as EducationPriority)}
+            helpText="How important are schools and universities for you?"
+          />
+        ) : null}
+
+        {step === 6 ? (
+          <TagPicker<LifestyleTag>
+            name="community"
+            legend="Community & lifestyle fit"
+            options={communityOptions}
+            selected={state.communityTags}
+            onChange={(v) => update('communityTags', v)}
+            helpText="Pick all that apply — the more you pick, the stricter the filter."
+          />
+        ) : null}
+
+        {step === 7 ? (
+          <RadioGroup<Exclude<Density, null>>
+            name="density"
+            legend="Location density preference"
+            options={densityOptions.filter((o): o is { value: Exclude<Density, null>; label: string } => o.value !== null)}
+            value={state.density ?? null}
+            onChange={(v) => update('density', v)}
+            nullable
+            helpText="How dense do you want your surroundings?"
           />
         ) : null}
       </section>
 
-      <section className="profile-form__section">
-        <ImportanceSlider
-          name="housing"
-          legend="Housing availability & cost"
-          value={profile.housing_importance}
-          onChange={(v) => setImportance('housing', v)}
-          helpText="How critical is the housing market?"
-        />
-        {profile.housing_importance > 0 ? (
-          <CeilingSlider
-            name="housing-ceiling"
-            legend="Maximum housing level (1 = easy, 5 = very tight)"
-            value={profile.housing_ceiling}
-            onChange={(v) => update('housing_ceiling', v)}
-          />
-        ) : null}
-      </section>
-
-      <section className="profile-form__section">
-        <RadioGroup<Industry>
-          name="career"
-          legend="Career industry"
-          options={industryOptions}
-          value={profile.career_industry}
-          onChange={(v) => update('career_industry', v)}
-          nullable
-          helpText="Pick the industry you’d most like to work in."
-        />
-      </section>
-
-      <section className="profile-form__section">
-        <RadioGroup<EducationPriority>
-          name="education"
-          legend="Education quality"
-          options={educationOptions}
-          value={profile.education}
-          onChange={(v) => update('education', v as EducationPriority)}
-          helpText="How important are schools and universities for you?"
-        />
-      </section>
-
-      <section className="profile-form__section">
-        <ImportanceSlider
-          name="healthcare"
-          legend="Healthcare quality"
-          value={profile.healthcare_importance}
-          onChange={(v) => update('healthcare_importance', v)}
-          helpText="How critical is access to good healthcare?"
-        />
-      </section>
-
-      <section className="profile-form__section">
-        <TagPicker<LifestyleTag>
-          name="lifestyle"
-          legend="Lifestyle preferences"
-          options={lifestyleOptions}
-          selected={profile.lifestyle_tags}
-          onChange={(v) => update('lifestyle_tags', v)}
-          helpText="Pick all that apply — the more you pick, the stricter the filter."
-        />
-      </section>
-
-      {validationError ? (
-        <p className="profile-form__error" role="alert" data-testid="validation-error">
-          {validationError}
-        </p>
-      ) : null}
       {error ? (
         <p className="profile-form__error" role="alert" data-testid="api-error">
           {error}
         </p>
       ) : null}
 
-      <div className="profile-form__actions">
+      <nav className="profile-form__nav" aria-label="Wizard navigation">
         <button
-          type="submit"
-          className="btn btn--primary"
-          disabled={!!validationError || submitting}
-          data-testid="submit"
+          type="button"
+          className="btn btn--secondary profile-form__back"
+          onClick={back}
+          disabled={step === 1 || submitting}
+          data-testid="wizard-back"
         >
-          {submitting ? 'Finding matches…' : 'Find my matches'}
+          ← Back
         </button>
-      </div>
-    </form>
+        <button
+          type="button"
+          className="btn btn--secondary profile-form__skip"
+          onClick={skip}
+          disabled={submitting}
+          data-testid="wizard-skip"
+        >
+          Skip
+        </button>
+        {isLast ? (
+          <button
+            type="button"
+            className="btn btn--primary profile-form__submit"
+            onClick={handleSubmit}
+            disabled={submitting}
+            data-testid="submit"
+          >
+            {submitting ? 'Finding matches…' : 'View matches'}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="btn btn--primary profile-form__next"
+            onClick={next}
+            disabled={submitting}
+            data-testid="wizard-next"
+          >
+            Next →
+          </button>
+        )}
+      </nav>
+    </div>
   );
 }
+
+const STEP_TITLES: readonly string[] = [
+  'What climate would you like?',
+  'How pricey is too pricey?',
+  'What industry are you in?',
+  'How much does healthcare matter?',
+  'How important is education?',
+  'What community vibe fits?',
+  'How dense do you want it?',
+];

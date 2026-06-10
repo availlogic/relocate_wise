@@ -8,22 +8,67 @@
  * PII in URLs.
  *
  * Each row is wired to the shortlist context: ticking "Add to compare"
- * toggles membership in the session-scoped shortlist, and a CTA to
- * /compare appears whenever 2+ cities are shortlisted.
+ * toggles membership in the session-scoped shortlist. When the user
+ * attempts to add a 4th city the toggle is blocked and a toast is shown
+ * (Acceptance-Criteria Feature 4). When the user navigates here from
+ * /compare with an insufficient shortlist, a notice is rendered above
+ * the header.
+ *
+ * "Start Over" clears the shortlist and routes to "/" (Acceptance-
+ * Criteria Feature 3 + E2E-3).
  */
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { RankCard } from '../components/RankCard';
+import { ShortlistBar } from '../components/ShortlistBar';
+import { useToast } from '../components/Toast';
 import { useShortlist, SHORTLIST_MAX } from '../state/shortlist';
+import { readCachedResults } from '../state/matchResults';
 import type { MatchResponseFull } from '../api';
 import './ResultsPage.css';
 
+interface ResultsLocationState extends MatchResponseFull {
+  compareNotice?: string;
+}
+
 export function ResultsPage() {
   const location = useLocation();
-  const state = location.state as MatchResponseFull | null;
+  const navigate = useNavigate();
+  const toast = useToast();
+  const locationState = (location.state ?? null) as ResultsLocationState | null;
+  // Rehydrate from sessionStorage if the location.state is missing
+  // (e.g. the user landed here from a <Navigate replace /> or hit the
+  // URL directly). The cached result is the most recent quiz
+  // outcome, kept in sync by ProfileForm.
+  const [cached, setCached] = useState<MatchResponseFull | null>(() =>
+    locationState ? null : readCachedResults(),
+  );
+  // After a redirect from /compare, the location state is empty. We
+  // re-read the cache in a layout effect so the results-page renders
+  // synchronously on the next paint.
+  useEffect(() => {
+    if (!locationState && !cached) {
+      const fromCache = readCachedResults();
+      if (fromCache) setCached(fromCache);
+    }
+  });
+  const state: ResultsLocationState | null = locationState ?? (cached ? { ...cached } : null);
   const results = state?.results ?? [];
   const generatedAt = state?.generated_at;
-  const { items, has, toggle, count } = useShortlist();
+  const { items, has, toggle, count, startOver } = useShortlist();
   const full = count >= SHORTLIST_MAX;
+
+  // Surface the "navigate to /compare with <2 cities" notice once.
+  useEffect(() => {
+    if (state?.compareNotice) {
+      toast.push(state.compareNotice, { durationMs: 6000 });
+      // Strip the notice from location.state so a refresh doesn't re-fire.
+      navigate(location.pathname, {
+        replace: true,
+        state: { ...state, compareNotice: undefined },
+      });
+    }
+  }, [state, toast, navigate, location.pathname]);
 
   if (results.length === 0) {
     return (
@@ -39,6 +84,20 @@ export function ResultsPage() {
       </div>
     );
   }
+
+  const handleStartOver = () => {
+    startOver();
+    navigate('/');
+  };
+
+  const handleToggle = (city: MatchResponseFull['results'][number]) => {
+    const willBeIn = !has(city.city.slug);
+    if (willBeIn && count >= SHORTLIST_MAX) {
+      toast.push('You can compare up to 3 cities. Please remove one first.');
+      return;
+    }
+    toggle(city);
+  };
 
   return (
     <div className="results-page" data-testid="results-page">
@@ -60,6 +119,14 @@ export function ResultsPage() {
           <Link to="/" className="btn btn--secondary">
             ← Edit my preferences
           </Link>
+          <button
+            type="button"
+            className="btn btn--secondary results-page__start-over"
+            onClick={handleStartOver}
+            data-testid="results-start-over"
+          >
+            Start over
+          </button>
           {count >= 2 ? (
             <Link
               to="/compare"
@@ -86,7 +153,7 @@ export function ResultsPage() {
               rank={idx + 1}
               result={r}
               inShortlist={has(r.city.slug)}
-              onToggleShortlist={() => toggle(r)}
+              onToggleShortlist={() => handleToggle(r)}
               shortlistFull={full && !has(r.city.slug)}
             />
           </li>
@@ -99,7 +166,7 @@ export function ResultsPage() {
             : `${items.length} cities saved for comparison.`}
         </p>
       ) : null}
+      <ShortlistBar />
     </div>
   );
 }
-

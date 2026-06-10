@@ -21,9 +21,13 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
     "test": "echo 'no tests in shared'"
   },
   "devDependencies": {
-    "typescript": "^5.4.5"
+    "@eslint/js": "^8.57.1",
+    "globals": "^13.24.0",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^8.61.0"
   }
 }

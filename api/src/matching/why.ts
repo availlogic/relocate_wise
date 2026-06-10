@@ -41,6 +41,7 @@ const INDUSTRY_PRETTY: Record<string, string> = {
 const TAG_PRETTY: Record<LifestyleTag, string> = {
   urban: 'urban',
   suburban: 'suburban',
+  rural: 'rural',
   coastal: 'coastal',
   mountain: 'mountain',
   arts_culture: 'arts & culture',

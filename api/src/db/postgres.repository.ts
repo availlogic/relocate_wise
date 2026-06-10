@@ -77,6 +77,7 @@ function asCommunitySub(sub: Record<string, number | string> | null): CityCommun
   return {
     urban: num('urban', 0),
     suburban: num('suburban', 0),
+    rural: num('rural', 0),
     coastal: num('coastal', 0),
     mountain: num('mountain', 0),
     arts_culture: num('arts_culture', 0),

@@ -34,6 +34,11 @@ function TestRig({
   );
 }
 
+function CountProbe() {
+  const api = useShortlist();
+  return <span data-testid="count">{api.count}</span>;
+}
+
 function renderRig() {
   let api!: ShortlistApi;
   const result = render(
@@ -45,6 +50,13 @@ function renderRig() {
 }
 
 describe('ShortlistProvider / useShortlist', () => {
+  beforeEach(() => {
+    // The ShortlistProvider now hydrates from sessionStorage. Tests in
+    // this file share a single jsdom window, so we must clear the
+    // storage key before each test to avoid cross-test leakage.
+    window.sessionStorage.clear();
+  });
+
   it('starts empty', () => {
     const { getApi } = renderRig();
     expect(getApi().items).toEqual([]);
@@ -201,5 +213,60 @@ describe('ShortlistProvider / useShortlist', () => {
     expect(screen.getByTestId('count').textContent).toBe('1');
     await user.click(screen.getByText('clear'));
     expect(screen.getByTestId('count').textContent).toBe('0');
+  });
+
+  it('persists the shortlist to sessionStorage and rehydrates on next mount', () => {
+    const initial = [
+      makeMatchedCity({ city: { ...makeMatchedCity().city, slug: 'lisbon' } }),
+      makeMatchedCity({ city: { ...makeMatchedCity().city, slug: 'berlin' } }),
+    ];
+    const { unmount } = render(
+      <ShortlistProvider initial={initial}>
+        <CountProbe />
+      </ShortlistProvider>,
+    );
+    expect(screen.getByTestId('count').textContent).toBe('2');
+    // Verify sessionStorage was written.
+    const stored = window.sessionStorage.getItem('rw:shortlist');
+    expect(stored).not.toBeNull();
+    expect(JSON.parse(stored!)).toHaveLength(2);
+    unmount();
+    // Re-mounting without an initial seed should rehydrate from storage.
+    render(
+      <ShortlistProvider>
+        <CountProbe />
+      </ShortlistProvider>,
+    );
+    expect(screen.getByTestId('count').textContent).toBe('2');
+  });
+
+  it('startOver empties the shortlist', () => {
+    const initial = [
+      makeMatchedCity({ city: { ...makeMatchedCity().city, slug: 'lisbon' } }),
+    ];
+    function StartOverProbe() {
+      const api = useShortlist();
+      return (
+        <>
+          <span data-testid="count">{api.count}</span>
+          <button onClick={() => api.startOver()} data-testid="start-over">start over</button>
+        </>
+      );
+    }
+    render(
+      <ShortlistProvider initial={initial}>
+        <StartOverProbe />
+      </ShortlistProvider>,
+    );
+    expect(screen.getByTestId('count').textContent).toBe('1');
+    act(() => {
+      screen.getByTestId('start-over').click();
+    });
+    expect(screen.getByTestId('count').textContent).toBe('0');
+    // startOver calls clearStorage; the subsequent useEffect re-writes
+    // '[]' to keep the storage layer consistent. Either form is
+    // semantically equivalent (no cities).
+    const stored = window.sessionStorage.getItem('rw:shortlist');
+    expect(stored === null || JSON.parse(stored!).length === 0).toBe(true);
   });
 });

@@ -25,5 +25,5 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"]
   },
-  "include": ["src", "test"]
+  "include": ["src", "test", "e2e", "playwright.config.ts"]
 }

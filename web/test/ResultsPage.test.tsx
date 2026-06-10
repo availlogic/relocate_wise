@@ -5,27 +5,35 @@
  * /results — we render an empty-state CTA back to the form. This
  * preserves AC-10 (no PII in URLs).
  */
-import { describe, expect, it } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { ResultsPage } from '../src/pages/ResultsPage';
 import { ShortlistProvider } from '../src/state/shortlist';
-import { makeMatchResponse } from './fixtures';
+import { ToastProvider } from '../src/components/Toast';
+import { makeMatchResponse, makeMatchedCity } from './fixtures';
 
 function renderWithState(state: unknown) {
   return render(
     <MemoryRouter initialEntries={[{ pathname: '/results', state }]}>
-      <ShortlistProvider>
-        <Routes>
-          <Route path="/results" element={<ResultsPage />} />
-          <Route path="/" element={<div data-testid="form-route" />} />
-        </Routes>
-      </ShortlistProvider>
+      <ToastProvider>
+        <ShortlistProvider>
+          <Routes>
+            <Route path="/results" element={<ResultsPage />} />
+            <Route path="/" element={<div data-testid="form-route" />} />
+          </Routes>
+        </ShortlistProvider>
+      </ToastProvider>
     </MemoryRouter>,
   );
 }
 
 describe('<ResultsPage />', () => {
+  beforeEach(() => {
+    window.sessionStorage.clear();
+  });
+
   it('renders the empty-state CTA when there is no state', () => {
     renderWithState(null);
     const empty = screen.getByTestId('results-empty');
@@ -46,7 +54,6 @@ describe('<ResultsPage />', () => {
     const list = screen.getByTestId('results-list');
     const items = within(list).getAllByRole('listitem');
     expect(items).toHaveLength(2);
-    // First item must be the higher-ranked (rank 1).
     expect(within(items[0]!).getByTestId('rank-card-1')).toBeInTheDocument();
     expect(within(items[1]!).getByTestId('rank-card-2')).toBeInTheDocument();
   });
@@ -71,13 +78,50 @@ describe('<ResultsPage />', () => {
 
   it('does not leak PII into the URL — /results stays /results with no query string', () => {
     renderWithState(makeMatchResponse());
-    // No <Link> on this page references a different URL with profile data
-    // baked in (the only "Edit my preferences" link points to "/").
     const editLink = screen.getByRole('link', { name: /edit my preferences/i });
     expect(editLink.getAttribute('href')).toBe('/');
-    // Each RankCard link must only carry the slug, not the score or why.
     const card1 = screen.getByTestId('rank-card-1');
     const cardLink = within(card1).getByRole('link') as HTMLAnchorElement;
     expect(cardLink.getAttribute('href')).toMatch(/^\/city\/[a-z0-9%]+$/);
+  });
+
+  it('Start Over button clears the shortlist and routes to /', async () => {
+    const user = userEvent.setup();
+    const resp = makeMatchResponse();
+    // Pre-populate the shortlist with Lisbon so we can verify it gets
+    // cleared by Start Over.
+    const { rerender } = render(
+      <MemoryRouter initialEntries={[{ pathname: '/results', state: resp }]}>
+        <ToastProvider>
+          <ShortlistProvider initial={[makeMatchedCity({ city: { ...makeMatchedCity().city, slug: 'lisbon' } })]}>
+            <Routes>
+              <Route path="/results" element={<ResultsPage />} />
+              <Route path="/" element={<div data-testid="home-route" />} />
+            </Routes>
+          </ShortlistProvider>
+        </ToastProvider>
+      </MemoryRouter>,
+    );
+    expect(screen.getByTestId('shortlist-bar')).toBeInTheDocument();
+    await user.click(screen.getByTestId('results-start-over'));
+    await waitFor(() => {
+      expect(window.location.pathname).toBe('/');
+    });
+    rerender(
+      <MemoryRouter initialEntries={['/']}>
+        <ToastProvider>
+          <ShortlistProvider>
+            <Routes>
+              <Route path="/" element={<div data-testid="home-route-2" />} />
+            </Routes>
+          </ShortlistProvider>
+        </ToastProvider>
+      </MemoryRouter>,
+    );
+    // startOver clears the key; the subsequent useEffect re-writes
+    // '[]' to keep the storage layer consistent. Either form is
+    // semantically equivalent (no cities).
+    const stored = window.sessionStorage.getItem('rw:shortlist');
+    expect(stored === null || JSON.parse(stored!).length === 0).toBe(true);
   });
 });

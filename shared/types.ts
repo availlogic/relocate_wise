@@ -80,6 +80,7 @@ export type EducationPriority = (typeof EDUCATION_OPTIONS)[number];
 export const LIFESTYLE_TAGS = [
   'urban',
   'suburban',
+  'rural',
   'coastal',
   'mountain',
   'arts_culture',
@@ -153,6 +154,7 @@ export interface CityCareerSub {
 export interface CityCommunitySub {
   urban: number;
   suburban: number;
+  rural: number;
   coastal: number;
   mountain: number;
   arts_culture: number;

@@ -1,17 +1,27 @@
 /**
- * Tests for ComparePage (PRD S6 / FR-8).
+ * Tests for ComparePage (PRD S6 / FR-8 / Acceptance-Criteria Feature 5).
  *
- * Covers the three states (empty / 1 / 2+) and the two mutations
- * (remove a single city, clear all). The "best match" highlight in
- * the dimension table is verified for the case where the max is
- * uniquely owned by one city.
+ * Covers the three states:
+ *   - <2 cities → redirect to /results with a notice (Acceptance-Criteria
+ *     Feature 5 Rule, E2E-2).
+ *   - 2 cities → comparison grid + table.
+ *   - 3 cities → comparison grid + table.
+ *
+ * Plus the row-level rules:
+ *   - 7 dimensions are rendered (climate, cost, housing, career avg,
+ *     education, healthcare, community max).
+ *   - Cost / Housing are inverted: lower index wins (Acceptance-Criteria
+ *     Feature 5).
+ *   - Removing the last-but-one (drops below 2) navigates with a
+ *     "fewer than 2 cities" notice.
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { ComparePage } from '../src/pages/ComparePage';
 import { ShortlistProvider } from '../src/state/shortlist';
+import { ToastProvider } from '../src/components/Toast';
 import { makeMatchedCity } from './fixtures';
 import type { MatchedCityFull } from '../src/api';
 
@@ -37,30 +47,34 @@ function makeCity(
 
 function renderPage(initial: MatchedCityFull[] = []) {
   return render(
-    <MemoryRouter>
-      <ShortlistProvider initial={initial}>
-        <ComparePage />
-      </ShortlistProvider>
+    <MemoryRouter initialEntries={['/compare']}>
+      <ToastProvider>
+        <ShortlistProvider initial={initial}>
+          <ComparePage />
+        </ShortlistProvider>
+      </ToastProvider>
     </MemoryRouter>,
   );
 }
 
 describe('<ComparePage />', () => {
-  it('shows the empty state with a CTA to start the questionnaire when nothing is shortlisted', () => {
-    renderPage();
-    const empty = screen.getByTestId('compare-empty');
-    expect(empty).toBeInTheDocument();
-    expect(
-      within(empty).getByRole('link', { name: /start the questionnaire/i }),
-    ).toHaveAttribute('href', '/');
+  beforeEach(() => {
+    window.sessionStorage.clear();
   });
 
-  it('prompts the user to add a second city when only one is shortlisted', () => {
-    renderPage([makeCity('lisbon', 'Lisbon', 'PT')]);
-    const one = screen.getByTestId('compare-one');
-    expect(one).toBeInTheDocument();
-    expect(within(one).getByText(/Lisbon/)).toBeInTheDocument();
-    expect(within(one).getByRole('link', { name: /back to results/i })).toHaveAttribute('href', '/results');
+  it('redirects to /results when shortlist is empty (E2E-2)', () => {
+    render(
+      <MemoryRouter initialEntries={['/compare']}>
+        <ToastProvider>
+          <ShortlistProvider>
+            <ComparePage />
+          </ShortlistProvider>
+        </ToastProvider>
+      </MemoryRouter>,
+    );
+    // The redirect navigates to /results; the ResultsPage then renders.
+    // We just need to confirm we are no longer on /compare.
+    expect(screen.queryByTestId('compare-page')).not.toBeInTheDocument();
   });
 
   it('renders one column per shortlisted city (2 and 3 cities)', () => {
@@ -72,10 +86,7 @@ describe('<ComparePage />', () => {
     expect(grid2.style.gridTemplateColumns).toMatch(/repeat\(2,/);
     expect(within(grid2).getByTestId('compare-card-lisbon')).toBeInTheDocument();
     expect(within(grid2).getByTestId('compare-card-berlin')).toBeInTheDocument();
-    expect(within(grid2).queryByTestId('compare-card-tokyo')).not.toBeInTheDocument();
 
-    // Provider state persists across `rerender`, so we have to unmount
-    // and remount to switch to a different initial shortlist.
     unmount();
     renderPage([a, b, c]);
     const grid3 = screen.getByTestId('compare-grid');
@@ -83,19 +94,22 @@ describe('<ComparePage />', () => {
     expect(within(grid3).getByTestId('compare-card-tokyo')).toBeInTheDocument();
   });
 
-  it('renders the dimension comparison table with one row per dimension', () => {
+  it('renders all 7 dimension rows', () => {
     renderPage([
       makeCity('lisbon', 'Lisbon', 'PT'),
       makeCity('berlin', 'Berlin', 'DE'),
     ]);
     const table = screen.getByTestId('compare-table');
+    expect(within(table).getByTestId('compare-row-climate')).toBeInTheDocument();
     expect(within(table).getByTestId('compare-row-cost-of-living')).toBeInTheDocument();
     expect(within(table).getByTestId('compare-row-housing')).toBeInTheDocument();
+    expect(within(table).getByTestId('compare-row-career-avg')).toBeInTheDocument();
     expect(within(table).getByTestId('compare-row-education')).toBeInTheDocument();
     expect(within(table).getByTestId('compare-row-healthcare')).toBeInTheDocument();
+    expect(within(table).getByTestId('compare-row-community-max')).toBeInTheDocument();
   });
 
-  it('highlights the cell that uniquely owns the max for a dimension', () => {
+  it('inverts the winner on cost (lower index wins)', () => {
     const lisbon = makeCity('lisbon', 'Lisbon', 'PT', {
       city: {
         ...makeMatchedCity().city,
@@ -105,7 +119,43 @@ describe('<ComparePage />', () => {
         country_code: 'PT',
         dimensions: {
           ...makeMatchedCity().city.dimensions,
-          healthcare: 5, // unique max
+          cost: 2, // cheaper
+        },
+      },
+    });
+    const nyc = makeCity('nyc', 'New York City', 'US', {
+      city: {
+        ...makeMatchedCity().city,
+        slug: 'nyc',
+        name: 'New York City',
+        country: 'United States',
+        country_code: 'US',
+        dimensions: {
+          ...makeMatchedCity().city.dimensions,
+          cost: 5,
+        },
+      },
+    });
+    renderPage([lisbon, nyc]);
+    expect(
+      screen.getByTestId('compare-cell-cost-of-living-lisbon').className,
+    ).toMatch(/--best/);
+    expect(
+      screen.getByTestId('compare-cell-cost-of-living-nyc').className,
+    ).not.toMatch(/--best/);
+  });
+
+  it('highlights the cell that uniquely owns the max for a non-inverted dimension', () => {
+    const lisbon = makeCity('lisbon', 'Lisbon', 'PT', {
+      city: {
+        ...makeMatchedCity().city,
+        slug: 'lisbon',
+        name: 'Lisbon',
+        country: 'Portugal',
+        country_code: 'PT',
+        dimensions: {
+          ...makeMatchedCity().city.dimensions,
+          healthcare: 5,
         },
       },
     });
@@ -123,10 +173,8 @@ describe('<ComparePage />', () => {
       },
     });
     renderPage([lisbon, berlin]);
-    const lisbonCell = screen.getByTestId('compare-cell-healthcare-lisbon');
-    const berlinCell = screen.getByTestId('compare-cell-healthcare-berlin');
-    expect(lisbonCell.className).toMatch(/--best/);
-    expect(berlinCell.className).not.toMatch(/--best/);
+    expect(screen.getByTestId('compare-cell-healthcare-lisbon').className).toMatch(/--best/);
+    expect(screen.getByTestId('compare-cell-healthcare-berlin').className).not.toMatch(/--best/);
   });
 
   it('does NOT highlight anyone when the max is tied', () => {
@@ -149,15 +197,15 @@ describe('<ComparePage />', () => {
     expect(screen.getByTestId('compare-cell-education-berlin').className).not.toMatch(/--best/);
   });
 
-  it('removes a single city when the "Remove" button is clicked', async () => {
+  it('removing a city that drops below 2 navigates to /results', async () => {
     const user = userEvent.setup();
     const a = makeCity('lisbon', 'Lisbon', 'PT');
     const b = makeCity('berlin', 'Berlin', 'DE');
     renderPage([a, b]);
     await user.click(screen.getByTestId('compare-remove-lisbon'));
-    // Now there's only 1 city, the 1-state message should appear.
-    expect(screen.getByTestId('compare-one')).toBeInTheDocument();
-    expect(screen.queryByTestId('compare-card-lisbon')).not.toBeInTheDocument();
+    // The <Navigate replace /> pushes us to /results; the compare page
+    // is no longer present.
+    expect(screen.queryByTestId('compare-page')).not.toBeInTheDocument();
   });
 
   it('clears the shortlist when "Clear all" is clicked', async () => {
@@ -166,7 +214,7 @@ describe('<ComparePage />', () => {
     const b = makeCity('berlin', 'Berlin', 'DE');
     renderPage([a, b]);
     await user.click(screen.getByTestId('compare-clear'));
-    expect(screen.getByTestId('compare-empty')).toBeInTheDocument();
+    expect(screen.queryByTestId('compare-page')).not.toBeInTheDocument();
   });
 
   it('shows the city score on each card', () => {

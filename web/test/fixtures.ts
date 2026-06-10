@@ -37,6 +37,7 @@ export function makeCity(overrides: Partial<City> = {}): City {
       community: {
         urban: 4,
         suburban: 3,
+        rural: 2,
         coastal: 5,
         mountain: 1,
         arts_culture: 5,
@@ -72,7 +73,7 @@ export function makeMatchedCity(
           tech: 3, finance: 2, healthcare: 3, creative: 4, manufacturing: 2,
         },
         community: {
-          urban: 4, suburban: 3, coastal: 5, mountain: 1,
+          urban: 4, suburban: 3, rural: 2, coastal: 5, mountain: 1,
           arts_culture: 5, family_oriented: 3, expat_friendly: 5,
         },
       },

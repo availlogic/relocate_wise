@@ -231,3 +231,53 @@ describe('CORS', () => {
     expect(res.headers['access-control-allow-origin']).toBe('https://example.com');
   });
 });
+
+describe('Shared-secret gate (Architecture §11)', () => {
+  const originalSecret = process.env.API_SECRET;
+
+  it('rejects /api/cities with 401 when API_SECRET is set and header is missing', async () => {
+    process.env.API_SECRET = 'test-secret-abc';
+    try {
+      const app = await newApp();
+      const res = await app.inject({ method: 'GET', url: '/api/cities' });
+      expect(res.statusCode).toBe(401);
+      const body = res.json();
+      expect(body.error).toBe('unauthorized');
+    } finally {
+      process.env.API_SECRET = originalSecret;
+    }
+  });
+
+  it('accepts /api/cities when the secret header matches', async () => {
+    process.env.API_SECRET = 'test-secret-abc';
+    try {
+      const app = await newApp();
+      const res = await app.inject({
+        method: 'GET',
+        url: '/api/cities',
+        headers: { 'x-relocatewise-secret': 'test-secret-abc' },
+      });
+      expect(res.statusCode).toBe(200);
+    } finally {
+      process.env.API_SECRET = originalSecret;
+    }
+  });
+
+  it('always allows /api/health regardless of the secret', async () => {
+    process.env.API_SECRET = 'test-secret-abc';
+    try {
+      const app = await newApp();
+      const res = await app.inject({ method: 'GET', url: '/api/health' });
+      expect(res.statusCode).toBe(200);
+    } finally {
+      process.env.API_SECRET = originalSecret;
+    }
+  });
+
+  it('is a no-op when API_SECRET is unset (dev workflow)', async () => {
+    delete process.env.API_SECRET;
+    const app = await newApp();
+    const res = await app.inject({ method: 'GET', url: '/api/cities' });
+    expect(res.statusCode).toBe(200);
+  });
+});

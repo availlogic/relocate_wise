@@ -20,6 +20,7 @@
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import { ProfileForm } from './components/ProfileForm';
 import { ConsentBanner } from './components/ConsentBanner';
+import { ToastProvider } from './components/Toast';
 import { ResultsPage } from './pages/ResultsPage';
 import { CityPage } from './pages/CityPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -32,48 +33,50 @@ import './App.css';
 export function App() {
   return (
     <BrowserRouter>
-      <ShortlistProvider>
-        <div className="app-shell">
-          <ConsentBanner />
-          <header className="app-header">
-            <Link className="app-header__brand" to="/">RelocateWise</Link>
-            <nav className="app-header__nav" aria-label="Primary">
-              <Link to="/q">Questionnaire</Link>
-              <HeaderShortlistBadge />
-              <Link to="/privacy">Privacy</Link>
-            </nav>
-          </header>
-          <main className="app-main">
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/q" element={<ProfileForm />} />
-              <Route path="/results" element={<ResultsPage />} />
-              <Route path="/compare" element={<ComparePage />} />
-              <Route path="/city/:slug" element={<CityPage />} />
-              <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </main>
-          <footer className="app-footer">
-            <p>
-              RelocateWise is decision support, not legal or immigration
-              advice. Verify any visa or residency information with the
-              destination country’s official sources.
-            </p>
-            <p>
-              <Link to="/privacy">How your data is handled</Link>
-              {' · '}
-              <a
-                href="https://github.com/"
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                Source on GitHub
-              </a>
-            </p>
-          </footer>
-        </div>
-      </ShortlistProvider>
+      <ToastProvider>
+        <ShortlistProvider>
+          <div className="app-shell">
+            <ConsentBanner />
+            <header className="app-header">
+              <Link className="app-header__brand" to="/">RelocateWise</Link>
+              <nav className="app-header__nav" aria-label="Primary">
+                <Link to="/q">Questionnaire</Link>
+                <HeaderShortlistBadge />
+                <Link to="/privacy">Privacy</Link>
+              </nav>
+            </header>
+            <main className="app-main">
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/q" element={<ProfileForm />} />
+                <Route path="/results" element={<ResultsPage />} />
+                <Route path="/compare" element={<ComparePage />} />
+                <Route path="/city/:slug" element={<CityPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </main>
+            <footer className="app-footer">
+              <p>
+                RelocateWise is decision support, not legal or immigration
+                advice. Verify any visa or residency information with the
+                destination country’s official sources.
+              </p>
+              <p>
+                <Link to="/privacy">How your data is handled</Link>
+                {' · '}
+                <a
+                  href="https://github.com/"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  Source on GitHub
+                </a>
+              </p>
+            </footer>
+          </div>
+        </ShortlistProvider>
+      </ToastProvider>
     </BrowserRouter>
   );
 }

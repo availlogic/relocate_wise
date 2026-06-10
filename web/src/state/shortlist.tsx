@@ -1,22 +1,26 @@
 /**
  * Session-scoped shortlist for side-by-side comparison.
  *
- * Implements PRD §3.1 S7 and FR-9:
+ * Implements PRD §3.1 S7, FR-9, and Acceptance-Criteria AC-7 + AC-9:
  *   - User can add any city to a session shortlist and remove it.
  *   - Maximum of 3 cities can be shortlisted at once.
+ *   - The shortlist is cleared when the user starts a new quiz or
+ *     closes the browser tab.
  *
- * The shortlist is held entirely in React state (one per browser tab).
- * Refreshing the page clears it, which is intentional per AC-10 — no PII
- * is ever persisted, including no server-side or localStorage history.
+ * Storage: `sessionStorage` key `rw:shortlist`. The browser clears
+ * sessionStorage when the tab is closed (AC-9). We persist on every
+ * mutation; on mount we hydrate from storage if present.
  *
- * The store keeps the full `MatchedCityFull` objects (not just slugs) so
- * the Compare page can render without re-hitting the API.
+ * The store keeps the full `MatchedCityFull` objects (not just slugs)
+ * so the Compare page can render without re-hitting the API.
  */
 import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -24,6 +28,40 @@ import type { MatchedCityFull } from '../api';
 
 /** Hard cap from PRD S7. */
 export const SHORTLIST_MAX = 3;
+
+/** sessionStorage key. Versioned by suffix to allow future migrations. */
+const STORAGE_KEY = 'rw:shortlist';
+
+function readStorage(): MatchedCityFull[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed as MatchedCityFull[];
+  } catch {
+    return [];
+  }
+}
+
+function writeStorage(items: MatchedCityFull[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  } catch {
+    /* sessionStorage may be unavailable (private mode, quota); ignore. */
+  }
+}
+
+function clearStorage(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
 
 export interface ShortlistApi {
   /** Ordered list of currently-shortlisted cities. */
@@ -42,21 +80,40 @@ export interface ShortlistApi {
   has: (slug: string) => boolean;
   /** Empty the shortlist. */
   clear: () => void;
+  /**
+   * Reset for a new questionnaire — clears the shortlist (Acceptance
+   * Criteria Feature 3 "Start Over" + E2E-3).
+   */
+  startOver: () => void;
 }
 
 const ShortlistContext = createContext<ShortlistApi | null>(null);
 
 export interface ShortlistProviderProps {
   children: ReactNode;
-  /** Test-only seed so stories/tests can start with a known state. */
+  /**
+   * Test-only seed. When supplied, takes precedence over the persisted
+   * sessionStorage value (so tests don't leak state between runs).
+   */
   initial?: MatchedCityFull[];
 }
 
 export function ShortlistProvider({
   children,
-  initial = [],
+  initial,
 }: ShortlistProviderProps) {
-  const [items, setItems] = useState<MatchedCityFull[]>(initial);
+  const [items, setItems] = useState<MatchedCityFull[]>(() => initial ?? readStorage());
+  const hydrated = useRef(initial !== undefined);
+
+  // Persist on every change. Skip the very first render if we hydrated
+  // from storage (no need to round-trip the same value).
+  useEffect(() => {
+    if (!hydrated.current) {
+      hydrated.current = true;
+      // Still write once so the value is normalised in storage.
+    }
+    writeStorage(items);
+  }, [items]);
 
   const has = useCallback(
     (slug: string) => items.some((c) => c.city.slug === slug),
@@ -90,7 +147,15 @@ export function ShortlistProvider({
     [],
   );
 
-  const clear = useCallback(() => setItems([]), []);
+  const clear = useCallback(() => {
+    setItems([]);
+    clearStorage();
+  }, []);
+
+  const startOver = useCallback(() => {
+    setItems([]);
+    clearStorage();
+  }, []);
 
   const value = useMemo<ShortlistApi>(
     () => ({
@@ -102,8 +167,9 @@ export function ShortlistProvider({
       toggle,
       has,
       clear,
+      startOver,
     }),
-    [items, add, remove, toggle, has, clear],
+    [items, add, remove, toggle, has, clear, startOver],
   );
 
   return (

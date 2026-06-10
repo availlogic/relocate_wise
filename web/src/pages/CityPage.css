@@ -1,62 +1,84 @@
 .city-page {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: var(--space-6) var(--space-4);
+  padding: var(--space-xl) var(--space-lg) 9rem;
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-lg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
 }
 
 .city-page__back {
   display: inline-block;
-  margin-bottom: var(--space-2);
-  font-size: var(--text-sm);
+  margin-bottom: var(--space-sm);
+  font-size: var(--font-ui-size);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+.city-page__back:hover,
+.city-page__back:focus-visible {
+  color: var(--color-accent-primary);
+  text-decoration: underline;
 }
 
 .city-page__header h1 {
-  margin-bottom: var(--space-1);
+  margin-bottom: var(--space-xs);
+  font-family: var(--font-headings);
+  color: var(--color-text-primary);
 }
 
 .city-page__country {
   font-weight: 400;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
 
 .city-page__region {
-  color: var(--color-text-muted);
-  margin: 0 0 var(--space-3) 0;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-md) 0;
 }
 
 .city-page__desc {
-  margin: 0 0 var(--space-4) 0;
-  line-height: 1.6;
+  margin: 0 0 var(--space-lg) 0;
+  line-height: var(--font-body-line);
+}
+
+.city-page__actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin: 0 0 var(--space-md) 0;
 }
 
 .city-page__meta {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-3);
+  gap: var(--space-md);
   margin: 0;
-  padding: var(--space-3);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  padding: var(--space-md);
+  background: var(--color-surface-glass);
+  border: 1px solid var(--color-border-glass);
   border-radius: var(--radius-md);
 }
 
 .city-page__meta dt {
-  font-size: var(--text-xs);
-  color: var(--color-text-muted);
+  font-size: var(--font-caption-size);
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  font-family: var(--font-body);
+  font-weight: 600;
 }
 
 .city-page__meta dd {
   margin: 0;
   font-weight: 600;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
 }
 
 .city-page--error {
   text-align: center;
-  padding-top: var(--space-8);
+  padding-top: var(--space-xxxl);
   align-items: center;
 }

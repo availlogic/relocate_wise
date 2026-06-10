@@ -16,7 +16,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "pretypecheck": "npm run -w @relocatewise/shared build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",

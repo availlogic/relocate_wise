@@ -68,6 +68,26 @@ export async function buildAppWithRepo(opts: AppOptions): Promise<BuildAppResult
     methods: ['GET', 'POST'],
   });
 
+  // Shared-secret gate (Architecture §11). When `API_SECRET` is set the
+  // server rejects any request without the matching
+  // `x-relocatewise-secret` header, except for /api/health which must
+  // stay reachable by external liveness probes. Dev / test paths set
+  // nothing and get a free pass so the local dev workflow keeps
+  // working.
+  const expectedSecret = process.env.API_SECRET;
+  if (expectedSecret) {
+    app.addHook('onRequest', async (req, reply) => {
+      if (req.url === '/api/health') return;
+      const provided = req.headers['x-relocatewise-secret'];
+      if (provided !== expectedSecret) {
+        reply.code(401).send({
+          error: 'unauthorized',
+          message: 'Missing or invalid API secret.',
+        });
+      }
+    });
+  }
+
   healthRoute(app, opts.version ?? version);
   cityRoute(app, cachedRepo, '/api');
   matchRoute(app, cachedRepo, '/api');
@@ -116,6 +136,23 @@ export async function bootstrap(opts: ServerOptions = {}): Promise<FastifyInstan
     origin: true,
     methods: ['GET', 'POST'],
   });
+
+  // Shared-secret gate (see buildAppWithRepo above). /api/health is
+  // intentionally exempt so external probes still work.
+  const expectedSecret = process.env.API_SECRET;
+  if (expectedSecret) {
+    app.addHook('onRequest', async (req, reply) => {
+      if (req.url === '/api/health') return;
+      const provided = req.headers['x-relocatewise-secret'];
+      if (provided !== expectedSecret) {
+        reply.code(401).send({
+          error: 'unauthorized',
+          message: 'Missing or invalid API secret.',
+        });
+      }
+    });
+  }
+
   healthRoute(app, opts.version ?? version);
   cityRoute(app, cachedRepo, '/api');
   matchRoute(app, cachedRepo, '/api');

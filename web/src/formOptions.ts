@@ -49,6 +49,7 @@ export const LIFESTYLE_LABELS: Record<
 > = {
   urban: 'Urban / big-city',
   suburban: 'Suburban',
+  rural: 'Rural',
   coastal: 'Coastal',
   mountain: 'Mountain',
   arts_culture: 'Arts & culture',

@@ -6,8 +6,11 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { CityPage } from '../src/pages/CityPage';
+import { ShortlistProvider } from '../src/state/shortlist';
+import { ToastProvider } from '../src/components/Toast';
 import { ApiError } from '../src/api';
 import { makeCity } from './fixtures';
 import type { City } from '@relocatewise/shared';
@@ -28,11 +31,15 @@ function renderCityPage(slug: string) {
   }
   return render(
     <MemoryRouter initialEntries={[`/city/${slug}`]}>
-      <Routes>
-        <Route path="/city/:slug" element={<CityPage />} />
-        <Route path="/results" element={<TestPage />} />
-        <Route path="*" element={<TestPage />} />
-      </Routes>
+      <ToastProvider>
+        <ShortlistProvider>
+          <Routes>
+            <Route path="/city/:slug" element={<CityPage />} />
+            <Route path="/results" element={<TestPage />} />
+            <Route path="*" element={<TestPage />} />
+          </Routes>
+        </ShortlistProvider>
+      </ToastProvider>
     </MemoryRouter>,
   );
 }
@@ -40,6 +47,7 @@ function renderCityPage(slug: string) {
 describe('<CityPage />', () => {
   beforeEach(() => {
     getCityMock.mockReset();
+    window.sessionStorage.clear();
   });
 
   afterEach(() => {
@@ -134,5 +142,22 @@ describe('<CityPage />', () => {
     const time = screen.getByText('2026-05-15');
     expect(time.tagName).toBe('TIME');
     expect(time.getAttribute('datetime')).toBe('2026-05-15');
+  });
+
+  it('toggles the city in the shortlist via the "Add to Comparison" button', async () => {
+    const user = userEvent.setup();
+    getCityMock.mockResolvedValueOnce(makeCity({ slug: 'lisbon' }));
+    renderCityPage('lisbon');
+    await screen.findByTestId('city-page');
+    const btn = screen.getByTestId('city-toggle-shortlist');
+    expect(btn.textContent).toMatch(/add to comparison/i);
+    await user.click(btn);
+    expect(btn.textContent).toMatch(/remove from comparison/i);
+    // sessionStorage was updated.
+    const stored = window.sessionStorage.getItem('rw:shortlist');
+    expect(stored).not.toBeNull();
+    const parsed = JSON.parse(stored!);
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0].city.slug).toBe('lisbon');
   });
 });

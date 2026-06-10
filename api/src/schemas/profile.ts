@@ -24,6 +24,7 @@ const industry = z.enum(['tech', 'finance', 'healthcare', 'creative', 'manufactu
 const lifestyleTag = z.enum([
   'urban',
   'suburban',
+  'rural',
   'coastal',
   'mountain',
   'arts_culture',

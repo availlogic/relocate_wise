@@ -20,7 +20,7 @@ function dimensionsWithClimate(label: string, cost: number): CityDimensionsT {
     healthcare: 1,
     career: { tech: 1, finance: 1, healthcare: 1, creative: 1, manufacturing: 1 },
     community: {
-      urban: 1, suburban: 1, coastal: 1, mountain: 1,
+      urban: 1, suburban: 1, rural: 1, coastal: 1, mountain: 1,
       arts_culture: 1, family_oriented: 1, expat_friendly: 1,
     },
   };
@@ -40,7 +40,7 @@ describe('<CityDimensions />', () => {
       cost: 3, housing: 4, education: 5, healthcare: 2,
       career: { tech: 3, finance: 2, healthcare: 3, creative: 4, manufacturing: 2 },
       community: {
-        urban: 4, suburban: 3, coastal: 5, mountain: 1,
+        urban: 4, suburban: 3, rural: 2, coastal: 5, mountain: 1,
         arts_culture: 5, family_oriented: 3, expat_friendly: 5,
       },
     };
@@ -80,7 +80,7 @@ describe('<CityDimensions />', () => {
       cost: 5, housing: 1, education: 1, healthcare: 1,
       career: { tech: 1, finance: 1, healthcare: 1, creative: 1, manufacturing: 1 },
       community: {
-        urban: 1, suburban: 1, coastal: 1, mountain: 1,
+        urban: 1, suburban: 1, rural: 1, coastal: 1, mountain: 1,
         arts_culture: 1, family_oriented: 1, expat_friendly: 1,
       },
     };
@@ -101,7 +101,7 @@ describe('<CityDimensions />', () => {
       cost: 99, housing: -2, education: 1, healthcare: 1,
       career: { tech: 1, finance: 1, healthcare: 1, creative: 1, manufacturing: 1 },
       community: {
-        urban: 1, suburban: 1, coastal: 1, mountain: 1,
+        urban: 1, suburban: 1, rural: 1, coastal: 1, mountain: 1,
         arts_culture: 1, family_oriented: 1, expat_friendly: 1,
       },
     };
@@ -122,7 +122,7 @@ describe('<CityDimensions />', () => {
       cost: 4, housing: 3, education: 1, healthcare: 1,
       career: { tech: 1, finance: 1, healthcare: 1, creative: 1, manufacturing: 1 },
       community: {
-        urban: 1, suburban: 1, coastal: 1, mountain: 1,
+        urban: 1, suburban: 1, rural: 1, coastal: 1, mountain: 1,
         arts_culture: 1, family_oriented: 1, expat_friendly: 1,
       },
     };

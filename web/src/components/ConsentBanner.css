@@ -1,31 +1,35 @@
 .consent-banner {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-surface-muted, #f3f4f6);
-  border-bottom: 1px solid var(--color-border, #e5e7eb);
-  color: var(--color-text, #1f2937);
-  font-size: var(--text-sm, 0.875rem);
+  gap: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-surface-glass);
+  backdrop-filter: var(--blur-glass);
+  border-bottom: 1px solid var(--color-border-glass);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-ui-size);
 }
 
 .consent-banner__text {
   flex: 1 1 auto;
   margin: 0;
+  color: var(--color-text-primary);
 }
 
 .consent-banner__link {
   font-weight: 600;
   text-decoration: underline;
+  color: var(--color-accent-primary);
 }
 
 .consent-banner__actions {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--space-sm);
   flex-shrink: 0;
 }
 
 .consent-banner__btn {
-  padding: 0.4rem 0.9rem;
-  font-size: var(--text-sm, 0.875rem);
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-ui-size);
 }

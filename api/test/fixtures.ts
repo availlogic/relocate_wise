@@ -20,6 +20,7 @@ function fullCommunity(values: Partial<CityCommunitySub> = {}): CityCommunitySub
   return {
     urban: 3,
     suburban: 3,
+    rural: 3,
     coastal: 3,
     mountain: 3,
     arts_culture: 3,

@@ -83,7 +83,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     4,
     { tech: 3, finance: 3, healthcare: 3, creative: 3, manufacturing: 1 },
-    { urban: 3, suburban: 0, coastal: 2, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
+    { urban: 3, suburban: 0, rural: 0, coastal: 2, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
     'The financial and cultural capital of the U.S., dense and walkable, with the largest metropolitan economy in the world.',
   ),
   c(
@@ -100,7 +100,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     4,
     { tech: 3, finance: 1, healthcare: 1, creative: 2, manufacturing: 1 },
-    { urban: 2, suburban: 2, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
+    { urban: 2, suburban: 2, rural: 0, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
     "Austin's tech boom has made it one of the fastest-growing U.S. metros, with a young population, live-music scene, and (until recently) no state income tax.",
   ),
   c(
@@ -117,7 +117,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     5,
     { tech: 3, finance: 3, healthcare: 2, creative: 2, manufacturing: 2 },
-    { urban: 3, suburban: 1, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
     'Canada\'s largest city and financial centre, with a globally recognized diversity: over half of residents were born outside Canada.',
   ),
   c(
@@ -134,7 +134,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     5,
     { tech: 2, finance: 1, healthcare: 1, creative: 2, manufacturing: 1 },
-    { urban: 2, suburban: 1, coastal: 3, mountain: 2, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 3, mountain: 2, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
     'Pacific coast city framed by mountains and ocean, with strong Asian-Canadian cultural ties and a mild (rainy) climate.',
   ),
   c(
@@ -151,7 +151,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     5,
     { tech: 3, finance: 2, healthcare: 2, creative: 2, manufacturing: 1 },
-    { urban: 3, suburban: 0, coastal: 3, mountain: 1, arts_culture: 3, family_oriented: 0, expat_friendly: 2 },
+    { urban: 3, suburban: 0, rural: 0, coastal: 3, mountain: 1, arts_culture: 3, family_oriented: 0, expat_friendly: 2 },
     'Pacific coast tech capital: high salaries offset by the highest cost of living in the U.S., with a famously entrepreneurial culture.',
   ),
   c(
@@ -168,7 +168,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     5,
     { tech: 3, finance: 1, healthcare: 2, creative: 1, manufacturing: 2 },
-    { urban: 2, suburban: 1, coastal: 2, mountain: 3, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 2, mountain: 3, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
     'Pacific Northwest tech hub anchored by Amazon and Microsoft; surrounded by mountains and water, with a famously rainy climate.',
   ),
   c(
@@ -185,7 +185,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     5,
     { tech: 3, finance: 2, healthcare: 3, creative: 1, manufacturing: 1 },
-    { urban: 2, suburban: 1, coastal: 2, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 2, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     "America's college town: dense, walkable, and an anchor of biotech, higher education, and medical research.",
   ),
   c(
@@ -202,7 +202,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     5,
     { tech: 2, finance: 3, healthcare: 2, creative: 2, manufacturing: 2 },
-    { urban: 3, suburban: 1, coastal: 1, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 1, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     'Midwestern hub famous for its architecture, deep-dish pizza, and the Chicago Mercantile Exchange. Large and affordable by coastal standards.',
   ),
   c(
@@ -219,7 +219,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     4,
     { tech: 2, finance: 1, healthcare: 1, creative: 1, manufacturing: 1 },
-    { urban: 2, suburban: 2, coastal: 0, mountain: 3, arts_culture: 2, family_oriented: 2, expat_friendly: 1 },
+    { urban: 2, suburban: 2, rural: 0, coastal: 0, mountain: 3, arts_culture: 2, family_oriented: 2, expat_friendly: 1 },
     'Mile-High City: sunny, dry, and a gateway to the Rocky Mountains. Growing fast as a remote-work destination.',
   ),
   c(
@@ -236,7 +236,7 @@ export const SEED_CITIES: readonly City[] = [
     3,
     4,
     { tech: 1, finance: 2, healthcare: 1, creative: 2, manufacturing: 0 },
-    { urban: 2, suburban: 1, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
     'Tropical coastal hub with strong Latin American ties, an active nightlife, and growing tech investment.',
   ),
   c(
@@ -253,7 +253,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     4,
     { tech: 2, finance: 1, healthcare: 1, creative: 2, manufacturing: 1 },
-    { urban: 2, suburban: 1, coastal: 1, mountain: 2, arts_culture: 3, family_oriented: 1, expat_friendly: 1 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 1, mountain: 2, arts_culture: 3, family_oriented: 1, expat_friendly: 1 },
     'Pacific Northwest city famous for its food carts, indie culture, and easy access to mountains and ocean.',
   ),
   c(
@@ -270,7 +270,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     4,
     { tech: 2, finance: 1, healthcare: 1, creative: 3, manufacturing: 1 },
-    { urban: 2, suburban: 1, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     "Francophone North American city with the lowest rent among Canadian majors, a thriving AI and games industry, and a celebrated food scene.",
   ),
   c(
@@ -287,7 +287,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     3,
     { tech: 2, finance: 1, healthcare: 1, creative: 2, manufacturing: 1 },
-    { urban: 3, suburban: 1, coastal: 0, mountain: 1, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 1, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     'Sprawling, high-altitude capital with deep history, a thriving arts scene, and one of the best food cultures in the Americas.',
   ),
   c(
@@ -304,7 +304,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     4,
     { tech: 2, finance: 2, healthcare: 2, creative: 3, manufacturing: 2 },
-    { urban: 2, suburban: 2, coastal: 3, mountain: 2, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
+    { urban: 2, suburban: 2, rural: 0, coastal: 3, mountain: 2, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
     'Car-dependent Pacific coast megacity centered on entertainment, tech, and the largest Mexican-American community in the U.S.',
   ),
   c(
@@ -321,7 +321,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     4,
     { tech: 2, finance: 2, healthcare: 2, creative: 2, manufacturing: 1 },
-    { urban: 2, suburban: 2, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 2, expat_friendly: 1 },
+    { urban: 2, suburban: 2, rural: 0, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 2, expat_friendly: 1 },
     "Southern business hub and home of the world's busiest airport. Fast-growing, with strong Black-American cultural institutions and a lower cost of living than coastal peers.",
   ),
 
@@ -342,7 +342,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     4,
     { tech: 2, finance: 1, healthcare: 1, creative: 2, manufacturing: 1 },
-    { urban: 2, suburban: 1, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
     'Atlantic-coast capital that has become Europe\'s leading digital-nomad hub, with the D7 visa and a famously low cost of living for Western Europe.',
   ),
   c(
@@ -359,7 +359,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     4,
     { tech: 1, finance: 0, healthcare: 1, creative: 1, manufacturing: 1 },
-    { urban: 2, suburban: 1, coastal: 2, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 2, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
     'Smaller, more traditional counterpart to Lisbon, with a strong identity, port-wine heritage, and lower cost of living.',
   ),
   c(
@@ -376,7 +376,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     4,
     { tech: 2, finance: 1, healthcare: 2, creative: 2, manufacturing: 1 },
-    { urban: 3, suburban: 0, coastal: 3, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
+    { urban: 3, suburban: 0, rural: 0, coastal: 3, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
     'Catalan capital with Mediterranean beaches, Gaudí architecture, and a strong startup scene. Famous for food and outdoor lifestyle.',
   ),
   c(
@@ -393,7 +393,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     5,
     { tech: 2, finance: 2, healthcare: 2, creative: 2, manufacturing: 1 },
-    { urban: 3, suburban: 1, coastal: 0, mountain: 1, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 1, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     'Spain\'s high-altitude capital, with vibrant nightlife, strong public healthcare, and lower living costs than Paris or London.',
   ),
   c(
@@ -410,7 +410,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     5,
     { tech: 3, finance: 1, healthcare: 2, creative: 3, manufacturing: 1 },
-    { urban: 3, suburban: 1, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 0, expat_friendly: 3 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 0, expat_friendly: 3 },
     'Germany\'s startup capital: cheap by Western European standards, intensely creative, and a magnet for English-speaking expats.',
   ),
   c(
@@ -427,7 +427,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     5,
     { tech: 3, finance: 2, healthcare: 2, creative: 2, manufacturing: 1 },
-    { urban: 2, suburban: 2, coastal: 1, mountain: 0, arts_culture: 3, family_oriented: 2, expat_friendly: 3 },
+    { urban: 2, suburban: 2, rural: 0, coastal: 1, mountain: 0, arts_culture: 3, family_oriented: 2, expat_friendly: 3 },
     'Compact canal city with the highest English proficiency in continental Europe and one of the strongest startup / tech ecosystems.',
   ),
   c(
@@ -444,7 +444,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     5,
     { tech: 2, finance: 3, healthcare: 2, creative: 3, manufacturing: 2 },
-    { urban: 3, suburban: 1, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     'Global capital for culture, fashion, and finance. Expensive to live in, but with a strong public services backbone.',
   ),
   c(
@@ -461,7 +461,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     4,
     { tech: 3, finance: 3, healthcare: 2, creative: 3, manufacturing: 1 },
-    { urban: 3, suburban: 1, coastal: 1, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 1, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
     'Europe\'s largest financial centre and a global hub for tech, creative industries, and academia. Among the most expensive cities worldwide.',
   ),
   c(
@@ -478,7 +478,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     5,
     { tech: 2, finance: 3, healthcare: 2, creative: 1, manufacturing: 2 },
-    { urban: 2, suburban: 2, coastal: 0, mountain: 2, arts_culture: 2, family_oriented: 2, expat_friendly: 1 },
+    { urban: 2, suburban: 2, rural: 0, coastal: 0, mountain: 2, arts_culture: 2, family_oriented: 2, expat_friendly: 1 },
     'Wealthy, efficient, and orderly Alpine city. Among the highest salaries and the highest costs of living in the world.',
   ),
   c(
@@ -495,7 +495,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     4,
     { tech: 2, finance: 1, healthcare: 1, creative: 1, manufacturing: 2 },
-    { urban: 2, suburban: 1, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
     'Central European capital with a beautiful historic core, low cost of living, and a fast-growing tech scene.',
   ),
 
@@ -516,7 +516,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     5,
     { tech: 3, finance: 3, healthcare: 3, creative: 1, manufacturing: 2 },
-    { urban: 3, suburban: 1, coastal: 1, mountain: 0, arts_culture: 2, family_oriented: 2, expat_friendly: 3 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 1, mountain: 0, arts_culture: 2, family_oriented: 2, expat_friendly: 3 },
     'City-state that consistently tops global rankings for education, healthcare, and ease of doing business.',
   ),
   c(
@@ -533,7 +533,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     5,
     { tech: 3, finance: 3, healthcare: 3, creative: 3, manufacturing: 3 },
-    { urban: 3, suburban: 1, coastal: 1, mountain: 1, arts_culture: 3, family_oriented: 1, expat_friendly: 1 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 1, mountain: 1, arts_culture: 3, family_oriented: 1, expat_friendly: 1 },
     'The world\'s largest metropolitan economy: ultra-safe, ultra-efficient, with famously low crime and excellent public transport.',
   ),
   c(
@@ -550,7 +550,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     5,
     { tech: 3, finance: 2, healthcare: 2, creative: 3, manufacturing: 2 },
-    { urban: 3, suburban: 1, coastal: 0, mountain: 1, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 1, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
     'Northeast Asian megacity famous for K-culture, ubiquitous connectivity, and a fast-growing startup scene.',
   ),
   c(
@@ -567,7 +567,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     5,
     { tech: 2, finance: 3, healthcare: 2, creative: 2, manufacturing: 1 },
-    { urban: 2, suburban: 2, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 2, expat_friendly: 2 },
+    { urban: 2, suburban: 2, rural: 0, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 2, expat_friendly: 2 },
     'Harbour city with a Mediterranean climate, strong points-based immigration pathways, and high quality of life.',
   ),
   c(
@@ -584,7 +584,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     3,
     { tech: 1, finance: 1, healthcare: 2, creative: 1, manufacturing: 1 },
-    { urban: 3, suburban: 1, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
     'Southeast Asian megacity famous for food, low cost of living, and a large long-stay expat community.',
   ),
 
@@ -605,7 +605,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     3,
     { tech: 2, finance: 1, healthcare: 1, creative: 2, manufacturing: 0 },
-    { urban: 3, suburban: 1, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     'Paris of South America: tango, steak, and European architecture, with chronic currency instability that distorts expat budgets.',
   ),
   c(
@@ -622,7 +622,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     4,
     { tech: 1, finance: 1, healthcare: 1, creative: 1, manufacturing: 1 },
-    { urban: 2, suburban: 2, coastal: 0, mountain: 3, arts_culture: 1, family_oriented: 1, expat_friendly: 1 },
+    { urban: 2, suburban: 2, rural: 0, coastal: 0, mountain: 3, arts_culture: 1, family_oriented: 1, expat_friendly: 1 },
     'Modern, mid-sized Andean capital framed by the Andes. Most stable economy and strongest institutions in the region.',
   ),
   c(
@@ -639,7 +639,7 @@ export const SEED_CITIES: readonly City[] = [
     3,
     3,
     { tech: 1, finance: 0, healthcare: 1, creative: 1, manufacturing: 0 },
-    { urban: 2, suburban: 1, coastal: 2, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 2, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
     'Coastal Pacific capital with a world-class food scene, and an arid microclimate kept cool by the Humboldt current.',
   ),
   c(
@@ -656,7 +656,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     2,
     { tech: 2, finance: 2, healthcare: 2, creative: 2, manufacturing: 2 },
-    { urban: 3, suburban: 1, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
     "Latin America's largest economy, with a dense, multicultural population and a strong business / tech scene.",
   ),
   c(
@@ -673,7 +673,7 @@ export const SEED_CITIES: readonly City[] = [
     3,
     3,
     { tech: 1, finance: 0, healthcare: 1, creative: 1, manufacturing: 0 },
-    { urban: 2, suburban: 1, coastal: 0, mountain: 2, arts_culture: 1, family_oriented: 1, expat_friendly: 2 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 0, mountain: 2, arts_culture: 1, family_oriented: 1, expat_friendly: 2 },
     'Once notorious, now a model of urban transformation: year-round spring weather, growing digital nomad scene, and a strong sense of place.',
   ),
 
@@ -694,7 +694,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     3,
     { tech: 1, finance: 1, healthcare: 1, creative: 2, manufacturing: 0 },
-    { urban: 2, suburban: 1, coastal: 3, mountain: 3, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 3, mountain: 3, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
     'Coastal city below Table Mountain: Mediterranean climate, strong food / wine culture, and a critical-skills visa pathway.',
   ),
   c(
@@ -711,7 +711,7 @@ export const SEED_CITIES: readonly City[] = [
     4,
     4,
     { tech: 2, finance: 3, healthcare: 1, creative: 1, manufacturing: 1 },
-    { urban: 3, suburban: 1, coastal: 2, mountain: 0, arts_culture: 1, family_oriented: 1, expat_friendly: 3 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 2, mountain: 0, arts_culture: 1, family_oriented: 1, expat_friendly: 3 },
     'Zero-income-tax Gulf city with a heavily expat population, a luxury lifestyle, and the Golden Visa long-stay program.',
   ),
   c(
@@ -728,7 +728,7 @@ export const SEED_CITIES: readonly City[] = [
     5,
     4,
     { tech: 3, finance: 2, healthcare: 2, creative: 3, manufacturing: 1 },
-    { urban: 3, suburban: 0, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
+    { urban: 3, suburban: 0, rural: 0, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
     'Mediterranean tech hub, second only to Silicon Valley in startup density per capita. Beach-and-business lifestyle.',
   ),
   c(
@@ -745,7 +745,7 @@ export const SEED_CITIES: readonly City[] = [
     3,
     3,
     { tech: 1, finance: 1, healthcare: 2, creative: 2, manufacturing: 1 },
-    { urban: 3, suburban: 1, coastal: 2, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
+    { urban: 3, suburban: 1, rural: 0, coastal: 2, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
     'Transcontinental megacity straddling Europe and Asia, with deep history, a strong food culture, and a recently launched citizenship-by-investment path.',
   ),
   c(
@@ -762,7 +762,7 @@ export const SEED_CITIES: readonly City[] = [
     3,
     3,
     { tech: 1, finance: 1, healthcare: 1, creative: 1, manufacturing: 1 },
-    { urban: 2, suburban: 1, coastal: 2, mountain: 0, arts_culture: 1, family_oriented: 1, expat_friendly: 1 },
+    { urban: 2, suburban: 1, rural: 0, coastal: 2, mountain: 0, arts_culture: 1, family_oriented: 1, expat_friendly: 1 },
     "Morocco's Atlantic-coast business hub, with French as a working language and an affordable Mediterranean lifestyle.",
   ),
 ];

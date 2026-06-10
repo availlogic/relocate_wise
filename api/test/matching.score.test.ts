@@ -203,7 +203,7 @@ describe('matching engine — per-dimension match', () => {
       slug: 'a', name: 'A', country: 'X',
       dimensions: {
         ...makeCity({ slug: 'b', name: 'B', country: 'X' }).dimensions,
-        community: { urban: 4, suburban: 2, coastal: 5, mountain: 1, arts_culture: 3, family_oriented: 3, expat_friendly: 4 },
+        community: { urban: 4, suburban: 2, rural: 0, coastal: 5, mountain: 1, arts_culture: 3, family_oriented: 3, expat_friendly: 4 },
       },
     });
     const c = scoreCity(city, withDefaults({ lifestyle_tags: ['urban', 'coastal'] }));
@@ -213,7 +213,7 @@ describe('matching engine — per-dimension match', () => {
   it('community: 0.5 neutral when no tags chosen', () => {
     const city = makeCity({
       slug: 'a', name: 'A', country: 'X',
-      dimensions: { ...makeCity({ slug: 'b', name: 'B', country: 'X' }).dimensions, community: { urban: 5, suburban: 5, coastal: 5, mountain: 5, arts_culture: 5, family_oriented: 5, expat_friendly: 5 } },
+      dimensions: { ...makeCity({ slug: 'b', name: 'B', country: 'X' }).dimensions, community: { urban: 5, suburban: 5, rural: 0, coastal: 5, mountain: 5, arts_culture: 5, family_oriented: 5, expat_friendly: 5 } },
     });
     const c = scoreCity(city, withDefaults({ lifestyle_tags: [] }));
     expect(c.contributions.find((x) => x.dimension === 'community')!.match).toBe(0.5);

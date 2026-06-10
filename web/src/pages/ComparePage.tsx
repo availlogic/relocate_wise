@@ -1,32 +1,54 @@
 /**
  * ComparePage — side-by-side comparison of 2 or 3 shortlisted cities.
  *
- * Implements PRD S6: "users can select up to three cities from their
- * results list and see a side-by-side comparison on a dedicated page."
- *
- * - Empty shortlist → CTA to /results (with a "go rank cities" prompt)
- * - Exactly 1 city → prompt to add at least one more
- * - 2 or 3 cities → comparison grid with the best match per row
- *   highlighted (a soft yellow background per Architecture §3).
- *
- * The page is read-only on city data; the only mutations are removing
- * a single city from the shortlist and clearing the whole set.
+ * Implements PRD S6, Acceptance-Criteria Feature 5, and E2E-2:
+ *   - Direct access with < 2 cities → redirect to /results with a
+ *     transient notice (Acceptance-Criteria Feature 5 Rule).
+ *   - Removing a city that drops the shortlist below 2 also redirects
+ *     with a notice (same rule).
+ *   - 7 dimensions are aligned row-by-row; for each row the cell that
+ *     owns the unique best score is highlighted (`compare-page__cell--best`).
+ *   - Cost of Living and Housing are inverted: a LOWER index represents
+ *     a cheaper city, which is the winner condition (Acceptance-Criteria
+ *     Feature 5, FTC-13).
  */
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useShortlist, SHORTLIST_MAX } from '../state/shortlist';
 import './ComparePage.css';
 
+const COMPARISON_INSUFFICIENT_NOTICE =
+  'Please select at least 2 cities to compare.';
+const COMPARISON_DROPPED_NOTICE =
+  'You now have fewer than 2 cities in your comparison.';
+
 export function ComparePage() {
   const { items, remove, clear } = useShortlist();
+  const navigate = useNavigate();
 
-  if (items.length === 0) {
-    return <EmptyState />;
+  // Insufficient shortlist (direct access, or after the user removed
+  // a city here and dropped below 2). We always emit the
+  // "insufficient" notice from this side; the "removed-below-2" path
+  // is signalled via /results location.state from handleRemove.
+  if (items.length < 2) {
+    return (
+      <Navigate
+        to="/results"
+        replace
+        state={{ compareNotice: COMPARISON_INSUFFICIENT_NOTICE }}
+      />
+    );
   }
 
-  if (items.length === 1) {
-    const only = items[0]!;
-    return <OneState city={only} />;
-  }
+  const handleRemove = (slug: string) => {
+    if (items.length === 2) {
+      // Removing the last-but-one drops the shortlist below 2 — flag it
+      // so /results can show the appropriate notice.
+      remove(slug);
+      navigate('/results', { state: { compareNotice: COMPARISON_DROPPED_NOTICE } });
+    } else {
+      remove(slug);
+    }
+  };
 
   return (
     <div className="compare-page" data-testid="compare-page">
@@ -67,23 +89,27 @@ export function ComparePage() {
               <p className="compare-card__country">
                 {entry.city.country} · {entry.city.region}
               </p>
-              <div
-                className="compare-card__score"
-                aria-label={`Match score ${entry.score} out of 100`}
-              >
-                {entry.score}
-                <span>/100</span>
-              </div>
+              {entry.score > 0 ? (
+                <div
+                  className="compare-card__score"
+                  aria-label={`Match score ${entry.score} out of 100`}
+                >
+                  {entry.score}
+                  <span>/100</span>
+                </div>
+              ) : null}
               <button
                 type="button"
                 className="btn btn--link"
-                onClick={() => remove(entry.city.slug)}
+                onClick={() => handleRemove(entry.city.slug)}
                 data-testid={`compare-remove-${entry.city.slug}`}
               >
                 Remove
               </button>
             </header>
-            <p className="compare-card__why">“{entry.why}”</p>
+            {entry.why ? (
+              <p className="compare-card__why">“{entry.why}”</p>
+            ) : null}
           </section>
         ))}
       </div>
@@ -93,58 +119,105 @@ export function ComparePage() {
   );
 }
 
-function EmptyState() {
-  return (
-    <div
-      className="compare-page compare-page--empty"
-      data-testid="compare-empty"
-    >
-      <h1>No cities to compare yet</h1>
-      <p>
-        Rank a few cities first, then tick <em>Add to compare</em> on up to{' '}
-        {SHORTLIST_MAX} results to see them side by side.
-      </p>
-      <Link to="/" className="btn btn--primary">
-        Start the questionnaire
-      </Link>
-    </div>
-  );
+interface DimensionRow {
+  label: string;
+  /** Lower is better if `invert` is true (cost / housing). */
+  invert?: boolean;
+  /** Format the value for display (defaults to `${n}/5`). */
+  format?: (n: number) => string;
+  /** Extract the per-city numeric value for this row. */
+  pick: (city: CompareCity) => number;
 }
 
-function OneState({ city }: { city: { city: { name: string; slug: string } } }) {
-  return (
-    <div
-      className="compare-page compare-page--empty"
-      data-testid="compare-one"
-    >
-      <h1>Add at least one more city</h1>
-      <p>
-        <strong>{city.city.name}</strong> is in your shortlist. Pick at
-        least one more from your results to start comparing.
-      </p>
-      <Link to="/results" className="btn btn--primary">
-        Back to results
-      </Link>
-    </div>
-  );
+type CompareCity = ReturnType<typeof useShortlist>['items'][number];
+
+function mean(values: number[]): number {
+  if (values.length === 0) return 0;
+  return values.reduce((a, b) => a + b, 0) / values.length;
 }
 
-/** A small dimension matrix — one row per dimension, one column per city. */
+const ROWS: ReadonlyArray<DimensionRow> = [
+  {
+    label: 'Climate',
+    pick: (city) => {
+      // No numeric value; render the label below as a special case.
+      // The "winner" highlighting is meaningless on a label, so we
+      // skip highlighting here by using a constant string match.
+      const v = city.city.dimensions.climate.label;
+      return LABEL_RANK[v] ?? 0;
+    },
+    format: (n) => LABEL_BY_RANK[n] ?? '—',
+  },
+  {
+    label: 'Cost of living',
+    invert: true,
+    pick: (city) => city.city.dimensions.cost,
+    format: (n) => `${n}/5`,
+  },
+  {
+    label: 'Housing',
+    invert: true,
+    pick: (city) => city.city.dimensions.housing,
+    format: (n) => `${n}/5`,
+  },
+  {
+    label: 'Career (avg)',
+    pick: (city) =>
+      mean([
+        city.city.dimensions.career.tech,
+        city.city.dimensions.career.finance,
+        city.city.dimensions.career.healthcare,
+        city.city.dimensions.career.creative,
+        city.city.dimensions.career.manufacturing,
+      ]),
+    format: (n) => `${n.toFixed(1)}/5`,
+  },
+  {
+    label: 'Education',
+    pick: (city) => city.city.dimensions.education,
+    format: (n) => `${n}/5`,
+  },
+  {
+    label: 'Healthcare',
+    pick: (city) => city.city.dimensions.healthcare,
+    format: (n) => `${n}/5`,
+  },
+  {
+    label: 'Community (max)',
+    pick: (city) =>
+      Math.max(
+        city.city.dimensions.community.urban,
+        city.city.dimensions.community.suburban,
+        city.city.dimensions.community.coastal,
+        city.city.dimensions.community.mountain,
+        city.city.dimensions.community.arts_culture,
+        city.city.dimensions.community.family_oriented,
+        city.city.dimensions.community.expat_friendly,
+      ),
+    format: (n) => `${n}/5`,
+  },
+];
+
+/** Map city climate labels to a sortable rank so we can pick a winner. */
+const LABEL_RANK: Readonly<Record<string, number>> = {
+  Tropical: 1,
+  Mediterranean: 2,
+  Arid: 3,
+  Temperate: 4,
+  Highland: 5,
+  Continental: 6,
+  Cold: 7,
+};
+
+const LABEL_BY_RANK: Readonly<Record<number, string>> = Object.fromEntries(
+  Object.entries(LABEL_RANK).map(([k, v]) => [v, k]),
+);
+
 function DimensionTable({
   items,
 }: {
   items: ReturnType<typeof useShortlist>['items'];
 }) {
-  const rows: Array<{
-    label: string;
-    values: number[];
-    format: (n: number) => string;
-  }> = [
-    { label: 'Cost of living', values: items.map((i) => i.city.dimensions.cost), format: (n) => `${n}/5` },
-    { label: 'Housing', values: items.map((i) => i.city.dimensions.housing), format: (n) => `${n}/5` },
-    { label: 'Education', values: items.map((i) => i.city.dimensions.education), format: (n) => `${n}/5` },
-    { label: 'Healthcare', values: items.map((i) => i.city.dimensions.healthcare), format: (n) => `${n}/5` },
-  ];
   return (
     <table className="compare-page__table" data-testid="compare-table">
       <thead>
@@ -156,21 +229,23 @@ function DimensionTable({
         </tr>
       </thead>
       <tbody>
-        {rows.map((row) => {
-          const max = Math.max(...row.values);
+        {ROWS.map((row) => {
+          const values = items.map((c) => row.pick(c));
+          const target = row.invert ? Math.min(...values) : Math.max(...values);
+          const allSame = values.every((v) => v === values[0]);
           return (
             <tr key={row.label} data-testid={`compare-row-${slugify(row.label)}`}>
               <th scope="row">{row.label}</th>
-              {row.values.map((v, idx) => {
-                const item = items[idx]!;
-                const best = v === max && row.values.filter((x) => x === max).length === 1;
+              {items.map((c, idx) => {
+                const v = values[idx]!;
+                const isBest = !allSame && v === target;
                 return (
                   <td
-                    key={item.city.slug}
-                    className={best ? 'compare-page__cell--best' : undefined}
-                    data-testid={`compare-cell-${slugify(row.label)}-${item.city.slug}`}
+                    key={c.city.slug}
+                    className={isBest ? 'compare-page__cell--best' : undefined}
+                    data-testid={`compare-cell-${slugify(row.label)}-${c.city.slug}`}
                   >
-                    {row.format(v)}
+                    {row.format ? row.format(v) : `${v}/5`}
                   </td>
                 );
               })}
@@ -183,5 +258,8 @@ function DimensionTable({
 }
 
 function slugify(s: string): string {
-  return s.toLowerCase().replace(/\s+/g, '-');
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
 }

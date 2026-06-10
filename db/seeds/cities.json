@@ -26,7 +26,7 @@
       "healthcare": 4,
       "community": {
         "urban": 3,
-        "suburban": 0,
+        "suburban": 0, "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 3,
@@ -62,7 +62,7 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 2,
+        "suburban": 2, "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 2,
@@ -98,7 +98,7 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 3,
@@ -134,7 +134,7 @@
       "healthcare": 5,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 3,
         "mountain": 2,
         "arts_culture": 2,
@@ -170,7 +170,7 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 0,
+        "suburban": 0, "rural": 0,
         "coastal": 3,
         "mountain": 1,
         "arts_culture": 3,
@@ -206,7 +206,7 @@
       "healthcare": 5,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 2,
         "mountain": 3,
         "arts_culture": 2,
@@ -242,7 +242,7 @@
       "healthcare": 5,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 3,
@@ -278,7 +278,7 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 1,
         "mountain": 0,
         "arts_culture": 3,
@@ -314,7 +314,7 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 2,
+        "suburban": 2, "rural": 0,
         "coastal": 0,
         "mountain": 3,
         "arts_culture": 2,
@@ -350,7 +350,7 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 3,
         "mountain": 0,
         "arts_culture": 2,
@@ -386,7 +386,7 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 1,
         "mountain": 2,
         "arts_culture": 3,
@@ -422,7 +422,7 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 3,
@@ -458,7 +458,7 @@
       "healthcare": 3,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 0,
         "mountain": 1,
         "arts_culture": 3,
@@ -494,7 +494,7 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 2,
+        "suburban": 2, "rural": 0,
         "coastal": 3,
         "mountain": 2,
         "arts_culture": 3,
@@ -530,7 +530,7 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 2,
+        "suburban": 2, "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 2,
@@ -566,7 +566,7 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 3,
         "mountain": 0,
         "arts_culture": 2,
@@ -602,7 +602,7 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 2,
@@ -638,7 +638,7 @@
       "healthcare": 4,
       "community": {
         "urban": 3,
-        "suburban": 0,
+        "suburban": 0, "rural": 0,
         "coastal": 3,
         "mountain": 0,
         "arts_culture": 3,
@@ -674,7 +674,7 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 0,
         "mountain": 1,
         "arts_culture": 3,
@@ -710,7 +710,7 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 3,
@@ -746,7 +746,7 @@
       "healthcare": 5,
       "community": {
         "urban": 2,
-        "suburban": 2,
+        "suburban": 2, "rural": 0,
         "coastal": 1,
         "mountain": 0,
         "arts_culture": 3,
@@ -782,7 +782,7 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 3,
@@ -818,7 +818,7 @@
       "healthcare": 4,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 1,
         "mountain": 0,
         "arts_culture": 3,
@@ -854,7 +854,7 @@
       "healthcare": 5,
       "community": {
         "urban": 2,
-        "suburban": 2,
+        "suburban": 2, "rural": 0,
         "coastal": 0,
         "mountain": 2,
         "arts_culture": 2,
@@ -890,7 +890,7 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 2,
@@ -926,7 +926,7 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 1,
         "mountain": 0,
         "arts_culture": 2,
@@ -962,7 +962,7 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 1,
         "mountain": 1,
         "arts_culture": 3,
@@ -998,7 +998,7 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 0,
         "mountain": 1,
         "arts_culture": 2,
@@ -1034,7 +1034,7 @@
       "healthcare": 5,
       "community": {
         "urban": 2,
-        "suburban": 2,
+        "suburban": 2, "rural": 0,
         "coastal": 3,
         "mountain": 0,
         "arts_culture": 2,
@@ -1070,7 +1070,7 @@
       "healthcare": 3,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 2,
@@ -1106,7 +1106,7 @@
       "healthcare": 3,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 3,
@@ -1142,7 +1142,7 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 2,
+        "suburban": 2, "rural": 0,
         "coastal": 0,
         "mountain": 3,
         "arts_culture": 1,
@@ -1178,7 +1178,7 @@
       "healthcare": 3,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 2,
@@ -1214,7 +1214,7 @@
       "healthcare": 2,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 2,
@@ -1250,7 +1250,7 @@
       "healthcare": 3,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 0,
         "mountain": 2,
         "arts_culture": 1,
@@ -1286,7 +1286,7 @@
       "healthcare": 3,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 3,
         "mountain": 3,
         "arts_culture": 2,
@@ -1322,7 +1322,7 @@
       "healthcare": 4,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 1,
@@ -1358,7 +1358,7 @@
       "healthcare": 4,
       "community": {
         "urban": 3,
-        "suburban": 0,
+        "suburban": 0, "rural": 0,
         "coastal": 3,
         "mountain": 0,
         "arts_culture": 2,
@@ -1394,7 +1394,7 @@
       "healthcare": 3,
       "community": {
         "urban": 3,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 2,
@@ -1430,7 +1430,7 @@
       "healthcare": 3,
       "community": {
         "urban": 2,
-        "suburban": 1,
+        "suburban": 1, "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 1,
