@@ -6,8 +6,9 @@
  *     transient notice (Acceptance-Criteria Feature 5 Rule).
  *   - Removing a city that drops the shortlist below 2 also redirects
  *     with a notice (same rule).
- *   - 7 dimensions are aligned row-by-row; for each row the cell that
- *     owns the unique best score is highlighted (`compare-page__cell--best`).
+ *   - 8 dimensions are aligned row-by-row (PRD v3.1.0 D1..D8); for each
+ *     row the cell that owns the unique best score is highlighted
+ *     (`compare-page__cell--best`).
  *   - Cost of Living and Housing are inverted: a LOWER index represents
  *     a cheaper city, which is the winner condition (Acceptance-Criteria
  *     Feature 5, FTC-13).
@@ -194,6 +195,11 @@ const ROWS: ReadonlyArray<DimensionRow> = [
         city.city.dimensions.community.family_oriented,
         city.city.dimensions.community.expat_friendly,
       ),
+    format: (n) => `${n}/5`,
+  },
+  {
+    label: 'Military safety',
+    pick: (city) => city.city.dimensions.military_safety,
     format: (n) => `${n}/5`,
   },
 ];

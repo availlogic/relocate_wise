@@ -1,10 +1,10 @@
 /**
- * ProfileForm — the 7-step wizard that implements the RelocateWise
+ * ProfileForm — the 8-step wizard that implements the RelocateWise
  * questionnaire.
  *
  * Implements PRD §5 (FR-1, FR-2, FR-3) and Acceptance-Criteria Feature 2:
- *   - Exactly 7 steps, single question per screen.
- *   - Progress bar (14.2% per step) with "Step N of 7" text.
+ *   - Exactly 8 steps, single question per screen.
+ *   - Progress bar (12.5% per step) with "Step N of 8" text.
  *   - Back / Skip on every screen; "View Matches" on the final step.
  *   - All fields are optional — a skipped question is recorded as the
  *     neutral default per Architecture §6.3.
@@ -19,6 +19,9 @@
  * MF-1 mapping (Review-Findings §2): step 7's Location Density choice
  * (Urban / Suburban / Rural) is merged into `lifestyle_tags` so the
  * back-end's single `lifestyle_tags` array sees the union.
+ *
+ * v0.3.0 (PRD v3.1.0): step 8 added — "Military Safety Priority"
+ * importance slider 0..3.
  */
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -47,7 +50,7 @@ import {
 } from '../formOptions';
 import './ProfileForm.css';
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 8;
 
 /** Density choices for step 7 — merged into lifestyle_tags (MF-1). */
 type Density = 'urban' | 'suburban' | 'rural' | null;
@@ -60,6 +63,7 @@ interface WizardState {
   education: EducationPriority;
   communityTags: LifestyleTag[];
   density: Density;
+  militarySafetyImportance: 0 | 1 | 2 | 3;
 }
 
 function emptyWizard(): WizardState {
@@ -71,13 +75,15 @@ function emptyWizard(): WizardState {
     education: 'not_relevant',
     communityTags: [],
     density: null,
+    militarySafetyImportance: 0,
   };
 }
 
 /**
  * Project the wizard state into a `UserProfile` ready for the API.
  * Handles the HF-1 mapping (single Housing Budget → 4 fields) and
- * MF-1 merge (density → lifestyle_tags).
+ * MF-1 merge (density → lifestyle_tags). v0.3.0 also surfaces
+ * `military_safety_importance` (step 8).
  */
 export function toUserProfile(state: WizardState): UserProfile {
   const tags: LifestyleTag[] = [...state.communityTags];
@@ -95,6 +101,7 @@ export function toUserProfile(state: WizardState): UserProfile {
     career_industry: state.career,
     education: state.education,
     healthcare_importance: state.healthcareImportance,
+    military_safety_importance: state.militarySafetyImportance,
     lifestyle_tags: tags,
   };
 }
@@ -293,6 +300,49 @@ export function ProfileForm({ initial }: ProfileFormProps) {
             helpText="How dense do you want your surroundings?"
           />
         ) : null}
+
+        {step === 8 ? (
+          <fieldset
+            className="profile-form__military-safety"
+            data-testid="military-safety-step"
+          >
+            <legend className="profile-form__step-legend">Military safety priority</legend>
+            <p className="profile-form__step-help">
+              How important is geopolitical stability and physical safety? A higher rating
+              acts as a heavy filter on the overall city match (PRD §6.1 D8).
+            </p>
+            <div className="profile-form__levels" role="radiogroup" aria-label="Military safety priority">
+              {[0, 1, 2, 3].map((level) => (
+                <label
+                  key={level}
+                  className={
+                    'profile-form__level' +
+                    (state.militarySafetyImportance === level ? ' is-active' : '')
+                  }
+                  data-testid={`military-safety-${level}`}
+                >
+                  <input
+                    type="radio"
+                    name="military_safety"
+                    value={level}
+                    checked={state.militarySafetyImportance === level}
+                    onChange={() => update('militarySafetyImportance', level as 0 | 1 | 2 | 3)}
+                  />
+                  <span className="profile-form__level-num">{level}</span>
+                  <span className="profile-form__level-label">
+                    {level === 0
+                      ? 'Skip'
+                      : level === 1
+                        ? 'Nice to have'
+                        : level === 2
+                          ? 'Important'
+                          : 'Critical'}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ) : null}
       </section>
 
       {error ? (
@@ -354,4 +404,5 @@ const STEP_TITLES: readonly string[] = [
   'How important is education?',
   'What community vibe fits?',
   'How dense do you want it?',
+  'How much does military safety matter?',
 ];

@@ -14,8 +14,8 @@ test('E2E-4 closing the browser context purges the shortlist', async ({ browser 
   await page.getByTestId('consent-accept').click();
   await page.getByTestId('landing-cta').click();
   await page.getByTestId('climate-mediterranean').click({ force: true });
-  // 6 next-clicks walk steps 1..7.
-  for (let i = 0; i < 6; i++) await page.getByTestId('wizard-next').click();
+  // 7 next-clicks walk steps 1..8 (v0.3.0: 8-question wizard).
+  for (let i = 0; i < 7; i++) await page.getByTestId('wizard-next').click();
   await page.getByTestId('submit').click();
   await page.getByTestId('rank-card-1-compare-checkbox').check();
   await expect(page.getByTestId('shortlist-bar')).toBeVisible();

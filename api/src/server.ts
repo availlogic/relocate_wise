@@ -68,6 +68,19 @@ export async function buildAppWithRepo(opts: AppOptions): Promise<BuildAppResult
     methods: ['GET', 'POST'],
   });
 
+  // Backend rate limit (API_Spec §3.2, ITC-6). Token-bucket at
+  // 100 req/min/IP, opt-out via `ENABLE_RATE_LIMIT=0`. Exempt /api/health
+  // so liveness probes are never blocked.
+  if (process.env.ENABLE_RATE_LIMIT !== '0') {
+    await app.register(import('@fastify/rate-limit'), {
+      max: 100,
+      timeWindow: '1 minute',
+      keyGenerator: (req) => req.ip,
+      allowList: ['127.0.0.1'],
+      skipOnError: true,
+    });
+  }
+
   // Shared-secret gate (Architecture §11). When `API_SECRET` is set the
   // server rejects any request without the matching
   // `x-relocatewise-secret` header, except for /api/health which must
@@ -121,6 +134,7 @@ export async function bootstrap(opts: ServerOptions = {}): Promise<FastifyInstan
   const { runMigrations } = await import('./db/migrate.js');
   const { seedIfEmpty } = await import('./db/seed.js');
   const { PostgresCityRepository } = await import('./db/postgres.repository.js');
+  const { startScheduler, stopScheduler } = await import('./jobs/scheduler.js');
 
   const pool = getPool();
   await runMigrations(pool);
@@ -136,6 +150,17 @@ export async function bootstrap(opts: ServerOptions = {}): Promise<FastifyInstan
     origin: true,
     methods: ['GET', 'POST'],
   });
+
+  // Backend rate limit (API_Spec §3.2).
+  if (process.env.ENABLE_RATE_LIMIT !== '0') {
+    await app.register(import('@fastify/rate-limit'), {
+      max: 100,
+      timeWindow: '1 minute',
+      keyGenerator: (req) => req.ip,
+      allowList: ['127.0.0.1'],
+      skipOnError: true,
+    });
+  }
 
   // Shared-secret gate (see buildAppWithRepo above). /api/health is
   // intentionally exempt so external probes still work.
@@ -157,7 +182,14 @@ export async function bootstrap(opts: ServerOptions = {}): Promise<FastifyInstan
   cityRoute(app, cachedRepo, '/api');
   matchRoute(app, cachedRepo, '/api');
 
+  // Ingestion scheduler (Architecture §4.4, PRD FR-16). Honours
+  // `INGESTION_DISABLED=1` for dev/test environments.
+  if (process.env.INGESTION_DISABLED !== '1') {
+    startScheduler(pool);
+  }
+
   app.addHook('onClose', async () => {
+    stopScheduler();
     await closePool();
   });
 

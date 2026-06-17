@@ -64,6 +64,14 @@ describe('why this fits you — templates per dimension', () => {
     const scored = scoreCity(city, user);
     expect(whyThisFitsYou(scored)).toContain('Matches your urban and coastal lifestyle');
   });
+
+  it('military_safety template (Architecture §6.5, PRD v3.1.0)', () => {
+    const user: UserProfile = withDefaults({ military_safety_importance: 3 });
+    const scored = scoreCity(city, user);
+    expect(whyThisFitsYou(scored)).toContain(
+      'High geopolitical stability and physical safety',
+    );
+  });
 });
 
 describe('why this fits you — tie-breaking (within 0.1 absolute)', () => {

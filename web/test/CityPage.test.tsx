@@ -61,7 +61,7 @@ describe('<CityPage />', () => {
     expect(screen.getByTestId('city-loading')).toBeInTheDocument();
   });
 
-  it('renders the city, all 7 dimension rows, and a back link to /results on success', async () => {
+  it('renders the city, all 8 dimension rows, and a back link to /results on success (v0.3.0)', async () => {
     const lisbon: City = makeCity({
       slug: 'lisbon',
       name: 'Lisbon',
@@ -102,6 +102,7 @@ describe('<CityPage />', () => {
     expect(within(dims).getByTestId('dim-housing')).toBeInTheDocument();
     expect(within(dims).getByTestId('dim-education')).toBeInTheDocument();
     expect(within(overallGroup).getByTestId('dim-healthcare')).toBeInTheDocument();
+    expect(within(dims).getByTestId('dim-military-safety')).toBeInTheDocument();
     expect(within(dims).getByTestId('dim-tech')).toBeInTheDocument();
     expect(within(dims).getByTestId('dim-urban')).toBeInTheDocument();
 
@@ -139,9 +140,22 @@ describe('<CityPage />', () => {
     renderCityPage('lisbon');
     await screen.findByTestId('city-page');
     expect(screen.getByText(/38\.72°/)).toBeInTheDocument();
-    const time = screen.getByText('2026-05-15');
+    // Two places now show the date: the meta block and the new "Data
+    // last updated" footer (Screen-Specs §4 v0.3.0). The meta <time>
+    // sits inside the header <dl>.
+    const meta = screen.getByTestId('city-page__meta');
+    const time = within(meta).getByText('2026-05-15');
     expect(time.tagName).toBe('TIME');
     expect(time.getAttribute('datetime')).toBe('2026-05-15');
+  });
+
+  it('renders a labelled "Data last updated" footer (Screen-Specs §4, v0.3.0)', async () => {
+    getCityMock.mockResolvedValueOnce(makeCity({ last_updated: '2026-05-15' }));
+    renderCityPage('lisbon');
+    await screen.findByTestId('city-page');
+    const footer = screen.getByTestId('city-page-updated');
+    expect(footer).toBeInTheDocument();
+    expect(footer.textContent).toMatch(/Data last updated:\s*2026-05-15/);
   });
 
   it('toggles the city in the shortlist via the "Add to Comparison" button', async () => {

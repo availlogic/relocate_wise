@@ -66,13 +66,14 @@ async function insertCity(
 
   await client.query(
     `INSERT INTO city_scores (city_id, dimension, score, sub_scores) VALUES
-       ($1, 'climate',    $2, $3::jsonb),
-       ($1, 'cost',       $4, NULL),
-       ($1, 'housing',    $5, NULL),
-       ($1, 'career',     0, $6::jsonb),
-       ($1, 'education',  $7, NULL),
-       ($1, 'healthcare', $8, NULL),
-       ($1, 'community',  0, $9::jsonb)`,
+       ($1, 'climate',         $2, $3::jsonb),
+       ($1, 'cost',            $4, NULL),
+       ($1, 'housing',         $5, NULL),
+       ($1, 'career',          0, $6::jsonb),
+       ($1, 'education',       $7, NULL),
+       ($1, 'healthcare',      $8, NULL),
+       ($1, 'community',       0, $9::jsonb),
+       ($1, 'military_safety', $10, $11::jsonb)`,
     [
       cityId,
       0, // climate score is not used by the matching engine; the label is
@@ -83,8 +84,33 @@ async function insertCity(
       city.dimensions.education,
       city.dimensions.healthcare,
       JSON.stringify(city.dimensions.community),
+      city.dimensions.military_safety,
+      city.dimensions.military_safety_sub
+        ? JSON.stringify(city.dimensions.military_safety_sub)
+        : JSON.stringify({
+            conflict_risk: conflictRiskForScore(city.dimensions.military_safety),
+            travel_advisory: travelAdvisoryForScore(city.dimensions.military_safety),
+          }),
     ],
   );
+}
+
+/** Default conflict-risk label derived from a city's safety score. */
+function conflictRiskForScore(score: number): 'low' | 'moderate' | 'elevated' | 'high' | 'severe' {
+  if (score >= 5) return 'low';
+  if (score >= 4) return 'low';
+  if (score >= 3) return 'moderate';
+  if (score >= 2) return 'elevated';
+  return 'high';
+}
+
+/** Default travel-advisory code derived from a city's safety score. */
+function travelAdvisoryForScore(score: number): string {
+  if (score >= 5) return 'level_1';
+  if (score >= 4) return 'level_1';
+  if (score >= 3) return 'level_2';
+  if (score >= 2) return 'level_3';
+  return 'level_4';
 }
 
 /**

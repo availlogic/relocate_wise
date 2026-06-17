@@ -51,7 +51,8 @@
   font-family: var(--font-body);
 }
 
-.profile-form__healthcare {
+.profile-form__healthcare,
+.profile-form__military-safety {
   border: none;
   padding: 0;
   margin: 0;

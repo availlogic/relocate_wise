@@ -1,10 +1,10 @@
 /**
- * Tests for ProfileForm — the 7-step wizard described in PRD §5, FR-1..FR-3
- * and Acceptance-Criteria Feature 2.
+ * Tests for ProfileForm — the 8-step wizard described in PRD §5 (v3.1.0),
+ * FR-1..FR-3, and Acceptance-Criteria Feature 2.
  *
  * Coverage targets the documented contract:
- *   - Exactly 7 steps are rendered sequentially; one question per step.
- *   - A progress bar fills incrementally and labels "Step N of 7".
+ *   - Exactly 8 steps are rendered sequentially; one question per step.
+ *   - A progress bar fills incrementally and labels "Step N of 8".
  *   - Back returns to the previous step; Skip advances without selection.
  *   - The final step shows "View matches" (Submit).
  *   - On submit, the form posts the assembled UserProfile and navigates
@@ -15,6 +15,7 @@
  *     maps to cost_ceiling=housing_ceiling=N, both importances=3.
  *   - Step 7 ("Density") implements MF-1: the choice merges into
  *     lifestyle_tags.
+ *   - Step 8 ("Military Safety") emits military_safety_importance.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -51,7 +52,14 @@ function renderForm() {
   );
 }
 
-describe('<ProfileForm /> (7-step wizard)', () => {
+/** Click Next `n` times to reach a specific step. */
+async function advanceToStep(user: ReturnType<typeof userEvent.setup>, step: number) {
+  for (let i = 1; i < step; i++) {
+    await user.click(screen.getByTestId('wizard-next'));
+  }
+}
+
+describe('<ProfileForm /> (8-step wizard)', () => {
   beforeEach(() => {
     postMatchMock.mockReset();
     window.sessionStorage.clear();
@@ -66,8 +74,8 @@ describe('<ProfileForm /> (7-step wizard)', () => {
     expect(screen.getByTestId('profile-form')).toBeInTheDocument();
     const bar = screen.getByTestId('progress-bar');
     expect(bar).toHaveAttribute('aria-valuenow', '1');
-    expect(bar).toHaveAttribute('aria-valuemax', '7');
-    expect(screen.getByTestId('progress-bar-label').textContent).toMatch(/Step 1 of 7/);
+    expect(bar).toHaveAttribute('aria-valuemax', '8');
+    expect(screen.getByTestId('progress-bar-label').textContent).toMatch(/Step 1 of 8/);
   });
 
   it('renders the Back button disabled on step 1 and enabled after advancing', async () => {
@@ -84,9 +92,12 @@ describe('<ProfileForm /> (7-step wizard)', () => {
     const user = userEvent.setup();
     renderForm();
     expect(screen.getByTestId('wizard-skip')).toBeInTheDocument();
-    for (let i = 1; i <= 7; i++) {
+    for (let i = 1; i <= 8; i++) {
       await user.click(screen.getByTestId('wizard-skip'));
-      expect(screen.getByTestId('progress-bar')).toHaveAttribute('aria-valuenow', String(Math.min(i + 1, 7)));
+      expect(screen.getByTestId('progress-bar')).toHaveAttribute(
+        'aria-valuenow',
+        String(Math.min(i + 1, 8)),
+      );
     }
   });
 
@@ -94,23 +105,27 @@ describe('<ProfileForm /> (7-step wizard)', () => {
     const user = userEvent.setup();
     renderForm();
     expect(screen.getByTestId('radio-group-climate')).toBeInTheDocument();
-    // Advance to step 7.
-    for (let i = 0; i < 6; i++) {
-      await user.click(screen.getByTestId('wizard-next'));
-    }
+    await advanceToStep(user, 7);
     expect(screen.getByTestId('radio-group-density')).toBeInTheDocument();
     expect(screen.getByTestId('density-urban')).toBeInTheDocument();
     expect(screen.getByTestId('density-suburban')).toBeInTheDocument();
     expect(screen.getByTestId('density-rural')).toBeInTheDocument();
   });
 
-  it('renders "View matches" only on step 7', async () => {
+  it('shows the military-safety slider on step 8', async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await advanceToStep(user, 8);
+    expect(screen.getByTestId('military-safety-step')).toBeInTheDocument();
+    expect(screen.getByTestId('military-safety-0')).toBeInTheDocument();
+    expect(screen.getByTestId('military-safety-3')).toBeInTheDocument();
+  });
+
+  it('renders "View matches" only on step 8', async () => {
     const user = userEvent.setup();
     renderForm();
     expect(screen.queryByTestId('submit')).not.toBeInTheDocument();
-    for (let i = 0; i < 6; i++) {
-      await user.click(screen.getByTestId('wizard-next'));
-    }
+    await advanceToStep(user, 8);
     const submit = screen.getByTestId('submit');
     expect(submit).toBeInTheDocument();
     expect(submit.textContent).toMatch(/view matches/i);
@@ -132,8 +147,8 @@ describe('<ProfileForm /> (7-step wizard)', () => {
     // Step 2: pick budget = 3.
     await user.click(screen.getByTestId('budget-3'));
 
-    // Skip through the rest.
-    for (let i = 0; i < 5; i++) {
+    // Skip through the rest (steps 3..8).
+    for (let i = 0; i < 6; i++) {
       await user.click(screen.getByTestId('wizard-skip'));
     }
     await user.click(screen.getByTestId('submit'));
@@ -162,6 +177,8 @@ describe('<ProfileForm /> (7-step wizard)', () => {
       await user.click(screen.getByTestId('wizard-skip'));
     }
     await user.click(screen.getByTestId('density-rural'));
+    // Advance to step 8 (submit).
+    await user.click(screen.getByTestId('wizard-next'));
     await user.click(screen.getByTestId('submit'));
 
     await waitFor(() => {
@@ -171,15 +188,55 @@ describe('<ProfileForm /> (7-step wizard)', () => {
     expect(captured!.lifestyle_tags).toContain('rural');
   });
 
+  it('step 8 military_safety_importance 3 is captured in the payload', async () => {
+    const user = userEvent.setup();
+    let captured: UserProfile | undefined;
+    postMatchMock.mockImplementation((p: UserProfile) => {
+      captured = p;
+      return Promise.resolve({ results: [], generated_at: '2026-06-02T00:00:00Z' });
+    });
+    renderForm();
+
+    await advanceToStep(user, 8);
+    await user.click(screen.getByTestId('military-safety-3'));
+    await user.click(screen.getByTestId('submit'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('results-path').textContent).toBe('/results');
+    });
+    expect(captured).toBeDefined();
+    expect(captured!.military_safety_importance).toBe(3);
+  });
+
+  it('skipped step 8 records military_safety_importance = 0 (default)', async () => {
+    const user = userEvent.setup();
+    let captured: UserProfile | undefined;
+    postMatchMock.mockImplementation((p: UserProfile) => {
+      captured = p;
+      return Promise.resolve({ results: [], generated_at: '2026-06-02T00:00:00Z' });
+    });
+    renderForm();
+
+    // Skip directly to step 8.
+    for (let i = 0; i < 7; i++) {
+      await user.click(screen.getByTestId('wizard-skip'));
+    }
+    await user.click(screen.getByTestId('submit'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('results-path').textContent).toBe('/results');
+    });
+    expect(captured).toBeDefined();
+    expect(captured!.military_safety_importance).toBe(0);
+  });
+
   it('disables submit and shows "Finding matches…" while the request is in flight', async () => {
     const user = userEvent.setup();
     let resolve!: (v: unknown) => void;
     postMatchMock.mockReturnValueOnce(new Promise((r) => { resolve = r; }));
     renderForm();
 
-    for (let i = 0; i < 6; i++) {
-      await user.click(screen.getByTestId('wizard-next'));
-    }
+    await advanceToStep(user, 8);
     await user.click(screen.getByTestId('submit'));
     const submit = screen.getByTestId('submit') as HTMLButtonElement;
     expect(submit).toBeDisabled();
@@ -196,11 +253,8 @@ describe('<ProfileForm /> (7-step wizard)', () => {
     let resolve!: (v: unknown) => void;
     postMatchMock.mockReturnValueOnce(new Promise((r) => { resolve = r; }));
     renderForm();
-    for (let i = 0; i < 6; i++) {
-      await user.click(screen.getByTestId('wizard-next'));
-    }
+    await advanceToStep(user, 8);
     await user.click(screen.getByTestId('submit'));
-    // A second click should be a no-op.
     await user.click(screen.getByTestId('submit')).catch(() => {});
     expect(postMatchMock).toHaveBeenCalledTimes(1);
     resolve({ results: [], generated_at: '2026-06-02T00:00:00Z' });
@@ -215,9 +269,7 @@ describe('<ProfileForm /> (7-step wizard)', () => {
       new ApiError(400, { error: 'invalid_profile', message: 'Bad climate tag.' }),
     );
     renderForm();
-    for (let i = 0; i < 6; i++) {
-      await user.click(screen.getByTestId('wizard-next'));
-    }
+    await advanceToStep(user, 8);
     await user.click(screen.getByTestId('submit'));
     const err = await screen.findByTestId('api-error');
     expect(err.textContent).toBe('Bad climate tag.');
@@ -228,9 +280,7 @@ describe('<ProfileForm /> (7-step wizard)', () => {
     const user = userEvent.setup();
     postMatchMock.mockRejectedValueOnce(new Error('network down'));
     renderForm();
-    for (let i = 0; i < 6; i++) {
-      await user.click(screen.getByTestId('wizard-next'));
-    }
+    await advanceToStep(user, 8);
     await user.click(screen.getByTestId('submit'));
     const err = await screen.findByTestId('api-error');
     expect(err.textContent).toBe('network down');
@@ -240,9 +290,7 @@ describe('<ProfileForm /> (7-step wizard)', () => {
     const user = userEvent.setup();
     postMatchMock.mockRejectedValueOnce('weird string');
     renderForm();
-    for (let i = 0; i < 6; i++) {
-      await user.click(screen.getByTestId('wizard-next'));
-    }
+    await advanceToStep(user, 8);
     await user.click(screen.getByTestId('submit'));
     const err = await screen.findByTestId('api-error');
     expect(err.textContent).toMatch(/something went wrong/i);

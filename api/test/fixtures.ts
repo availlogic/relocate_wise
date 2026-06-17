@@ -46,6 +46,7 @@ export function makeCity(overrides: Partial<City> & Pick<City, 'slug' | 'name' |
       education: 3,
       healthcare: 3,
       community: fullCommunity(),
+      military_safety: 4,
     },
     ...overrides,
   };
@@ -68,6 +69,7 @@ export const CITIES: City[] = [
       education: 4,
       healthcare: 4,
       community: fullCommunity({ urban: 5, suburban: 2, coastal: 5, mountain: 1, arts_culture: 5, family_oriented: 3, expat_friendly: 5 }),
+      military_safety: 5,
     },
   }),
   makeCity({
@@ -85,6 +87,7 @@ export const CITIES: City[] = [
       education: 5,
       healthcare: 5,
       community: fullCommunity({ urban: 5, suburban: 2, coastal: 1, mountain: 1, arts_culture: 5, family_oriented: 3, expat_friendly: 5 }),
+      military_safety: 5,
     },
   }),
   makeCity({
@@ -102,6 +105,7 @@ export const CITIES: City[] = [
       education: 3,
       healthcare: 3,
       community: fullCommunity({ urban: 5, suburban: 1, coastal: 2, mountain: 0, arts_culture: 4, family_oriented: 3, expat_friendly: 5 }),
+      military_safety: 3,
     },
   }),
   makeCity({
@@ -119,6 +123,7 @@ export const CITIES: City[] = [
       education: 5,
       healthcare: 5,
       community: fullCommunity({ urban: 3, suburban: 1, coastal: 5, mountain: 4, arts_culture: 4, family_oriented: 4, expat_friendly: 4 }),
+      military_safety: 5,
     },
   }),
   makeCity({
@@ -136,6 +141,7 @@ export const CITIES: City[] = [
       education: 4,
       healthcare: 3,
       community: fullCommunity({ urban: 5, suburban: 2, coastal: 1, mountain: 1, arts_culture: 4, family_oriented: 3, expat_friendly: 4 }),
+      military_safety: 3,
     },
   }),
 ];

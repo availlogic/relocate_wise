@@ -44,6 +44,8 @@ export function makeCity(overrides: Partial<City> = {}): City {
         family_oriented: 3,
         expat_friendly: 5,
       },
+      military_safety: 5,
+      military_safety_sub: { conflict_risk: 'low', travel_advisory: 'level_1' },
     },
     ...overrides,
   };
@@ -76,6 +78,8 @@ export function makeMatchedCity(
           urban: 4, suburban: 3, rural: 2, coastal: 5, mountain: 1,
           arts_culture: 5, family_oriented: 3, expat_friendly: 5,
         },
+        military_safety: 5,
+        military_safety_sub: { conflict_risk: 'low', travel_advisory: 'level_1' },
       },
     },
     score: 88,
@@ -116,6 +120,7 @@ export function makeEmptyProfile(): UserProfile {
     career_industry: null,
     education: 'not_relevant',
     healthcare_importance: 0,
+    military_safety_importance: 0,
     lifestyle_tags: [],
   };
 }

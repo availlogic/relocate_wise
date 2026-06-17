@@ -106,7 +106,7 @@ describe('<RankCard />', () => {
     });
     const link = screen.getByTestId('rank-card-1-link') as HTMLAnchorElement;
     expect(link.getAttribute('href')).toBe('/city/sao%20paulo');
-    expect(link.textContent).toMatch(/view full profile/i);
+    expect(link.textContent).toMatch(/view profile/i);
   });
 
   it('does not render the compare checkbox when no shortlist props are passed', () => {

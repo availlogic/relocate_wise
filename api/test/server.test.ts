@@ -74,6 +74,24 @@ describe('GET /api/cities/:slug', () => {
     expect(typeof body.dimensions.cost).toBe('number');
   });
 
+  it('returns 8 dimensions including military_safety (PRD v3.1.0)', async () => {
+    const app = await newApp();
+    const res = await app.inject({ method: 'GET', url: '/api/cities/lisbon-pt' });
+    expect(res.statusCode).toBe(200);
+    const body = res.json();
+    const d = body.dimensions;
+    expect(typeof d.climate).toBe('object');
+    expect(typeof d.cost).toBe('number');
+    expect(typeof d.housing).toBe('number');
+    expect(typeof d.career).toBe('object');
+    expect(typeof d.education).toBe('number');
+    expect(typeof d.healthcare).toBe('number');
+    expect(typeof d.community).toBe('object');
+    expect(typeof d.military_safety).toBe('number');
+    expect(d.military_safety).toBeGreaterThanOrEqual(1);
+    expect(d.military_safety).toBeLessThanOrEqual(5);
+  });
+
   it('returns 404 + ApiError envelope for an unknown slug', async () => {
     const app = await newApp();
     const res = await app.inject({ method: 'GET', url: '/api/cities/atlantis-xx' });

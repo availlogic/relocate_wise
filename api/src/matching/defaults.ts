@@ -22,6 +22,7 @@ export function withDefaults(profile: Partial<UserProfile>): UserProfile {
     career_industry: profile.career_industry ?? null,
     education: profile.education ?? 'not_relevant',
     healthcare_importance: profile.healthcare_importance ?? 0,
+    military_safety_importance: profile.military_safety_importance ?? 0,
     lifestyle_tags: profile.lifestyle_tags ?? [],
   };
 }

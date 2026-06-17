@@ -134,7 +134,7 @@ export function CityPage() {
             {inShortlist ? 'Remove from Comparison' : 'Add to Comparison'}
           </button>
         </div>
-        <dl className="city-page__meta">
+        <dl className="city-page__meta" data-testid="city-page__meta">
           <div>
             <dt>Coordinates</dt>
             <dd>
@@ -153,6 +153,9 @@ export function CityPage() {
         <h2>Dimension scores</h2>
         <CityDimensions dimensions={city.dimensions} />
       </section>
+      <footer className="city-page__updated" data-testid="city-page-updated">
+        Data last updated: <time dateTime={city.last_updated}>{city.last_updated}</time>
+      </footer>
       <ShortlistBar />
     </article>
   );

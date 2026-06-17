@@ -1,7 +1,11 @@
 /**
- * CityDimensions — visual representation of the seven dimension scores
+ * CityDimensions — visual representation of the eight dimension scores
  * for a single city. Renders each as a labelled bar with a 0..5 scale
  * (sub-scores like climate's `label` are shown as plain text).
+ *
+ * v0.3.0: now displays 8 dimensions per PRD v3.1.0 / FTC-10 (Climate,
+ * Cost, Housing, Career, Healthcare, Education, Community, Military
+ * Safety).
  */
 import type { CityDimensions as CityDimensionsT } from '@relocatewise/shared';
 import './CityDimensions.css';
@@ -38,6 +42,17 @@ export function CityDimensions({ dimensions }: CityDimensionsProps) {
     {
       label: 'Healthcare',
       value: dimensions.healthcare,
+    },
+    {
+      label: 'Military safety',
+      value: dimensions.military_safety,
+      ...(dimensions.military_safety_sub
+        ? {
+            sub: `Conflict risk: ${prettyRisk(
+              dimensions.military_safety_sub.conflict_risk,
+            )} · Advisory: ${dimensions.military_safety_sub.travel_advisory}`,
+          }
+        : {}),
     },
   ];
 
@@ -87,6 +102,11 @@ export function CityDimensions({ dimensions }: CityDimensionsProps) {
       </section>
     </div>
   );
+}
+
+function prettyRisk(risk: string): string {
+  if (!risk) return '—';
+  return risk.charAt(0).toUpperCase() + risk.slice(1);
 }
 
 function DimensionRow({ row }: { row: BarRow }) {

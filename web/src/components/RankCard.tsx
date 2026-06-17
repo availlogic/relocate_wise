@@ -93,7 +93,7 @@ export function RankCard({
           className="btn btn--secondary"
           data-testid={`rank-card-${rank}-link`}
         >
-          View full profile
+          View profile
         </Link>
       </footer>
     </article>

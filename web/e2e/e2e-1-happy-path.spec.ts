@@ -17,7 +17,7 @@ test('E2E-1 happy path: quiz → results → profile → shortlist → compare',
   await page.getByTestId('landing-cta').click();
   await expect(page).toHaveURL(/\/q$/);
 
-  // 3. Walk all 7 steps with explicit choices. The radio inputs are
+  // 3. Walk all 8 steps with explicit choices. The radio inputs are
   // visually hidden (opacity 0, pointer-events none) so we click the
   // wrapping label via its testid. Playwright sometimes tries to
   // click the inner <strong> instead — use `force: true` to bypass
@@ -54,10 +54,14 @@ test('E2E-1 happy path: quiz → results → profile → shortlist → compare',
   await clickOpt('community-coastal');
   await next();
 
-  // Step 7: density = urban. Submit.
+  // Step 7: density = urban.
   await clickOpt('density-urban');
+  await next();
+
+  // Step 8: military safety = 3. Submit.
+  await clickOpt('military-safety-3');
   const step = await page.getByTestId('progress-bar').getAttribute('aria-valuenow');
-  expect(step).toBe('7');
+  expect(step).toBe('8');
   await page.getByTestId('submit').click();
 
   // 4. /results: 10 cards. The top match's "why" must reference at
@@ -69,7 +73,7 @@ test('E2E-1 happy path: quiz → results → profile → shortlist → compare',
   await expect(page.getByTestId('results-page')).toBeVisible();
   await expect(page.getByTestId('rank-card-1')).toBeVisible();
   await expect(page.getByTestId('rank-card-1-why')).toContainText(
-    /climate|budget|cost|housing|tech|lifestyle/i,
+    /climate|budget|cost|housing|tech|lifestyle|safety|military/i,
   );
 
   // 5. View profile, add to shortlist from the city page, then
@@ -104,9 +108,10 @@ test('E2E-1 happy path: quiz → results → profile → shortlist → compare',
   await page.getByTestId('shortlist-bar-compare').click();
   await expect(page).toHaveURL(/\/compare$/);
 
-  // 9. /compare renders the 2-column grid + 7-row table.
+  // 9. /compare renders the 2-column grid + 8-row table (v0.3.0).
   await expect(page.getByTestId('compare-page')).toBeVisible();
   await expect(page.getByTestId('compare-table')).toBeVisible();
   const cardCount = await page.locator('[data-testid^="compare-card-"]').count();
   expect(cardCount).toBe(2);
+  await expect(page.getByTestId('compare-row-military-safety')).toBeVisible();
 });

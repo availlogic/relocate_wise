@@ -131,6 +131,13 @@ export interface UserProfile {
   /** 0 = no healthcare concern, 3 = critical. */
   healthcare_importance: Importance;
 
+  /**
+   * 0 = not a concern, 3 = critical. Weight table (Architecture §6.3)
+   * is `{0, 1, 2.5, 4}` — a higher safety priority acts as a heavy
+   * filter on the overall city match (AC-5).
+   */
+  military_safety_importance: Importance;
+
   /** 0..N lifestyle tags. Empty array = no preference for community dimension. */
   lifestyle_tags: LifestyleTag[];
 }
@@ -162,6 +169,17 @@ export interface CityCommunitySub {
   expat_friendly: number;
 }
 
+/**
+ * Sub-scores for the `military_safety` dimension (1 = high conflict risk,
+ * 5 = extremely safe / stable). Carries the contextual details a UI
+ * can surface: a categorical conflict-risk label and a travel-advisory
+ * code (e.g. `"level_1"`).
+ */
+export interface CityMilitarySafetySub {
+  conflict_risk: 'low' | 'moderate' | 'elevated' | 'high' | 'severe';
+  travel_advisory: string;
+}
+
 export interface CityDimensions {
   climate: CityClimateSub;
   cost: number;
@@ -170,6 +188,8 @@ export interface CityDimensions {
   education: number;
   healthcare: number;
   community: CityCommunitySub;
+  military_safety: number;
+  military_safety_sub?: CityMilitarySafetySub;
 }
 
 export interface City {

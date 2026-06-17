@@ -100,6 +100,10 @@ function joinCityAndScores(city: CityRow, scores: ScoreRow[]): City {
   const education = byDim.get('education')?.score ?? 3;
   const healthcare = byDim.get('healthcare')?.score ?? 3;
   const community = asCommunitySub(byDim.get('community')?.sub_scores ?? null);
+  const militarySafety = byDim.get('military_safety')?.score ?? 3;
+  const militarySafetySub = asMilitarySafetySub(
+    byDim.get('military_safety')?.sub_scores ?? null,
+  );
 
   const dimensions: CityDimensions = {
     climate,
@@ -109,6 +113,8 @@ function joinCityAndScores(city: CityRow, scores: ScoreRow[]): City {
     education,
     healthcare,
     community,
+    military_safety: militarySafety,
+    ...(militarySafetySub ? { military_safety_sub: militarySafetySub } : {}),
   };
 
   return {
@@ -122,6 +128,28 @@ function joinCityAndScores(city: CityRow, scores: ScoreRow[]): City {
     description: city.description,
     last_updated: toIsoDate(city.last_updated),
     dimensions,
+  };
+}
+
+const CONFLICT_RISK_VALUES: ReadonlySet<string> = new Set([
+  'low',
+  'moderate',
+  'elevated',
+  'high',
+  'severe',
+]);
+
+function asMilitarySafetySub(
+  sub: Record<string, number | string> | null,
+): { conflict_risk: 'low' | 'moderate' | 'elevated' | 'high' | 'severe'; travel_advisory: string } | null {
+  if (!sub) return null;
+  const risk = String(sub.conflict_risk ?? '').toLowerCase();
+  const advisory = String(sub.travel_advisory ?? '').toLowerCase();
+  if (!CONFLICT_RISK_VALUES.has(risk)) return null;
+  if (!advisory) return null;
+  return {
+    conflict_risk: risk as 'low' | 'moderate' | 'elevated' | 'high' | 'severe',
+    travel_advisory: advisory,
   };
 }
 

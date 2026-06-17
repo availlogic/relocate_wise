@@ -12,7 +12,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { withDefaults } from '../src/matching/defaults.js';
-import { rankCities, scoreCity, SEVEN_DIMENSIONS } from '../src/matching/score.js';
+import { rankCities, scoreCity, EIGHT_DIMENSIONS, SEVEN_DIMENSIONS } from '../src/matching/score.js';
 import { CITIES, makeCity } from './fixtures.js';
 import type { City, UserProfile } from '@relocatewise/shared';
 
@@ -346,6 +346,66 @@ describe('matching engine — weighting and normalization', () => {
         expect(c2.contribution).toBe(0);
       }
     }
+  });
+
+  it('eight dimensions are exposed on the score record (PRD v3.1.0)', () => {
+    const city = makeCity({ slug: 'a', name: 'A', country: 'X' });
+    const c = scoreCity(city, baseUser);
+    expect(c.contributions.map((x) => x.dimension)).toEqual(EIGHT_DIMENSIONS);
+  });
+
+  it('military_safety: city score / 5', () => {
+    const city = makeCity({
+      slug: 'a', name: 'A', country: 'X',
+      dimensions: { ...makeCity({ slug: 'b', name: 'B', country: 'X' }).dimensions, military_safety: 3 },
+    });
+    const c = scoreCity(
+      city,
+      withDefaults({ military_safety_importance: 2 }),
+    );
+    expect(
+      c.contributions.find((x) => x.dimension === 'military_safety')!.match,
+    ).toBeCloseTo(0.6, 5);
+  });
+
+  it('military_safety importance 0/1/2/3 maps to raw weight 0/1/2.5/4 (Architecture §6.3)', () => {
+    const city = makeCity({ slug: 'a', name: 'A', country: 'X' });
+    for (const [imp, w] of [[0, 0], [1, 1], [2, 2.5], [3, 4]] as const) {
+      const c = scoreCity(
+        city,
+        withDefaults({ military_safety_importance: imp as 0 | 1 | 2 | 3 }),
+      );
+      expect(
+        c.contributions.find((x) => x.dimension === 'military_safety')!.rawWeight,
+      ).toBeCloseTo(w, 5);
+    }
+  });
+
+  it('military_safety weight is 0 when importance is 0', () => {
+    const city = makeCity({ slug: 'a', name: 'A', country: 'X' });
+    const c = scoreCity(city, withDefaults({ military_safety_importance: 0 }));
+    expect(
+      c.contributions.find((x) => x.dimension === 'military_safety')!.weight,
+    ).toBe(0);
+  });
+
+  it('military_safety is a heavy filter when importance is 3 (US-5, AC-5)', () => {
+    // A city with military_safety=1 should rank below an otherwise
+    // identical city with military_safety=5 when the user rated
+    // military_safety importance at 3.
+    const unsafe = makeCity({
+      slug: 'unsafe', name: 'Unsafe', country: 'X',
+      dimensions: { ...makeCity({ slug: 'b', name: 'B', country: 'X' }).dimensions, military_safety: 1 },
+    });
+    const safe = makeCity({
+      slug: 'safe', name: 'Safe', country: 'X',
+      dimensions: { ...makeCity({ slug: 'b', name: 'B', country: 'X' }).dimensions, military_safety: 5 },
+    });
+    const user = withDefaults({ military_safety_importance: 3 });
+    const r = rankCities(user, [unsafe, safe]);
+    expect(r[0]!.city.slug).toBe('safe');
+    expect(r[1]!.city.slug).toBe('unsafe');
+    expect(r[0]!.score).toBeGreaterThan(r[1]!.score);
   });
 
   it('overall score is integer in [0, 100]', () => {

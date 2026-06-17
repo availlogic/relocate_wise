@@ -1,8 +1,7 @@
 /**
  * Tests for LandingPage. We assert on the contract — the headline
- * promise, the CTA target, and the privacy link — without locking
- * in the exact wording of the marketing sentence (which is allowed
- * to evolve independently of the routing).
+ * promise, the CTA target, the value-props grid, and the privacy link
+ * — without locking in the exact wording of the marketing sentence.
  */
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
@@ -21,7 +20,7 @@ describe('<LandingPage />', () => {
   it('renders the headline promise', () => {
     renderPage();
     const heading = screen.getByRole('heading', { level: 1 });
-    expect(heading.textContent?.toLowerCase()).toMatch(/city|fit|live/);
+    expect(heading.textContent?.toLowerCase()).toMatch(/home|data|city/);
   });
 
   it('renders a single primary CTA that routes to /q', () => {
@@ -48,5 +47,13 @@ describe('<LandingPage />', () => {
   it('uses the landing testid on its root', () => {
     renderPage();
     expect(screen.getByTestId('landing')).toBeInTheDocument();
+  });
+
+  it('renders the three-card value-props grid (Screen-Specs §1, v0.3.0)', () => {
+    renderPage();
+    expect(screen.getByTestId('landing-values')).toBeInTheDocument();
+    expect(screen.getByTestId('value-objective')).toBeInTheDocument();
+    expect(screen.getByTestId('value-comparisons')).toBeInTheDocument();
+    expect(screen.getByTestId('value-privacy')).toBeInTheDocument();
   });
 });

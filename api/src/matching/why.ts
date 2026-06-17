@@ -7,13 +7,14 @@
  * emit both, joined with " and ".
  *
  * Templates:
- *   climate    | "Matches your {preference} climate preference"
- *   cost       | "Fits your housing and cost budget"
- *   housing    | "Fits your housing and cost budget"     (shared with cost)
- *   career     | "Strong {industry} job market"
- *   education  | "Strong schools and education options"
- *   healthcare | "Strong healthcare access"
- *   community  | "Matches your {tag1, tag2} lifestyle"
+ *   climate         | "Matches your {preference} climate preference"
+ *   cost            | "Fits your housing and cost budget"
+ *   housing         | "Fits your housing and cost budget"     (shared with cost)
+ *   career          | "Strong {industry} job market"
+ *   education       | "Strong schools and education options"
+ *   healthcare      | "Strong healthcare access"
+ *   community       | "Matches your {tag1, tag2} lifestyle"
+ *   military_safety | "High geopolitical stability and physical safety"
  */
 import { CLIMATE_LABEL_TO_PREFERENCE } from '@relocatewise/shared/climate';
 import type { LifestyleTag } from '@relocatewise/shared';
@@ -106,6 +107,8 @@ function hasUserValue(c: PerDimensionContribution): boolean {
       return v.importance !== 0;
     case 'community':
       return Array.isArray(v.tags) && v.tags.length > 0;
+    case 'military_safety':
+      return v.importance !== 0;
   }
 }
 
@@ -137,6 +140,8 @@ function formatReason(c: PerDimensionContribution): string {
       const pretty = tags.slice(0, 2).map((t) => TAG_PRETTY[t]);
       return `Matches your ${pretty.join(' and ')} lifestyle`;
     }
+    case 'military_safety':
+      return 'High geopolitical stability and physical safety';
   }
 }
 

@@ -8,7 +8,7 @@
     "lat": 40.7128,
     "lng": -74.006,
     "description": "The financial and cultural capital of the U.S., dense and walkable, with the largest metropolitan economy in the world.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -26,12 +26,18 @@
       "healthcare": 4,
       "community": {
         "urban": 3,
-        "suburban": 0, "rural": 0,
+        "suburban": 0,
+        "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 3
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -44,7 +50,7 @@
     "lat": 30.2672,
     "lng": -97.7431,
     "description": "Austin's tech boom has made it one of the fastest-growing U.S. metros, with a young population, live-music scene, and (until recently) no state income tax.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Tropical"
@@ -62,12 +68,18 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 2, "rural": 0,
+        "suburban": 2,
+        "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 1
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -80,7 +92,7 @@
     "lat": 43.6532,
     "lng": -79.3832,
     "description": "Canada's largest city and financial centre, with a globally recognized diversity: over half of residents were born outside Canada.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -98,12 +110,18 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 3
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -116,7 +134,7 @@
     "lat": 49.2827,
     "lng": -123.1207,
     "description": "Pacific coast city framed by mountains and ocean, with strong Asian-Canadian cultural ties and a mild (rainy) climate.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -134,12 +152,18 @@
       "healthcare": 5,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 3,
         "mountain": 2,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 3
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -152,7 +176,7 @@
     "lat": 37.7749,
     "lng": -122.4194,
     "description": "Pacific coast tech capital: high salaries offset by the highest cost of living in the U.S., with a famously entrepreneurial culture.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -170,12 +194,18 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 0, "rural": 0,
+        "suburban": 0,
+        "rural": 0,
         "coastal": 3,
         "mountain": 1,
         "arts_culture": 3,
         "family_oriented": 0,
         "expat_friendly": 2
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -188,7 +218,7 @@
     "lat": 47.6062,
     "lng": -122.3321,
     "description": "Pacific Northwest tech hub anchored by Amazon and Microsoft; surrounded by mountains and water, with a famously rainy climate.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -206,12 +236,18 @@
       "healthcare": 5,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 2,
         "mountain": 3,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 1
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -224,7 +260,7 @@
     "lat": 42.3601,
     "lng": -71.0589,
     "description": "America's college town: dense, walkable, and an anchor of biotech, higher education, and medical research.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -242,12 +278,18 @@
       "healthcare": 5,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 2
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -260,7 +302,7 @@
     "lat": 41.8781,
     "lng": -87.6298,
     "description": "Midwestern hub famous for its architecture, deep-dish pizza, and the Chicago Mercantile Exchange. Large and affordable by coastal standards.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -278,12 +320,18 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 1,
         "mountain": 0,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 2
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -296,7 +344,7 @@
     "lat": 39.7392,
     "lng": -104.9903,
     "description": "Mile-High City: sunny, dry, and a gateway to the Rocky Mountains. Growing fast as a remote-work destination.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -314,12 +362,18 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 2, "rural": 0,
+        "suburban": 2,
+        "rural": 0,
         "coastal": 0,
         "mountain": 3,
         "arts_culture": 2,
         "family_oriented": 2,
         "expat_friendly": 1
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -332,7 +386,7 @@
     "lat": 25.7617,
     "lng": -80.1918,
     "description": "Tropical coastal hub with strong Latin American ties, an active nightlife, and growing tech investment.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Tropical"
@@ -350,12 +404,18 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 3,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 3
+      },
+      "military_safety": 4,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -368,7 +428,7 @@
     "lat": 45.5152,
     "lng": -122.6784,
     "description": "Pacific Northwest city famous for its food carts, indie culture, and easy access to mountains and ocean.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -386,12 +446,18 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 1,
         "mountain": 2,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 1
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -404,7 +470,7 @@
     "lat": 45.5017,
     "lng": -73.5673,
     "description": "Francophone North American city with the lowest rent among Canadian majors, a thriving AI and games industry, and a celebrated food scene.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -422,12 +488,18 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 2
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -440,7 +512,7 @@
     "lat": 19.4326,
     "lng": -99.1332,
     "description": "Sprawling, high-altitude capital with deep history, a thriving arts scene, and one of the best food cultures in the Americas.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Highland"
@@ -458,12 +530,18 @@
       "healthcare": 3,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 0,
         "mountain": 1,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 2
+      },
+      "military_safety": 3,
+      "military_safety_sub": {
+        "conflict_risk": "moderate",
+        "travel_advisory": "level_2"
       }
     }
   },
@@ -476,7 +554,7 @@
     "lat": 34.0522,
     "lng": -118.2437,
     "description": "Car-dependent Pacific coast megacity centered on entertainment, tech, and the largest Mexican-American community in the U.S.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -494,12 +572,18 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 2, "rural": 0,
+        "suburban": 2,
+        "rural": 0,
         "coastal": 3,
         "mountain": 2,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 3
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -512,7 +596,7 @@
     "lat": 33.749,
     "lng": -84.388,
     "description": "Southern business hub and home of the world's busiest airport. Fast-growing, with strong Black-American cultural institutions and a lower cost of living than coastal peers.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -530,12 +614,18 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 2, "rural": 0,
+        "suburban": 2,
+        "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 2,
         "expat_friendly": 1
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -548,7 +638,7 @@
     "lat": 38.7223,
     "lng": -9.1393,
     "description": "Atlantic-coast capital that has become Europe's leading digital-nomad hub, with the D7 visa and a famously low cost of living for Western Europe.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -566,12 +656,18 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 3,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 3
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -584,7 +680,7 @@
     "lat": 41.1579,
     "lng": -8.6291,
     "description": "Smaller, more traditional counterpart to Lisbon, with a strong identity, port-wine heritage, and lower cost of living.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -602,12 +698,18 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 2
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -620,7 +722,7 @@
     "lat": 41.3851,
     "lng": 2.1734,
     "description": "Catalan capital with Mediterranean beaches, Gaudí architecture, and a strong startup scene. Famous for food and outdoor lifestyle.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -638,12 +740,18 @@
       "healthcare": 4,
       "community": {
         "urban": 3,
-        "suburban": 0, "rural": 0,
+        "suburban": 0,
+        "rural": 0,
         "coastal": 3,
         "mountain": 0,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 3
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -656,7 +764,7 @@
     "lat": 40.4168,
     "lng": -3.7038,
     "description": "Spain's high-altitude capital, with vibrant nightlife, strong public healthcare, and lower living costs than Paris or London.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -674,12 +782,18 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 0,
         "mountain": 1,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 2
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -692,7 +806,7 @@
     "lat": 52.52,
     "lng": 13.405,
     "description": "Germany's startup capital: cheap by Western European standards, intensely creative, and a magnet for English-speaking expats.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -710,12 +824,18 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 3,
         "family_oriented": 0,
         "expat_friendly": 3
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -728,7 +848,7 @@
     "lat": 52.3676,
     "lng": 4.9041,
     "description": "Compact canal city with the highest English proficiency in continental Europe and one of the strongest startup / tech ecosystems.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -746,12 +866,18 @@
       "healthcare": 5,
       "community": {
         "urban": 2,
-        "suburban": 2, "rural": 0,
+        "suburban": 2,
+        "rural": 0,
         "coastal": 1,
         "mountain": 0,
         "arts_culture": 3,
         "family_oriented": 2,
         "expat_friendly": 3
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -764,7 +890,7 @@
     "lat": 48.8566,
     "lng": 2.3522,
     "description": "Global capital for culture, fashion, and finance. Expensive to live in, but with a strong public services backbone.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -782,12 +908,18 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 2
+      },
+      "military_safety": 4,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -800,7 +932,7 @@
     "lat": 51.5074,
     "lng": -0.1278,
     "description": "Europe's largest financial centre and a global hub for tech, creative industries, and academia. Among the most expensive cities worldwide.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -818,12 +950,18 @@
       "healthcare": 4,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 1,
         "mountain": 0,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 3
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -836,7 +974,7 @@
     "lat": 47.3769,
     "lng": 8.5417,
     "description": "Wealthy, efficient, and orderly Alpine city. Among the highest salaries and the highest costs of living in the world.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -854,12 +992,18 @@
       "healthcare": 5,
       "community": {
         "urban": 2,
-        "suburban": 2, "rural": 0,
+        "suburban": 2,
+        "rural": 0,
         "coastal": 0,
         "mountain": 2,
         "arts_culture": 2,
         "family_oriented": 2,
         "expat_friendly": 1
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -872,7 +1016,7 @@
     "lat": 50.0755,
     "lng": 14.4378,
     "description": "Central European capital with a beautiful historic core, low cost of living, and a fast-growing tech scene.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -890,12 +1034,18 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 2
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -908,7 +1058,7 @@
     "lat": 1.3521,
     "lng": 103.8198,
     "description": "City-state that consistently tops global rankings for education, healthcare, and ease of doing business.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Tropical"
@@ -926,12 +1076,18 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 1,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 2,
         "expat_friendly": 3
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -944,7 +1100,7 @@
     "lat": 35.6762,
     "lng": 139.6503,
     "description": "The world's largest metropolitan economy: ultra-safe, ultra-efficient, with famously low crime and excellent public transport.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -962,12 +1118,18 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 1,
         "mountain": 1,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 1
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -980,7 +1142,7 @@
     "lat": 37.5665,
     "lng": 126.978,
     "description": "Northeast Asian megacity famous for K-culture, ubiquitous connectivity, and a fast-growing startup scene.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -998,12 +1160,18 @@
       "healthcare": 5,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 0,
         "mountain": 1,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 1
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -1016,7 +1184,7 @@
     "lat": -33.8688,
     "lng": 151.2093,
     "description": "Harbour city with a Mediterranean climate, strong points-based immigration pathways, and high quality of life.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -1034,12 +1202,18 @@
       "healthcare": 5,
       "community": {
         "urban": 2,
-        "suburban": 2, "rural": 0,
+        "suburban": 2,
+        "rural": 0,
         "coastal": 3,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 2,
         "expat_friendly": 2
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -1052,7 +1226,7 @@
     "lat": 13.7563,
     "lng": 100.5018,
     "description": "Southeast Asian megacity famous for food, low cost of living, and a large long-stay expat community.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Tropical"
@@ -1070,12 +1244,18 @@
       "healthcare": 3,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 3
+      },
+      "military_safety": 3,
+      "military_safety_sub": {
+        "conflict_risk": "moderate",
+        "travel_advisory": "level_2"
       }
     }
   },
@@ -1088,7 +1268,7 @@
     "lat": -34.6037,
     "lng": -58.3816,
     "description": "Paris of South America: tango, steak, and European architecture, with chronic currency instability that distorts expat budgets.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -1106,12 +1286,18 @@
       "healthcare": 3,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 3,
         "family_oriented": 1,
         "expat_friendly": 2
+      },
+      "military_safety": 3,
+      "military_safety_sub": {
+        "conflict_risk": "moderate",
+        "travel_advisory": "level_2"
       }
     }
   },
@@ -1124,7 +1310,7 @@
     "lat": -33.4489,
     "lng": -70.6693,
     "description": "Modern, mid-sized Andean capital framed by the Andes. Most stable economy and strongest institutions in the region.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -1142,12 +1328,18 @@
       "healthcare": 4,
       "community": {
         "urban": 2,
-        "suburban": 2, "rural": 0,
+        "suburban": 2,
+        "rural": 0,
         "coastal": 0,
         "mountain": 3,
         "arts_culture": 1,
         "family_oriented": 1,
         "expat_friendly": 1
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -1160,7 +1352,7 @@
     "lat": -12.0464,
     "lng": -77.0428,
     "description": "Coastal Pacific capital with a world-class food scene, and an arid microclimate kept cool by the Humboldt current.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Arid"
@@ -1178,12 +1370,18 @@
       "healthcare": 3,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 1
+      },
+      "military_safety": 3,
+      "military_safety_sub": {
+        "conflict_risk": "moderate",
+        "travel_advisory": "level_2"
       }
     }
   },
@@ -1196,7 +1394,7 @@
     "lat": -23.5505,
     "lng": -46.6333,
     "description": "Latin America's largest economy, with a dense, multicultural population and a strong business / tech scene.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Tropical"
@@ -1214,12 +1412,18 @@
       "healthcare": 2,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 0,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 1
+      },
+      "military_safety": 3,
+      "military_safety_sub": {
+        "conflict_risk": "moderate",
+        "travel_advisory": "level_2"
       }
     }
   },
@@ -1232,7 +1436,7 @@
     "lat": 6.2476,
     "lng": -75.5658,
     "description": "Once notorious, now a model of urban transformation: year-round spring weather, growing digital nomad scene, and a strong sense of place.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Tropical"
@@ -1250,12 +1454,18 @@
       "healthcare": 3,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 0,
         "mountain": 2,
         "arts_culture": 1,
         "family_oriented": 1,
         "expat_friendly": 2
+      },
+      "military_safety": 2,
+      "military_safety_sub": {
+        "conflict_risk": "elevated",
+        "travel_advisory": "level_3"
       }
     }
   },
@@ -1268,7 +1478,7 @@
     "lat": -33.9249,
     "lng": 18.4241,
     "description": "Coastal city below Table Mountain: Mediterranean climate, strong food / wine culture, and a critical-skills visa pathway.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -1286,12 +1496,18 @@
       "healthcare": 3,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 3,
         "mountain": 3,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 2
+      },
+      "military_safety": 3,
+      "military_safety_sub": {
+        "conflict_risk": "moderate",
+        "travel_advisory": "level_2"
       }
     }
   },
@@ -1304,7 +1520,7 @@
     "lat": 25.2048,
     "lng": 55.2708,
     "description": "Zero-income-tax Gulf city with a heavily expat population, a luxury lifestyle, and the Golden Visa long-stay program.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Arid"
@@ -1322,12 +1538,18 @@
       "healthcare": 4,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 1,
         "family_oriented": 1,
         "expat_friendly": 3
+      },
+      "military_safety": 5,
+      "military_safety_sub": {
+        "conflict_risk": "low",
+        "travel_advisory": "level_1"
       }
     }
   },
@@ -1340,7 +1562,7 @@
     "lat": 32.0853,
     "lng": 34.7818,
     "description": "Mediterranean tech hub, second only to Silicon Valley in startup density per capita. Beach-and-business lifestyle.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -1358,12 +1580,18 @@
       "healthcare": 4,
       "community": {
         "urban": 3,
-        "suburban": 0, "rural": 0,
+        "suburban": 0,
+        "rural": 0,
         "coastal": 3,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 2
+      },
+      "military_safety": 2,
+      "military_safety_sub": {
+        "conflict_risk": "elevated",
+        "travel_advisory": "level_3"
       }
     }
   },
@@ -1376,7 +1604,7 @@
     "lat": 41.0082,
     "lng": 28.9784,
     "description": "Transcontinental megacity straddling Europe and Asia, with deep history, a strong food culture, and a recently launched citizenship-by-investment path.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -1394,12 +1622,18 @@
       "healthcare": 3,
       "community": {
         "urban": 3,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 1
+      },
+      "military_safety": 2,
+      "military_safety_sub": {
+        "conflict_risk": "elevated",
+        "travel_advisory": "level_3"
       }
     }
   },
@@ -1412,7 +1646,7 @@
     "lat": 33.5731,
     "lng": -7.5898,
     "description": "Morocco's Atlantic-coast business hub, with French as a working language and an affordable Mediterranean lifestyle.",
-    "last_updated": "2026-01-15",
+    "last_updated": "2026-06-17",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -1430,12 +1664,18 @@
       "healthcare": 3,
       "community": {
         "urban": 2,
-        "suburban": 1, "rural": 0,
+        "suburban": 1,
+        "rural": 0,
         "coastal": 2,
         "mountain": 0,
         "arts_culture": 1,
         "family_oriented": 1,
         "expat_friendly": 1
+      },
+      "military_safety": 3,
+      "military_safety_sub": {
+        "conflict_risk": "moderate",
+        "travel_advisory": "level_2"
       }
     }
   }

@@ -7,16 +7,20 @@
  * It does not gate any tracking, because the MVP has none. Future
  * analytics can read the same key to decide whether to load.
  *
- * Storage key: `rw:consent` → `"accepted" | "declined" | null`.
+ * v0.3.0 changes:
+ *   - Storage key renamed from `rw:consent` to `rw:cookie_consent`
+ *     to match Functional-Test-Cases FTC-1.
+ *   - Banner is now bottom-fixed (Screen-Specs §1 + UI-Layouts §1)
+ *     instead of a top strip.
+ *
+ * Storage key: `rw:cookie_consent` → `"accepted" | "declined" | null`.
  * The banner is rendered when the key is absent and dismissed on click.
- * It is intentionally unobtrusive (a thin strip at the top, not a modal)
- * to match the PRD's "no signup walls" framing (PRD §3.1 S8).
  */
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './ConsentBanner.css';
 
-const STORAGE_KEY = 'rw:consent';
+const STORAGE_KEY = 'rw:cookie_consent';
 type ConsentState = 'accepted' | 'declined';
 
 function readConsent(): ConsentState | null {

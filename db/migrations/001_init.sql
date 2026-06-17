@@ -27,7 +27,10 @@ CREATE TABLE IF NOT EXISTS cities (
 -- and lets us add a new dimension without a migration.
 CREATE TABLE IF NOT EXISTS city_scores (
   city_id     INTEGER NOT NULL REFERENCES cities(id) ON DELETE CASCADE,
-  dimension   TEXT NOT NULL,
+  dimension   TEXT NOT NULL CHECK (dimension IN (
+                'climate', 'cost', 'housing', 'career', 'education',
+                'healthcare', 'community', 'military_safety'
+              )),
   score       SMALLINT NOT NULL CHECK (score BETWEEN 0 AND 5),
   sub_scores  JSONB,
   PRIMARY KEY (city_id, dimension)
@@ -36,3 +39,4 @@ CREATE TABLE IF NOT EXISTS city_scores (
 CREATE INDEX IF NOT EXISTS cities_region_idx          ON cities (region);
 CREATE INDEX IF NOT EXISTS cities_country_code_idx   ON cities (country_code);
 CREATE INDEX IF NOT EXISTS city_scores_dimension_idx ON city_scores (dimension);
+

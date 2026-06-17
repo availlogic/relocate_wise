@@ -15,9 +15,10 @@ test('E2E-3 Start Over clears the shortlist and routes to landing', async ({ pag
   // Run a quick quiz end-to-end so we land on /results.
   await page.getByTestId('landing-cta').click();
   await page.getByTestId('climate-mediterranean').click({ force: true });
-  // 6 next-clicks walk steps 1..7 (the climate click keeps us on
-  // step 1; each next advances by one).
-  for (let i = 0; i < 6; i++) await page.getByTestId('wizard-next').click();
+  // 7 next-clicks walk steps 1..8 (the climate click keeps us on
+  // step 1; each next advances by one). v0.3.0: 8 questions, so we
+  // need 7 advances to reach the submit on step 8.
+  for (let i = 0; i < 7; i++) await page.getByTestId('wizard-next').click();
   await page.getByTestId('submit').click();
   await expect(page).toHaveURL(/\/results$/);
 

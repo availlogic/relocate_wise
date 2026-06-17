@@ -3,7 +3,7 @@
  * payload as three grouped lists of bar rows (Overall, Career by
  * industry, Community). The "Climate" row uses the city climate label
  * as a sub-string instead of a numeric bar, per the visualization
- * design in the PRD.
+ * design in the PRD. v0.3.0: 6 overall rows (added Military Safety).
  */
 import { describe, expect, it } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
@@ -23,6 +23,7 @@ function dimensionsWithClimate(label: string, cost: number): CityDimensionsT {
       urban: 1, suburban: 1, rural: 1, coastal: 1, mountain: 1,
       arts_culture: 1, family_oriented: 1, expat_friendly: 1,
     },
+    military_safety: 4,
   };
 }
 
@@ -34,7 +35,7 @@ describe('<CityDimensions />', () => {
     expect(screen.getByRole('heading', { name: 'Community' })).toBeInTheDocument();
   });
 
-  it('renders five Overall rows including Climate, Cost, Housing, Education, Healthcare', () => {
+  it('renders six Overall rows including Climate, Cost, Housing, Education, Healthcare, Military safety', () => {
     const dims: CityDimensionsT = {
       climate: { label: 'Mediterranean' },
       cost: 3, housing: 4, education: 5, healthcare: 2,
@@ -43,11 +44,12 @@ describe('<CityDimensions />', () => {
         urban: 4, suburban: 3, rural: 2, coastal: 5, mountain: 1,
         arts_culture: 5, family_oriented: 3, expat_friendly: 5,
       },
+      military_safety: 5,
     };
     render(<CityDimensions dimensions={dims} />);
     const overall = screen.getByRole('heading', { name: 'Overall' }).parentElement!;
     const rows = within(overall).getAllByRole('listitem');
-    expect(rows).toHaveLength(5);
+    expect(rows).toHaveLength(6);
     const labels = rows.map((r) => r.querySelector('.city-dims__label')!.textContent);
     expect(labels).toEqual([
       'Climate',
@@ -55,6 +57,7 @@ describe('<CityDimensions />', () => {
       'Housing',
       'Education',
       'Healthcare',
+      'Military safety',
     ]);
   });
 
@@ -83,6 +86,7 @@ describe('<CityDimensions />', () => {
         urban: 1, suburban: 1, rural: 1, coastal: 1, mountain: 1,
         arts_culture: 1, family_oriented: 1, expat_friendly: 1,
       },
+      military_safety: 3,
     };
     render(<CityDimensions dimensions={dims} />);
     const costFill = screen
@@ -104,6 +108,7 @@ describe('<CityDimensions />', () => {
         urban: 1, suburban: 1, rural: 1, coastal: 1, mountain: 1,
         arts_culture: 1, family_oriented: 1, expat_friendly: 1,
       },
+      military_safety: 3,
     };
     render(<CityDimensions dimensions={dims} />);
     const costFill = screen
@@ -125,6 +130,7 @@ describe('<CityDimensions />', () => {
         urban: 1, suburban: 1, rural: 1, coastal: 1, mountain: 1,
         arts_culture: 1, family_oriented: 1, expat_friendly: 1,
       },
+      military_safety: 5,
     };
     render(<CityDimensions dimensions={dims} />);
     const costFill = screen
@@ -146,6 +152,7 @@ describe('<CityDimensions />', () => {
     expect(screen.getByTestId('dim-tech')).toBeInTheDocument();
     expect(screen.getByTestId('dim-coastal')).toBeInTheDocument();
     expect(screen.getByTestId('dim-arts-culture')).toBeInTheDocument();
+    expect(screen.getByTestId('dim-military-safety')).toBeInTheDocument();
     expect(screen.getByTestId('city-dims')).toBeInTheDocument();
   });
 

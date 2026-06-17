@@ -93,7 +93,7 @@ describeMaybe('PostgresCityRepository', () => {
     expect(new Set(names)).toEqual(new Set(SEED_CITIES.map((c) => c.name)));
   });
 
-  it('findBySlug() returns the matching city with all 7 dimensions', async () => {
+  it('findBySlug() returns the matching city with all 8 dimensions', async () => {
     const lisbon = await repo!.findBySlug('lisbon-pt');
     expect(lisbon).not.toBeNull();
     expect(lisbon!.name).toBe('Lisbon');
@@ -103,6 +103,9 @@ describeMaybe('PostgresCityRepository', () => {
     expect(lisbon!.dimensions.cost).toBeLessThanOrEqual(5);
     expect(lisbon!.dimensions.career.tech).toBeGreaterThanOrEqual(0);
     expect(lisbon!.dimensions.community.arts_culture).toBeGreaterThanOrEqual(0);
+    // v0.3.0: 8th dimension.
+    expect(lisbon!.dimensions.military_safety).toBeGreaterThanOrEqual(1);
+    expect(lisbon!.dimensions.military_safety).toBeLessThanOrEqual(5);
   });
 
   it('findBySlug() returns null on an unknown slug', async () => {

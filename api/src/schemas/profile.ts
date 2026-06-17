@@ -45,6 +45,7 @@ export const UserProfileSchema = z
     career_industry: industry.nullable().optional(),
     education: education.optional(),
     healthcare_importance: importance.optional(),
+    military_safety_importance: importance.optional(),
     lifestyle_tags: z.array(lifestyleTag).optional(),
   })
   .strict(); // reject unknown fields so we can spot client drift early

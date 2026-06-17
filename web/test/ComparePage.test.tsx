@@ -8,8 +8,8 @@
  *   - 3 cities → comparison grid + table.
  *
  * Plus the row-level rules:
- *   - 7 dimensions are rendered (climate, cost, housing, career avg,
- *     education, healthcare, community max).
+ *   - 8 dimensions are rendered (climate, cost, housing, career avg,
+ *     education, healthcare, community max, military safety) — v0.3.0.
  *   - Cost / Housing are inverted: lower index wins (Acceptance-Criteria
  *     Feature 5).
  *   - Removing the last-but-one (drops below 2) navigates with a
@@ -94,7 +94,7 @@ describe('<ComparePage />', () => {
     expect(within(grid3).getByTestId('compare-card-tokyo')).toBeInTheDocument();
   });
 
-  it('renders all 7 dimension rows', () => {
+  it('renders all 8 dimension rows (v0.3.0)', () => {
     renderPage([
       makeCity('lisbon', 'Lisbon', 'PT'),
       makeCity('berlin', 'Berlin', 'DE'),
@@ -107,6 +107,27 @@ describe('<ComparePage />', () => {
     expect(within(table).getByTestId('compare-row-education')).toBeInTheDocument();
     expect(within(table).getByTestId('compare-row-healthcare')).toBeInTheDocument();
     expect(within(table).getByTestId('compare-row-community-max')).toBeInTheDocument();
+    expect(within(table).getByTestId('compare-row-military-safety')).toBeInTheDocument();
+  });
+
+  it('military safety row highlights the higher score (FTC-13 v0.3.0)', () => {
+    const safe = makeCity('safe', 'Safe', 'PT', {
+      city: {
+        ...makeMatchedCity().city,
+        slug: 'safe', name: 'Safe', country: 'Portugal', country_code: 'PT',
+        dimensions: { ...makeMatchedCity().city.dimensions, military_safety: 5 },
+      },
+    });
+    const risky = makeCity('risky', 'Risky', 'DE', {
+      city: {
+        ...makeMatchedCity().city,
+        slug: 'risky', name: 'Risky', country: 'Germany', country_code: 'DE',
+        dimensions: { ...makeMatchedCity().city.dimensions, military_safety: 1 },
+      },
+    });
+    renderPage([safe, risky]);
+    expect(screen.getByTestId('compare-cell-military-safety-safe').className).toMatch(/--best/);
+    expect(screen.getByTestId('compare-cell-military-safety-risky').className).not.toMatch(/--best/);
   });
 
   it('inverts the winner on cost (lower index wins)', () => {

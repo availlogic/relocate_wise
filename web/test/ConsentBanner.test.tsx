@@ -3,7 +3,7 @@
  *
  * The banner is the only surface in the MVP that interacts with
  * `localStorage` (Architecture §11: no cookies, no tracking). It must:
- *   1. Render on first visit (no `rw:consent` key set)
+ *   1. Render on first visit (no `rw:cookie_consent` key set)
  *   2. Provide a link to the Privacy page
  *   3. Hide on accept or decline, and remember the choice
  *   4. Stay hidden on subsequent visits once a choice is stored
@@ -15,7 +15,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { ConsentBanner } from '../src/components/ConsentBanner';
 
-const STORAGE_KEY = 'rw:consent';
+const STORAGE_KEY = 'rw:cookie_consent';
 
 function clearStorage() {
   window.localStorage.clear();

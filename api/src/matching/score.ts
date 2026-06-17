@@ -16,6 +16,8 @@
  * The top contributing dimensions per city are returned alongside the
  * score so the templated "why this fits you" generator (why.ts) can phrase
  * the explanation.
+ *
+ * v0.3.0: 8 dimensions (added `military_safety` per PRD v3.1.0).
  */
 import {
   CLIMATE_COMPATIBILITY,
@@ -29,7 +31,7 @@ import type {
   LifestyleTag,
 } from '@relocatewise/shared';
 
-export const SEVEN_DIMENSIONS = [
+export const EIGHT_DIMENSIONS = [
   'climate',
   'cost',
   'housing',
@@ -37,8 +39,12 @@ export const SEVEN_DIMENSIONS = [
   'education',
   'healthcare',
   'community',
+  'military_safety',
 ] as const;
-export type Dimension = (typeof SEVEN_DIMENSIONS)[number];
+export type Dimension = (typeof EIGHT_DIMENSIONS)[number];
+
+/** @deprecated Use `EIGHT_DIMENSIONS`. Kept for back-compat in tests. */
+export const SEVEN_DIMENSIONS = EIGHT_DIMENSIONS;
 
 /**
  * Per-dimension match score in the range [0, 1].
@@ -52,8 +58,9 @@ export interface PerDimensionContribution {
   /**
    * The raw weight before normalization (Architecture §6.3 table).
    * Importance 0/1/2/3 maps to 0/0.5/1/2 for cost, housing, healthcare;
-   * 1 for climate; 0 or 1 for career/education/community. Exposed for
-   * testability and introspection; the API does not return it.
+   * 0/1/2.5/4 for military_safety; 1 for climate; 0 or 1 for
+   * career/education/community. Exposed for testability and
+   * introspection; the API does not return it.
    */
   rawWeight: number;
   /** The raw m(c, d) ∈ [0,1]. */
@@ -164,9 +171,30 @@ function communityMatch(city: CityDimensions['community'], user: UserProfile): D
   return max / 5;
 }
 
+/**
+ * Military safety: city score / 5 (Architecture §6.2 — same shape as
+ * healthcare/education; 5 = extremely safe, 1 = high conflict risk).
+ */
+function militarySafetyMatch(city: number, _user: UserProfile): DimensionMatch {
+  return city / 5;
+}
+
 // ---------------------------------------------------------------------------
 // Per-dimension raw weight (Architecture §6.3)
 // ---------------------------------------------------------------------------
+
+/**
+ * Maps the `Importance` slider (0..3) to the raw weight for the
+ * `military_safety` dimension, per Architecture §6.3. The mapping is
+ * steeper than the other dimensions because a higher safety priority
+ * acts as a heavy filter: 0/1/2/3 → 0/1/2.5/4.
+ */
+function militarySafetyWeight(importance: number): number {
+  if (importance <= 0) return 0;
+  if (importance === 1) return 1;
+  if (importance === 2) return 2.5;
+  return 4;
+}
 
 function rawWeights(user: UserProfile): Record<Dimension, number> {
   // importance 0..3 maps to weight 0, 0.5, 1, 2
@@ -179,6 +207,7 @@ function rawWeights(user: UserProfile): Record<Dimension, number> {
     education: user.education === 'not_relevant' ? 0 : 1,
     healthcare: impToW(user.healthcare_importance),
     community: user.lifestyle_tags.length === 0 ? 0 : 1,
+    military_safety: militarySafetyWeight(user.military_safety_importance),
   };
 }
 
@@ -267,12 +296,21 @@ export function scoreCity(city: City, user: UserProfile): ScoredCity {
       userValue: { tags: user.lifestyle_tags },
       cityValue: maxCommunityTag(dims.community, user.lifestyle_tags),
     },
+    military_safety: {
+      dimension: 'military_safety',
+      weight: 0,
+      rawWeight: rawW.military_safety,
+      match: militarySafetyMatch(dims.military_safety, user),
+      contribution: 0,
+      userValue: { importance: user.military_safety_importance },
+      cityValue: dims.military_safety,
+    },
   };
 
   // Normalize weights over the **included** dimensions (rawW > 0).
-  const included = SEVEN_DIMENSIONS.filter((d) => rawW[d] > 0);
+  const included = EIGHT_DIMENSIONS.filter((d) => rawW[d] > 0);
   const totalRaw = included.reduce((acc, d) => acc + rawW[d], 0);
-  for (const d of SEVEN_DIMENSIONS) {
+  for (const d of EIGHT_DIMENSIONS) {
     const w = totalRaw === 0 ? 0 : rawW[d] / totalRaw;
     records[d].weight = w;
   }
@@ -301,7 +339,7 @@ export function scoreCity(city: City, user: UserProfile): ScoredCity {
     city,
     score,
     rawScore,
-    contributions: SEVEN_DIMENSIONS.map((d) => records[d]),
+    contributions: EIGHT_DIMENSIONS.map((d) => records[d]),
   };
 }
 

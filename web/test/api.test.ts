@@ -25,6 +25,7 @@ const SAMPLE_PROFILE: UserProfile = {
   career_industry: 'tech',
   education: 'important',
   healthcare_importance: 1,
+  military_safety_importance: 0,
   lifestyle_tags: ['urban'],
 };
 
