@@ -1,10 +1,10 @@
 ---
 title: "Project Constraints"
-version: "1.0.0"
+version: "1.1.0"
 status: draft
 author: "Human"
 created: "2026-06-01"
-updated: "2026-06-01"
+updated: "2026-06-17"
 reviewers: []
 related_docs:
   - "docs/Vision.md"
@@ -16,7 +16,7 @@ related_docs:
 
 | Layer    | Technology     | Rationale                                                                 |
 | -------- | -------------- | ------------------------------------------------------------------------- |
-| Backend  | Node.js        | JavaScript ubiquity, extensive ecosystem, strong JSON handling, async I/O |
+| Backend  | Node.js        | JavaScript ubiquity, extensive ecosystem, strong JSON handling, async I/O; hosts both API server and scheduled worker jobs |
 | Frontend | React          | Component reusability, large community, SEO-friendly SSR option          |
 | Database | PostgreSQL     | Robust relational data, excellent geospatial extensions (PostGIS), ACID compliance |
 
@@ -37,12 +37,14 @@ related_docs:
 
 ## Additional Constraints
 
-- **Timeline**: MVP delivery within 2 weeks; focus on core location comparison features before extended data sources
-- **Compliance**: GDPR-compliant data handling for EU users; privacy policy and user consent flows required before launch
-- **External dependencies**: Minimize third-party API reliance; cache external data where possible to reduce runtime costs and single points of failure
+- **Timeline**: MVP delivery within 2 weeks; focus on core location comparison features and seed database before extending scheduled collection scripts
+- **Compliance**: GDPR-compliant data handling for EU users; privacy policy and user consent flows required before launch; raw data collected from public sources must comply with data licensing agreements (e.g., Creative Commons, Numbeo API terms)
+- **External dependencies & Runtime decoupling**: Minimize third-party API reliance during request time; cache external data in the backend database. All authoritative data collection (UN, OECD, open data portals, Wikipedia, Numbeo) must run asynchronously via scheduled workers (weekly or monthly) and never run synchronously within the matching API path.
+- **Geopolitical & Conflict Indicators**: Must explicitly evaluate military safety as a standard dimension, lowering matching suitability for zones with active regional conflicts or heightened geopolitical instability.
 
 ## Change Log
 
-| Date       | Version | Author | Changes         |
-| ---------- | ------- | ------ | --------------- |
-| 2026-06-01 | 1.0.0   | Human  | Initial version |
+| Date       | Version | Author      | Changes                                                                                      |
+| ---------- | ------- | ----------- | -------------------------------------------------------------------------------------------- |
+| 2026-06-01 | 1.0.0   | Human       | Initial version                                                                              |
+| 2026-06-17 | 1.1.0   | Antigravity | Added scheduled worker and external raw data collection constraints, military safety details |

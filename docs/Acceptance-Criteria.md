@@ -8,7 +8,6 @@ updated: "2026-06-10"
 related_docs:
   - "docs/PRD.md"
   - "docs/Architecture.md"
-  - "docs/Review-Findings.md"
 ---
 
 # RelocateWise — Acceptance Criteria & Definition of Done
@@ -29,8 +28,8 @@ This document provides the final acceptance criteria for each major feature area
 
 ### Feature 2: Preference Questionnaire
 *   **Acceptance Conditions**:
-    *   The UI must render exactly 7 questionnaire steps sequentially, showing one question per screen.
-    *   A progress bar must dynamically reflect steps (14.2% per step).
+    *   The UI must render exactly 8 questionnaire steps sequentially, showing one question per screen.
+    *   A progress bar must dynamically reflect steps (12.5% per step).
     *   "Back" navigation must return the user to the previous step while preserving their chosen option.
     *   "Skip" navigation must be enabled on all steps, advancing the user and recording a neutral weight/default.
     *   On the final step, the primary button must render as "View Matches". Clicking it must submit the payload and navigate to `/results`.
@@ -53,7 +52,7 @@ This document provides the final acceptance criteria for each major feature area
 
 ### Feature 5: Side-by-Side Comparison Matrix
 *   **Acceptance Conditions**:
-    *   Matrix aligns the 7 dimensions row-by-row for 2 or 3 shortlisted cities.
+    *   Matrix aligns the 8 dimensions row-by-row for 2 or 3 shortlisted cities.
     *   For each row, the cell containing the highest score must be highlighted with a distinctive border and background.
     *   If Cost of Living is evaluated, the lower index score (representing cheaper cost) must be treated as the winner.
     *   Removing a city from the comparison must adjust the columns immediately. If columns fall below 2, the user is redirected to the `/results` view.

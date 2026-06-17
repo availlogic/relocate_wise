@@ -8,7 +8,6 @@ updated: "2026-06-10"
 related_docs:
   - "docs/API_Spec.md"
   - "docs/Database.md"
-  - "docs/Review-Findings.md"
 ---
 
 # RelocateWise — Integration Test Cases
@@ -79,7 +78,7 @@ This document describes the backend and system integration test cases for the Re
     3. Query database: `SELECT COUNT(*)::int AS count FROM city_scores;`.
 *   **Expected Result**:
     *   `cities` count is equal to the length of the JSON seed file (e.g., 40).
-    *   `city_scores` count is exactly equal to `cities` count multiplied by the number of dimensions (e.g., $40 \times 7 = 280$).
+    *   `city_scores` count is exactly equal to `cities` count multiplied by the number of dimensions (e.g., $40 \times 8 = 320$).
 
 #### ITC-4: City Profile Query (GET /api/cities/:slug)
 *   **Purpose**: Verify the backend joins the `cities` table and the `city_scores` table correctly, resolving the JSONB structures.

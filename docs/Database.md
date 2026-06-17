@@ -1,14 +1,14 @@
 # RelocateWise — Database Design
 
-This document details the database architecture for the RelocateWise Minimum Viable Product (MVP). Under the project constraints (`docs/Constraints.md`), the database runs on PostgreSQL 16 with PostGIS 3.4 extensions, hosted inside a Docker container on the target Ubuntu environment.
+This document details the database architecture for RelocateWise. Under the project constraints (`docs/Constraints.md`), the database runs on PostgreSQL 16 with PostGIS 3.4 extensions, hosted inside a Docker container on the target Ubuntu environment.
 
 ---
 
 ## 1. Design Principles
 
-1. **Normalized Dimension Scoring**: Rather than flattening scores as columns on the `cities` table, dimension scores are stored in a separate `city_scores` table (one row per city per dimension). This allows adding new metrics (e.g., "Air Quality" or "Tax Index") in the future without modifying the table schema or running database migrations.
+1. **Normalized Dimension Scoring**: Rather than flattening scores as columns on the `cities` table, dimension scores are stored in a separate `city_scores` table (one row per city per dimension). This allows adding new metrics (e.g., "Air Quality" or "Military Safety") in the future without modifying the table schema or running database migrations.
 2. **Zero-PII Footprint**: In compliance with the GDPR-compliant state requirements defined in the PRD, the database stores **only** global city data. No user sessions, questionnaire profiles, shortlists, or lead captures are persisted.
-3. **Seeding from Version-Controlled Source**: The database is designed as a build artifact. The canonical source of truth for the city dataset resides in version control (`db/seeds/cities.json`). Database initialization and recovery re-seed the tables from this file.
+3. **Primary Source Dynamic Updates & Seed Decoupling**: While the database is seeded from a static JSON (`db/seeds/cities.json`) on initial startup, it acts as a dynamic store. An automated ingestion worker periodically updates the scores directly from authoritative primary sources.
 
 ---
 
@@ -32,7 +32,7 @@ erDiagram
     }
     CITY_SCORES {
         INTEGER city_id FK
-        TEXT dimension PK "climate | cost | housing | career | education | healthcare | community"
+        TEXT dimension PK "climate | cost | housing | career | education | healthcare | community | military_safety"
         SMALLINT score "CHECK between 0 and 5"
         JSONB sub_scores "Nullable key-score mappings"
     }
@@ -47,7 +47,7 @@ erDiagram
 The database schema is initialized by the migration script [001_init.sql](file:///Users/victorxu/projects/relocate_wise/db/migrations/001_init.sql).
 
 ```sql
--- Enable PostGIS extensions for future geospatial spatial filtering (e.g., "cities within X miles of coast")
+-- Enable PostGIS extensions for future geospatial spatial filtering
 CREATE EXTENSION IF NOT EXISTS postgis;
 
 CREATE TABLE IF NOT EXISTS cities (
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS cities (
 
 CREATE TABLE IF NOT EXISTS city_scores (
   city_id     INTEGER NOT NULL REFERENCES cities(id) ON DELETE CASCADE,
-  dimension   TEXT NOT NULL,
+  dimension   TEXT NOT NULL CHECK (dimension IN ('climate', 'cost', 'housing', 'career', 'education', 'healthcare', 'community', 'military_safety')),
   score       SMALLINT NOT NULL CHECK (score BETWEEN 0 AND 5),
   sub_scores  JSONB,
   PRIMARY KEY (city_id, dimension)
@@ -82,7 +82,7 @@ CREATE INDEX IF NOT EXISTS city_scores_dimension_idx ON city_scores (dimension);
 ### Table: `cities`
 
 Stores the primary metadata and geo-coordinates for each location.
-* **`geom` (GEOMETRY)**: A PostGIS geography/geometry column initialized with the Spatial Reference System Identifier (SRID) **4326** (WGS 84 coordinate reference system). It is generated automatically during seeding from `lat` and `lng` parameters using:
+* **`geom` (GEOMETRY)**: A PostGIS geometry column initialized with SRID **4326** (WGS 84 coordinate reference system). Generated automatically during seeding/updates:
   ```sql
   ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)
   ```
@@ -90,59 +90,61 @@ Stores the primary metadata and geo-coordinates for each location.
 ### Table: `city_scores`
 
 Stores the standardized dimension scores (0–5 rating, where 5 is best/highest rating) and specific sub-score breakdowns.
-* **`score`**: Normalized dimension score. For composite indicators like Cost of Living, the integer score represents the primary scale. For multi-valued categories like Climate, this is set to a default fallback value `0` because the actual label in `sub_scores` is evaluated.
+* **`score`**: Normalized dimension score (1-5 range).
 * **`sub_scores`**: A `JSONB` structure designed to store sub-dimensional detail.
   * **Climate sub-scores**: Contains the climate classification label.
-    ```json
-    { "label": "Mediterranean" }
-    ```
-  * **Career sub-scores**: Key-value pairs containing 1-5 ratings across 5 main industries (Tech, Finance, Healthcare, Creative, Manufacturing).
-    ```json
-    {
-      "tech": 3,
-      "finance": 1,
-      "healthcare": 2,
-      "creative": 1,
-      "manufacturing": 2
-    }
-    ```
-  * **Community sub-scores**: Key-value pairs containing 0-5 ratings across community/lifestyle tags.
-    ```json
-    {
-      "urban": 2,
-      "suburban": 1,
-      "coastal": 2,
-      "mountain": 3,
-      "arts_culture": 2,
-      "family_oriented": 1,
-      "expat_friendly": 1
-    }
-    ```
+    `{ "label": "Mediterranean" }`
+  * **Career sub-scores**: Key-value pairs containing 1-5 ratings across major industry clusters (Tech, Finance, Healthcare, Creative, Manufacturing).
+  * **Community sub-scores**: Ratings for tags (Urban, Suburban, Coastal, Mountain, Arts/Culture, Family-oriented, Expat-friendly).
+  * **Military Safety sub-scores**: Contextual details like regional conflict level, travel advisory code, or security indexes.
+    `{ "conflict_risk": "low", "travel_advisory": "level_1" }`
 
 ---
 
 ## 4. Seeding and Truncation Operations
 
-The seed pipeline reads the JSON definitions inside `db/seeds/cities.json` and loads them into PostgreSQL in a single transaction block.
+The seed pipeline reads the JSON definitions inside `db/seeds/cities.json` and loads them into PostgreSQL on initial database instantiation.
 
 ### Seeding Execution
 
 On container boot-up:
-1. The API server calls `seedIfEmpty()` within [seed.ts](file:///Users/victorxu/projects/relocate_wise/api/src/db/seed.ts).
+1. The API server calls `seedIfEmpty()` within `seed.ts`.
 2. It queries `SELECT COUNT(*)::int AS n FROM cities`.
-3. If `n == 0`, a transaction block is opened (`BEGIN`), inserting all cities followed by their scores, and then committed (`COMMIT`). If any insert fails, the transaction is rolled back (`ROLLBACK`).
+3. If `n == 0`, it loads the seed data from the JSON file into the database.
 
 ### Manual CLI Commands
 
 To reset and re-seed the database locally or in staging:
 
 ```bash
-# Truncate all tables and restart serial sequences
 uv run npm run db:seed
 ```
 
-The underlying script imports the `truncateAll()` method in `api/src/db/postgres.repository.ts`, which runs:
+This runs:
 ```sql
 TRUNCATE city_scores, cities RESTART IDENTITY CASCADE;
 ```
-It then executes the seeding workflow to reload all cities from the JSON definition.
+
+---
+
+## 5. Automated Ingestion Pipeline
+
+To keep city ratings accurate, an automated background job pulls directly from raw primary sources.
+
+### Ingestion Flow
+1. **Trigger**: Node-Cron runs the ingestion job on a weekly or monthly schedule.
+2. **Fetch**: The worker fetches raw statistics from sources like:
+   - **OECD Portal**: Housing affordability, local employment indices.
+   - **UN Open Data**: Healthcare access metrics, education levels.
+   - **Wikipedia**: Climate normals, location demographics.
+   - **Numbeo**: Living cost indicators.
+   - **Geopolitical Feeds / Security advisories**: Geopolitical safety rating, military/conflict risks.
+3. **Parse & Normalize**: Cleans, parses, and maps the raw values into standard 1–5 indices.
+4. **Update DB**: Performs a transaction writing the updated scores to `city_scores` using:
+   ```sql
+   INSERT INTO city_scores (city_id, dimension, score, sub_scores)
+   VALUES ($1, $2, $3, $4)
+   ON CONFLICT (city_id, dimension) 
+   DO UPDATE SET score = EXCLUDED.score, sub_scores = EXCLUDED.sub_scores;
+   ```
+5. **Timestamp Update**: Updates `last_updated` on the matching row in `cities` to the current date.

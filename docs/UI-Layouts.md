@@ -64,7 +64,7 @@ Designed to focus the user's attention on a single preference dimension at a tim
 
 ```
 +-------------------------------------------------------------+
-|  < Back             [====== Step 3 of 7 ======]      Skip > |
+|  < Back             [====== Step 3 of 8 ======]      Skip > |
 +-------------------------------------------------------------+
 |                                                             |
 |              What is your primary career industry?          |

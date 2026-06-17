@@ -8,7 +8,6 @@ updated: "2026-06-10"
 related_docs:
   - "docs/PRD.md"
   - "docs/Architecture.md"
-  - "docs/Review-Findings.md"
 ---
 
 # RelocateWise — Test Strategy

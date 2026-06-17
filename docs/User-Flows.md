@@ -30,7 +30,8 @@ graph TD
     Q4 --> |Next / Skip| Q5[Questionnaire Step 5: Education]
     Q5 --> |Next / Skip| Q6[Questionnaire Step 6: Community Fit]
     Q6 --> |Next / Skip| Q7[Questionnaire Step 7: Location Density]
-    Q7 --> |Submit| MatchEngine{Deterministic Matching}
+    Q7 --> |Next / Skip| Q8[Questionnaire Step 8: Military Safety]
+    Q8 --> |Submit| MatchEngine{Deterministic Matching}
     MatchEngine --> |Calculates weighted scores| Results[2. Ranked Results Screen]
     
     Results --> |Click 'View Profile'| Profile[3. City Profile Screen]
@@ -53,7 +54,7 @@ graph TD
 *   **Navigation**: User clicks the primary Call to Action (CTA) "Start Questionnaire" to move to Step 2.
 
 #### Step 2: Questionnaire Progression
-*   **Action**: User answers a sequence of 7 core preference questions:
+*   **Action**: User answers a sequence of 8 core preference questions:
     1.  **Climate Preference** (e.g., Mediterranean, Continental, Tropical).
     2.  **Housing Budget Range** (Relative index 1–5).
     3.  **Career & Industry Focus** (e.g., Tech, Finance, Healthcare, Creative, Manufacturing).
@@ -61,6 +62,7 @@ graph TD
     5.  **Education Quality Priority** (Importance rating 1–5, with a "Not Applicable" option for households without children).
     6.  **Community & Lifestyle Fit** (e.g., Urban, Suburban, Coastal, Mountain, Arts/Culture).
     7.  **Location Density Preference** (Urban, Suburban, Rural).
+    8.  **Military Safety Priority** (Importance rating 1–5).
 *   **Controls on Each Screen**:
     *   *Next / Select Option*: Progresses to the next step.
     *   *Back*: Returns to the previous step (retaining the selected option).
@@ -76,7 +78,7 @@ graph TD
     *   *Option C*: Click "Start Over" to reset all answers and return to Step 2.
 
 #### Step 4: City Profile Inspection
-*   **Action**: User reads the 7 normalized indices (1–5) and qualitative summary for a chosen city.
+*   **Action**: User reads the 8 normalized indices (1–5) and qualitative summary for a chosen city.
 *   **Decision Point**:
     *   *Option A*: Click "Add to Comparison" (if shortlist < 3).
     *   *Option B*: Click "Remove from Comparison" (if already in shortlist).

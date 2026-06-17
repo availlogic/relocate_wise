@@ -29,14 +29,15 @@ This document specifies the end-to-end (E2E) test scenarios for RelocateWise. Th
     2.  **Start Questionnaire**:
         *   Click "Start Questionnaire".
         *   Verify current route is `/q`.
-    3.  **Complete the 7-Step Quiz**:
+    3.  **Complete the 8-Step Quiz**:
         *   *Step 1 (Climate)*: Select "Mediterranean", click "Next".
         *   *Step 2 (Cost)*: Select card for score "2", click "Next".
         *   *Step 3 (Career)*: Select "Technology", click "Next".
         *   *Step 4 (Healthcare)*: Select "4" (High), click "Next".
         *   *Step 5 (Education)*: Select "Not Applicable", click "Next".
         *   *Step 6 (Community)*: Select "Coastal", click "Next".
-        *   *Step 7 (Density)*: Select "Urban", click "View Matches".
+        *   *Step 7 (Density)*: Select "Urban", click "Next".
+        *   *Step 8 (Military Safety)*: Select card for score "3" (High importance), click "View Matches".
     4.  **View Ranked Results**:
         *   Verify redirection to `/results`.
         *   Verify exactly 10 cards load.
@@ -55,7 +56,7 @@ This document specifies the end-to-end (E2E) test scenarios for RelocateWise. Th
     7.  **Inspect Side-by-Side Comparison**:
         *   Verify route is `/compare`.
         *   Verify two columns are rendered (Lisbon and Tokyo).
-        *   Verify the "winner" highlighting is applied on the Cost and Climate rows.
+        *   Verify the "winner" highlighting is applied on the Cost, Climate, and Military Safety rows.
         *   Click "Back to Results".
         *   Verify return to `/results` with the shortlist intact.
 *   **Pass Criteria**: All navigation transitions happen without layout failure, session state is preserved correctly in client memory, and correct winner cells are highlighted.

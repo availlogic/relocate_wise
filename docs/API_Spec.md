@@ -63,7 +63,7 @@ Retrieve a lightweight summary list of all available cities in the dataset (for 
 ---
 
 ### 2.3 Get City Profile
-Retrieve the complete profile for a single city by its unique slug identifier, including all 7 dimension scores and sub-scores.
+Retrieve the complete profile for a single city by its unique slug identifier, including all 8 dimension scores and sub-scores.
 
 - **URL**: `GET /api/cities/:slug`
 - **URL Parameter**: `slug` (string, e.g., `lisbon-pt`)
@@ -103,7 +103,8 @@ Retrieve the complete profile for a single city by its unique slug identifier, i
         "arts_culture": 2,
         "family_oriented": 1,
         "expat_friendly": 3
-      }
+      },
+      "military_safety": 5
     }
   }
   ```
@@ -135,6 +136,7 @@ Submit the user's questionnaire choices to run the deterministic matching engine
 | `career_industry` | string/null | `tech`, `finance`, `healthcare`, `creative`, `manufacturing`, `null` | User's industry cluster |
 | `education` | string | `important`, `somewhat`, `not_relevant` | Priority for education quality |
 | `healthcare_importance`| integer | `0`, `1`, `2`, `3` | Importance of healthcare index |
+| `military_safety_importance`| integer | `0`, `1`, `2`, `3` | Importance of military safety index |
 | `lifestyle_tags` | array of strings | `urban`, `suburban`, `coastal`, `mountain`, `arts_culture`, `family_oriented`, `expat_friendly` | Preferred community vibe tags |
 
 - **Request Body Example**:
@@ -148,6 +150,7 @@ Submit the user's questionnaire choices to run the deterministic matching engine
     "career_industry": "tech",
     "education": "important",
     "healthcare_importance": 2,
+    "military_safety_importance": 3,
     "lifestyle_tags": ["urban", "coastal"]
   }
   ```

@@ -8,7 +8,6 @@ updated: "2026-06-10"
 related_docs:
   - "docs/PRD.md"
   - "docs/Screen-Specs.md"
-  - "docs/Review-Findings.md"
 ---
 
 # RelocateWise — Functional Test Cases
@@ -119,11 +118,11 @@ To ensure test repeatability and TDD reproducibility, the following mock dataset
 *   **Preconditions**: User is on the landing page `/`.
 *   **Steps**:
     1. Click "Start Questionnaire" to load step 1.
-    2. Verify progress bar fills to 14.2% and text shows "Step 1 of 7".
+    2. Verify progress bar fills to 12.5% and text shows "Step 1 of 8".
     3. Click "Next" without selecting an option.
-    4. Verify progress bar fills to 28.5% and text shows "Step 2 of 7".
+    4. Verify progress bar fills to 25.0% and text shows "Step 2 of 8".
     5. Click "Back" button.
-*   **Expected Result**: The UI returns to step 1. Progress bar returns to 14.2% and text shows "Step 1 of 7".
+*   **Expected Result**: The UI returns to step 1. Progress bar returns to 12.5% and text shows "Step 1 of 8".
 *   **Priority**: High
 
 #### FTC-4: Skipping Questions
@@ -189,14 +188,14 @@ To ensure test repeatability and TDD reproducibility, the following mock dataset
 
 ### 2.4 City Profile Screen
 
-#### FTC-10: Display of 7 Standard Dimensions
+#### FTC-10: Display of 8 Standard Dimensions
 *   **Feature Name**: City Profile Screen
 *   **Preconditions**: User navigates to `/city/lisbon-pt`.
 *   **Steps**:
     1. Verify the profile page shows the city name "Lisbon" and country "Portugal".
-    2. Verify 7 horizontal progress bars are rendered (Climate, Cost, Housing, Career, Healthcare, Education, Community).
+    2. Verify 8 horizontal progress bars are rendered (Climate, Cost, Housing, Career, Healthcare, Education, Community, Military Safety).
     3. Verify Climate shows label "Mediterranean".
-    4. Verify Cost, Housing, Career, Healthcare, Education, and Community display ratings matching the mock dataset (e.g. Cost: 2/5, Housing: 2/5).
+    4. Verify Cost, Housing, Career, Healthcare, Education, Community, and Military Safety display ratings matching the mock dataset (e.g. Cost: 2/5, Housing: 2/5, Military Safety: 5/5).
 *   **Expected Result**: Ratings align with database/JSON scores.
 *   **Priority**: High
 

@@ -98,10 +98,10 @@ Now open <http://localhost:5173> in a browser. The expected first-visit flow:
 
 1. **Consent banner** appears at the top (no cookies set; click *Accept* or *Decline*).
 2. **Landing page** shows the one-sentence value prop and a **Start the questionnaire** button.
-3. **Questionnaire** has 7 sections (climate, cost, housing, career, education, healthcare, lifestyle). You can *Skip* any question.
+3. **Questionnaire** has 8 sections (climate, cost, housing, career, education, healthcare, lifestyle, safety). You can *Skip* any question.
 4. **Results** page shows your top 10 matches as cards with a 0–100 score and a templated "why this fits you" line.
 5. **Add to compare** on any 2 or 3 cards, then click the **Compare** link in the header to see the side-by-side table with the best per row highlighted.
-6. **View full profile** on any card to see the 7 dimension bars and the qualitative description.
+6. **View full profile** on any card to see the 8 dimension bars and the qualitative description.
 
 If step 2 or 3 fails, the issue is the API → Vite proxy. Check the `proxy: { '/api': … }` block in `web/vite.config.ts` and confirm the API is reachable on `localhost:3000`.
 
@@ -127,7 +127,7 @@ The SPA still uses relative URLs and Vite still proxies — but the target is no
 │   │   ├── server.ts          App builder + bootstrap (DB on/off)
 │   │   ├── routes/            /api/health, /api/cities, /api/cities/:slug, /api/match
 │   │   ├── matching/          Pure deterministic engine + "why" templating
-│   │   │   ├── score.ts       7-dimension scoring, weight normalization
+│   │   │   ├── score.ts       8-dimension scoring, weight normalization
 │   │   │   ├── why.ts         Templated "why this fits you" (Architecture §6.5)
 │   │   │   ├── defaults.ts    Default weights for skipped questions
 │   │   │   └── result.ts      Wire-format projection
@@ -506,7 +506,7 @@ If step 1 returns 200 but step 2 doesn't, the issue is on the Netlify side (func
 | 3   | Exactly 10 results returned                                                            | `api/src/matching/score.ts:336` (`topN ?? 10`)                      |
 | 4   | Identical inputs ⇒ identical ranking                                                   | Pure function; `api/test/matching.score.test.ts`                    |
 | 5   | Each result card shows city/country/score/why                                          | `web/src/components/RankCard.tsx`                                   |
-| 6   | City profile shows 7 dimensions + description + last_updated                           | `web/src/pages/CityPage.tsx`, `api/src/routes/city.ts`              |
+| 6   | City profile shows 8 dimensions + description + last_updated                           | `web/src/pages/CityPage.tsx`, `api/src/routes/city.ts`              |
 | 7   | Max 3 cities in shortlist; 4th is rejected                                             | `web/src/state/shortlist.tsx:26` (`SHORTLIST_MAX = 3`)              |
 | 8   | Comparison view highlights best per row                                                 | `web/src/pages/ComparePage.tsx:163` (`--best` class)                |
 | 9   | Submit or tab-close clears the shortlist                                               | Shortlist lives in React state, not storage                         |

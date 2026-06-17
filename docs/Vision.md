@@ -1,10 +1,10 @@
 ---
 title: "Product Vision"
-version: "1.0.0"
+version: "1.1.0"
 status: draft
 author: "Human"
 created: "2026-06-01"
-updated: "2026-06-01"
+updated: "2026-06-17"
 reviewers: []
 related_docs:
   - "docs/Constraints.md"
@@ -18,7 +18,7 @@ RelocateWise
 
 ## Vision Statement
 
-RelocateWise is a web-based decision-support tool that helps individuals and families discover their ideal place to live by analyzing personal preferences, lifestyle priorities, and life stage requirements against comprehensive data about cities, towns, and neighborhoods worldwide. Unlike existing tools that overwhelm users with data or focus narrowly on single factors like cost of living, RelocateWise provides an intuitive, questionnaire-driven experience that synthesizes multiple dimensions—including climate, culture, career opportunities, housing affordability, education quality, healthcare access, and community character—into personalized rankings and detailed profiles. Our mission is to transform the often stressful and uncertain relocation decision into an informed, confident choice by empowering users with clarity, context, and comprehensive comparative insights tailored to their unique circumstances.
+RelocateWise is a web-based decision-support tool that helps individuals and families discover their ideal place to live by analyzing personal preferences, lifestyle priorities, and life stage requirements against comprehensive data about cities, towns, and neighborhoods worldwide. Unlike existing tools that overwhelm users with data or focus narrowly on single factors like cost of living, RelocateWise provides an intuitive, questionnaire-driven experience that synthesizes multiple dimensions—including climate, culture, career opportunities, housing affordability, education quality, healthcare access, community character, and military safety/security—into personalized rankings and detailed profiles. Our mission is to transform the often stressful and uncertain relocation decision into an informed, confident choice by empowering users with clarity, context, and comprehensive comparative insights tailored to their unique circumstances.
 
 ## Target Users
 
@@ -44,10 +44,11 @@ RelocateWise is a web-based decision-support tool that helps individuals and fam
 
 4. **Respect for the emotional complexity of home** — Relocation isn't purely rational. People leave behind communities, memories, and identities when they move. Our product acknowledges this by incorporating qualitative factors—community character, cultural fit, sense of belonging—alongside quantitative data. We also ensure users can easily revisit and refine their analysis as their thinking evolves, recognizing that the "right" answer today may shift as circumstances change.
 
-5. **Continuous accuracy over point-in-time perfection** — Location data changes constantly—housing markets shift, new businesses open, schools improve or decline, crime patterns evolve. We commit to updating our data regularly, clearly indicating when information was last refreshed, and providing users with confidence intervals or trend indicators where static snapshots would be misleading. An imperfect but current database serves users better than a perfect one that's six months out of date.
+5. **Continuous accuracy over point-in-time perfection** — Location data changes constantly—housing markets shift, new businesses open, schools improve or decline, crime patterns evolve. We commit to updating our data regularly, clearly indicating when information was last refreshed, and providing users with confidence intervals or trend indicators where static snapshots would be misleading. To ensure data accuracy and timeliness, the core of RelocateWise is built upon a continuous data collection mechanism that directly harvests primary, authoritative source data (e.g., UN, OECD, government open data portals, Wikipedia, Numbeo) on a weekly or monthly schedule rather than relying on processed, stagnant, or secondary rating indices.
 
 ## Change Log
 
-| Date       | Version | Author | Changes         |
-| ---------- | ------- | ------ | --------------- |
-| 2026-06-01 | 1.0.0   | Human  | Initial version |
+| Date       | Version | Author      | Changes                                                                                         |
+| ---------- | ------- | ----------- | ----------------------------------------------------------------------------------------------- |
+| 2026-06-01 | 1.0.0   | Human       | Initial version                                                                                 |
+| 2026-06-17 | 1.1.0   | Antigravity | Added Military Safety dimension and primary source data collection mechanism.                   |

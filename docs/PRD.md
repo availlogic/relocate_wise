@@ -1,10 +1,10 @@
 ---
 title: "Product Requirements"
-version: "2.0.0"
+version: "3.1.0"
 status: draft
 author: "Product Agent"
 created: "2026-06-01"
-updated: "2026-06-02"
+updated: "2026-06-17"
 related_docs:
   - "docs/Vision.md"
   - "docs/Constraints.md"
@@ -22,13 +22,14 @@ Relocating is one of the most significant and stressful financial and lifestyle 
 - **Information Overload**: Extensive but fragmented public data (climate, schools, cost of living, healthcare) scattered across hundreds of websites.
 - **Lack of Personalization**: Standard "Top 10" lists steer users toward generic options and do not reflect individual trade-offs (e.g., matching a specific career sector, climate preference, or household budget).
 - **Comparison Complexity**: Users must manually build spreadsheets or parse tables of raw prices to compare candidate cities side-by-side.
-- **Trust Deficit**: Existing relocation guides are frequently sponsored by real estate developers or tourism boards, lacking objective, data-driven neutrality.
+- **Trust Deficit & Secondary Data Reliance**: Existing relocation guides are frequently sponsored by real estate developers or tourism boards, lacking objective, data-driven neutrality. Furthermore, relying on static "second-hand" rankings leads to stale, outdated information.
+- **Geopolitical Risks**: High conflict or military risks in specific regions (e.g., Jerusalem/active conflict zones) make them unsuitable for most relocators, yet general indexes fail to highlight this as a distinct dimension.
 
 ## 2. Target Users
 
 Our target audience consists of adults aged 25–55 who are actively considering a major relocation within a 1–3 year horizon. This includes:
 - **Remote Workers / Freelancers**: Seeking optimal cost-of-living trade-offs, reliable infrastructure (high-speed internet), and specific lifestyle amenities (coastal/mountain access).
-- **Families with Children**: Prioritizing safety, healthcare quality, and school/education ratings.
+- **Families with Children**: Prioritizing safety, healthcare quality, school/education ratings, and geopolitical stability.
 - **Career Professionals**: Seeking hubs with high industry-specific career opportunities (e.g., Tech, Finance, Creative).
 - **Pre-Retirees**: Researching stable, high-amenity lifestyle destinations before full retirement.
 
@@ -48,6 +49,9 @@ These users are digitally literate, research-driven, and value objective, eviden
 ### US-4: Transparency of matches (All Users)
 *As a skeptical user, I want to see a clear justification ("why this fits you") for my matches, so that I can understand how my answers directly influenced the ranking.*
 
+### US-5: Geopolitical stability and safety (All Users)
+*As a prospective relocator, I want to evaluate the military safety and regional conflict risk of a city, so that I do not move to a region with high geopolitical danger or active conflicts.*
+
 ## 4. Goals
 
 The MVP must validate one hypothesis: **adults planning a relocation will use a structured, questionnaire-driven tool to discover and compare candidate destinations more effectively than with general-purpose search.**
@@ -55,9 +59,9 @@ The MVP must validate one hypothesis: **adults planning a relocation will use a 
 A first-time visitor should be able to:
 
 1. Complete a short preference questionnaire in under 5 minutes.
-2. Receive a ranked shortlist of cities that match their stated priorities.
+2. Receive a ranked shortlist of cities that match their stated priorities (including safety).
 3. Open a detailed profile for any shortlisted city.
-4. Compare 2–3 cities side-by-side across the same set of dimensions.
+4. Compare 2–3 cities side-by-side across the same set of dimensions (8 dimensions total).
 5. Do all of the above in a single uninterrupted session, on a deployed public URL, without hitting a paywall or being forced to create an account.
 
 If the MVP does not deliver this single end-to-end loop, it has not shipped.
@@ -77,15 +81,16 @@ The MVP's success and hypothesis validation will be evaluated using the followin
 
 | # | Capability | Notes |
 |---|------------|-------|
-| S1 | **Preference questionnaire** | Single fixed path, ~10 questions covering climate, housing budget, career/industry focus, healthcare priority, education priority (optional), community/cultural fit, and lifestyle. Single-question-per-screen layout. No conditional branching, no save-and-resume, no account required. |
-| S2 | **Curated location dataset** | 30–50 cities across at least 3 continents. Open public sources or manually curated values. Each city carries the 7 dimensions listed in §6. |
-| S3 | **Matching engine** | Deterministic weighted score over the 7 dimensions, with a per-dimension "match" component exposed as a 0–100 score and a one-line "why this fits you" reason. |
+| S1 | **Preference questionnaire** | Single fixed path, ~10 questions covering climate, housing budget, career/industry focus, healthcare priority, education priority (optional), community/cultural fit, lifestyle, and military safety priority. Single-question-per-screen layout. |
+| S2 | **Curated location dataset** | 30–50 cities across at least 3 continents. Open public sources. Each city carries the 8 dimensions listed in §9.1. |
+| S3 | **Matching engine** | Deterministic weighted score over the 8 dimensions, with a per-dimension "match" component exposed as a 0–100 score and a one-line "why this fits you" reason. |
 | S4 | **Ranked results view** | Top 10 matches displayed as cards with city name, country, overall match score, and the "why this fits you" line. |
-| S5 | **City profile page** | One page per city showing the 7 dimensions on a 1–5 scale plus a 2–3 sentence qualitative summary and a "last updated" date. |
-| S6 | **Side-by-side comparison** | Select 2 or 3 cities from the results; view a single screen aligning the 7 dimensions. The city that best matches the user on each row is visually highlighted. |
-| S7 | **Session-based shortlist** | User's current selection of up to 3 cities persists for the browser session. No account, no server-side history, no cross-device sync. |
-| S8 | **GDPR consent + privacy notice** | Cookie/analytics consent banner on first visit and a linked Privacy Policy. No marketing email capture, no analytics that require personal data. |
+| S5 | **City profile page** | One page per city showing the 8 dimensions on a 1–5 scale plus a 2–3 sentence qualitative summary and a "last updated" date. |
+| S6 | **Side-by-side comparison** | Select 2 or 3 cities from the results; view a single screen aligning the 8 dimensions. The city that best matches the user on each row is visually highlighted. |
+| S7 | **Session-based shortlist** | User's current selection of up to 3 cities persists for the browser session. No account, no server-side history. |
+| S8 | **GDPR consent + privacy notice** | Cookie/analytics consent banner on first visit and a linked Privacy Policy. No marketing email capture. |
 | S9 | **Public deployment** | App runs on the free tier of Cloudflare or Netlify, with HTTPS, CDN-served static assets, and rate limiting on the matching API. |
+| S10 | **Automated ingestion pipeline** | Background script/worker running on a weekly or monthly schedule to fetch raw, authoritative data directly from primary sources (UN, OECD, government open data, Wikipedia, Numbeo) and feed it into the PostgreSQL database. |
 
 ### 3.2 Explicitly Out of Scope (MVP)
 
@@ -101,8 +106,7 @@ The following are **not** built in the MVP and will not be retrofitted to the MV
 - Email capture, marketing automation, referral program, social sharing
 - Mobile native apps; mobile is served via the responsive web app only
 - Non-English languages and localization
-- Real-time or third-party API calls at request time; all data is local to the app
-- Continuous/automated data refresh; the MVP ships a static, manually updated dataset
+- Real-time or third-party API calls at request time; all data is local to the app database
 - AI assistant, chatbot, conversational Q&A
 - SEO-optimized public city pages (these can be added later; for MVP the city pages are reachable by URL but not optimized for organic acquisition)
 
@@ -126,7 +130,7 @@ Landing → Questionnaire (≈10 questions) → Ranked Results (top 10)
 - **Landing page**: One sentence value proposition and a single primary CTA ("Start the questionnaire"). No account creation, no marketing content.
 - **Questionnaire**: Single-question-per-screen, progress indicator, "Back" and "Skip" on every question. Submission triggers matching and routes to results.
 - **Ranked results**: Top 10 cities as cards. Each card has a "View profile" link and a checkbox to add/remove from the comparison set (max 3).
-- **City profile**: Static-style page summarizing the 7 dimensions. Includes "Add to comparison" and a "Back to results" link.
+- **City profile**: Static-style page summarizing the 8 dimensions. Includes "Add to comparison" and a "Back to results" link.
 - **Comparison**: Available whenever the user has 2 or 3 cities selected. A persistent "Compare" button is visible from the results and profile pages. Comparison view shows one row per dimension with the best-matching city highlighted. "Remove" on each card; "Clear all" to reset.
 
 The questionnaire is the only input that can change the ranking. To re-rank, the user clicks "Start over" from the results page and re-answers the questionnaire. There is no "refine my answers" UI in the MVP.
@@ -136,24 +140,25 @@ The questionnaire is the only input that can change the ranking. To re-rank, the
 Numbered for easy reference. Each requirement is testable in a single user action.
 
 - **FR-1**: The system shall present a preference questionnaire of approximately 10 questions, each on its own screen, with a visible progress indicator.
-- **FR-2**: The questionnaire shall cover, at minimum: climate preference, housing budget range, career/industry focus, healthcare priority, education priority, community/cultural fit, and lifestyle (urban / suburban / rural).
+- **FR-2**: The questionnaire shall cover, at minimum: climate preference, housing budget range, career/industry focus, healthcare priority, education priority, community/cultural fit, lifestyle (urban / suburban / rural), and military safety priority.
 - **FR-3**: All questionnaire questions shall be skippable; the system shall use a documented default weight for any skipped dimension.
 - **FR-4**: On submission, the system shall return a ranked list of the top 10 cities from the curated dataset, ordered by descending match score.
 - **FR-5**: Each result card shall display: city name, country, overall match score (0–100), and a one-line "why this fits you" explanation naming the 1–2 strongest matching dimensions.
 - **FR-6**: The matching algorithm shall be deterministic: identical questionnaire inputs shall produce identical result ordering across requests and sessions.
-- **FR-7**: The matching algorithm shall run on locally stored data only; no external API call shall be required to produce rankings.
-- **FR-8**: The city profile page shall display all 7 dimensions for the city, each on a 1–5 scale, plus a 2–3 sentence qualitative description, plus a "last updated" date.
+- **FR-7**: The matching algorithm shall run on locally stored database data only; no external API call shall be required to produce rankings at request time.
+- **FR-8**: The city profile page shall display all 8 dimensions for the city, each on a 1–5 scale, plus a 2–3 sentence qualitative description, plus a "last updated" date.
 - **FR-9**: The user shall be able to add any city to a session shortlist and remove it, up to a maximum of 3 cities.
-- **FR-10**: The user shall be able to view a side-by-side comparison of the 2 or 3 currently shortlisted cities, with one row per dimension.
+- **FR-10**: The user shall be able to view a side-by-side comparison of the 2 or 3 currently shortlisted cities, with one row per dimension (8 dimensions total).
 - **FR-11**: In the comparison view, the city with the best score on each dimension shall be visually distinguished (bold, color, or icon — implementation choice).
 - **FR-12**: The shortlist shall be cleared automatically when the user submits a new questionnaire or closes the browser.
 - **FR-13**: The system shall display a cookie/analytics consent banner on the user's first visit, and shall not set non-essential cookies or analytics before consent is granted.
 - **FR-14**: A Privacy Policy page shall be linked from the site footer and from the consent banner.
 - **FR-15**: The application shall be deployable to the free tier of Cloudflare or Netlify, with HTTPS enforced, and shall run via Docker Compose locally with a documented one-command startup.
+- **FR-16**: The system shall run an automated background data ingestion job on a weekly or monthly schedule to fetch raw indicators directly from UN, OECD, Wikipedia, Numbeo, and government open data portals, clean and normalize the values, and update the PostgreSQL database.
 
 ## 9. Data Requirements
 
-### 6.1 City Attributes (the 7 dimensions)
+### 6.1 City Attributes (the 8 dimensions)
 
 | # | Dimension | Value Type | Notes |
 |---|-----------|------------|-------|
@@ -161,30 +166,31 @@ Numbered for easy reference. Each requirement is testable in a single user actio
 | D2 | Cost of living | 1–5 index (1 = low, 5 = high) | Single composite, no line-item breakdown in MVP |
 | D3 | Housing affordability | 1–5 index | Anchored to cost-of-living; users see them as one factor in the questionnaire |
 | D4 | Career / industry fit | 1–5 index per major industry cluster (Tech, Finance, Healthcare, Creative, Manufacturing) | Scoring uses the industry the user selects |
-| D5 | Education | 1–5 index | Single composite; explicit "not relevant" option in the questionnaire for users without children |
+| D5 | Education | 1–5 index | Single composite; explicit "not relevant" option in the questionnaire |
 | D6 | Healthcare | 1–5 index | Single composite |
 | D7 | Community & lifestyle | 1–5 index per lifestyle tag (Urban, Suburban, Coastal, Mountain, Arts/Culture, Family-oriented, Expat-friendly) | Scoring uses the lifestyle tags the user selects |
+| D8 | Military safety | 1–5 index (1 = high conflict risk, 5 = extremely safe/stable) | Measures geopolitical stability, presence of regional/armed conflicts, and general safety. Lower scores act as a significant detractor. |
 
-All indices are normalized to a 1–5 scale. Each city record also carries: name, country, region, latitude/longitude (for PostGIS readiness, not for MVP UI), and `last_updated` date.
+All indices are normalized to a 1–5 scale. Each city record also carries: name, country, region, latitude/longitude, and `last_updated` date.
 
 ### 6.2 Dataset Scope
 
 - **Coverage**: 30–50 cities, distributed across at least 3 continents. Include at least 10 cities outside the user's assumed home market to demonstrate breadth.
-- **Source policy**: Public open data (World Bank, Numbeo, national statistics offices, OpenStreetMap), or values manually curated from reputable published sources (e.g., Numbeo cost-of-living indices, public climate normals). Each city record's `last_updated` reflects the most recent source review.
-- **Refresh**: Manual for the MVP. A documented checklist, not a pipeline.
+- **Source policy**: Authoritative primary open data (World Bank, UN, OECD, national statistics offices, Wikipedia, Numbeo), gathered directly at source rather than using secondary rankings. Each city record's `last_updated` reflects the most recent pipeline refresh.
+- **Refresh**: Automated weekly or monthly scheduled script, feeding cleaned and parsed data into the PostgreSQL database.
 
 ### 6.3 Storage
 
-- PostgreSQL with PostGIS extensions. Schema is `cities` (one row per city) and `location_scores` (one row per city per dimension), joined at query time.
-- Seeded via a versioned SQL or JSON file in the repository; the app boots against an empty database by loading the seed.
+- PostgreSQL with PostGIS extensions. Schema is `cities` (one row per city) and `city_scores` (one row per city per dimension), joined at query time.
+- Seeded via a versioned JSON file in the repository on first installation; updated thereafter by the scheduled ingestion pipeline.
 
 ## 10. Non-Functional Requirements
 
-- **Performance**: Ranking results shall be returned in under 1 second (p95) after questionnaire submission on a standard broadband connection. Pages shall become interactive in under 2 seconds.
+- **Performance**: Ranking results shall be returned in under 1 second (p95) after questionnaire submission on a standard broadband connection. Pages shall become interactive in under 2 seconds. Ingestion pipeline tasks run asynchronously in the background and must not affect API latency.
 - **Availability**: Best-effort, no formal SLA. The MVP is deployed on free-tier infrastructure; downtime is acceptable during the validation phase.
 - **Security**: HTTPS enforced everywhere. No personal data is stored server-side in the MVP. The only data persisted across requests is the user's selected city IDs, held in the browser session.
 - **Compliance**: GDPR-aligned minimum. A privacy notice and a cookie consent banner are present on first visit. The MVP collects no personal data; questionnaire answers are processed in-browser session state and are not stored server-side.
-- **Stack**: Node.js backend, React frontend, PostgreSQL with PostGIS. Local dev runs via Docker Compose; deployment targets Cloudflare or Netlify free tier.
+- **Stack**: Node.js backend (API server and scheduled ingestion worker), React frontend, PostgreSQL with PostGIS. Local dev runs via Docker Compose; deployment targets Cloudflare or Netlify free tier.
 - **Cost**: $0. No paid third-party services, no paid data feeds, no paid monitoring.
 - **CI/CD**: GitHub Actions runs lint, unit tests, and a smoke build on every push to `main`. Manual deploy to the chosen free-tier host is acceptable for the MVP.
 
@@ -197,9 +203,9 @@ The MVP is shippable when **all** of the following are true. Each criterion is v
 - **AC-3**: On submission, the system returns exactly 10 ranked city results.
 - **AC-4**: Submitting the same questionnaire answers twice produces the same ranking, in the same order.
 - **AC-5**: Each result card shows the city name, country, an overall match score (0–100), and a non-empty "why this fits you" line that references at least one user-stated priority.
-- **AC-6**: Each city profile shows the 7 dimensions, each on a 1–5 scale, a 2–3 sentence qualitative description, and a visible "last updated" date.
+- **AC-6**: Each city profile shows the 8 dimensions, each on a 1–5 scale, a 2–3 sentence qualitative description, and a visible "last updated" date.
 - **AC-7**: A user can add up to 3 cities to the comparison set; attempting to add a 4th is prevented with a clear, non-blocking message.
-- **AC-8**: The comparison view aligns the 7 dimensions in a row-by-row table and visually highlights the best-matching city per row.
+- **AC-8**: The comparison view aligns the 8 dimensions in a row-by-row table and visually highlights the best-matching city per row.
 - **AC-9**: Closing the browser tab or submitting a new questionnaire clears the shortlist.
 - **AC-10**: No personal data is sent to or stored on the server. The server logs no questionnaire answers, IP addresses, or user identifiers in a way that could identify an individual.
 - **AC-11**: A cookie consent banner is shown on the first visit; no analytics or non-essential cookies are set before consent is granted.
@@ -207,6 +213,7 @@ The MVP is shippable when **all** of the following are true. Each criterion is v
 - **AC-13**: The app builds and runs locally via a documented single-command Docker Compose startup.
 - **AC-14**: The app is deployed to a public URL on the free tier of Cloudflare or Netlify, with HTTPS enforced.
 - **AC-15**: Lint, unit tests, and a smoke build pass in CI on the latest commit to `main`.
+- **AC-16**: The background data ingestion job successfully executes, pulling raw indicator data from at least one primary source and populating the database scores without errors.
 
 ## 12. Open Questions
 
@@ -231,15 +238,15 @@ A single list. Items are sequenced roughly by expected priority but no dates are
 - Content marketing, SEO-optimized public city pages, referral program
 - Native mobile apps
 - Internationalization beyond English
-- Continuous/automated data refresh pipeline
 - AI assistant or conversational Q&A
 - Real estate, job, or moving-service integrations
 - B2B / partner API
 
 ## Change Log
 
-| Date       | Version | Author        | Changes                                                                                            |
-| ---------- | ------- | ------------- | -------------------------------------------------------------------------------------------------- |
-| 2026-06-01 | 1.0.0   | Human         | Initial version. |
+| Date       | Version | Author      | Changes                                                                                            |
+| ---------- | ------- | ----------- | -------------------------------------------------------------------------------------------------- |
+| 2026-06-01 | 1.0.0   | Human       | Initial version. |
 | 2026-06-02 | 2.0.0   | Product Agent | Rewritten to be MVP-only. Removed detailed personas, premium-tier features, multi-phase roadmap, business-model pricing, exhaustive data-source analysis, and 24 open questions. Resolved internal contradictions (database size, questionnaire length, account vs. session model). Reorganized into a single linear user journey, 15 functional requirements, and 15 acceptance criteria. Length reduced from 1,829 to 210 lines. |
 | 2026-06-10 | 3.0.0   | Product Agent | Updated to Stage 3. Added explicit Problem Statement, Target Users, User Stories (equally representing remote workers and families), and Success Metrics sections to satisfy design-product guidelines. |
+| 2026-06-17 | 3.1.0   | Antigravity | Added Military Safety dimension, automated ingestion pipeline requirements, updated out-of-scope, and updated acceptance criteria. |

@@ -132,8 +132,8 @@ This document outlines the detailed specifications for each screen in the Reloca
     *   *Back Button*: "Back to Results" (Returns user to Results).
     *   *Action Button*: "Add to Comparison" / "Remove from Comparison" (Updates shortlist state).
 *   **Qualitative Summary**: A 2–3 sentence description paragraph explaining the city's character.
-*   **Metrics Grid**: The 7 dimensions displayed as horizontal progress bars:
-    *   *Dimensions*: Climate (Label + numeric range), Cost of Living (1-5 scale), Housing Affordability (1-5 scale), Career/Industry Fit (1-5 scale), Healthcare (1-5 scale), Education (1-5 scale), Community & Lifestyle (1-5 scale).
+*   **Metrics Grid**: The 8 dimensions displayed as horizontal progress bars:
+    *   *Dimensions*: Climate (Label + numeric range), Cost of Living (1-5 scale), Housing Affordability (1-5 scale), Career/Industry Fit (1-5 scale), Healthcare (1-5 scale), Education (1-5 scale), Community & Lifestyle (1-5 scale), and Military Safety (1-5 scale).
 *   **Metadata Footer**: Shows a "Data last updated: YYYY-MM-DD" label.
 *   **Floating Shortlist Bar**: Persistent at bottom (matches Results screen behavior) to allow quick comparison.
 
@@ -163,7 +163,7 @@ This document outlines the detailed specifications for each screen in the Reloca
     *   *Action Buttons*: "Back to Results", "Clear All" (Resets shortlist and returns to Results).
 *   **Comparison Matrix (Table)**:
     *   *Columns*: Header contains City Name, Country, and a "Remove" icon button.
-    *   *Rows*: Aligns the 7 dimensions.
+    *   *Rows*: Aligns the 8 dimensions.
     *   *Highlight Cell*: For each row, the cell containing the highest-ranking score is styled with a distinct border and accent color (e.g., bright teal background/border) to signify the "winner" of that dimension.
 
 ### Validation Rules & Data Requirements
