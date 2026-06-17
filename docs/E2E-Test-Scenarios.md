@@ -1,10 +1,10 @@
 ---
 title: "End-to-End Test Scenarios"
-version: "1.0.0"
+version: "1.1.0"
 status: draft
-author: "QA Agent"
+author: "QA Agent / Antigravity"
 created: "2026-06-10"
-updated: "2026-06-10"
+updated: "2026-06-17"
 related_docs:
   - "docs/PRD.md"
   - "docs/User-Flows.md"
@@ -37,7 +37,7 @@ This document specifies the end-to-end (E2E) test scenarios for RelocateWise. Th
         *   *Step 5 (Education)*: Select "Not Applicable", click "Next".
         *   *Step 6 (Community)*: Select "Coastal", click "Next".
         *   *Step 7 (Density)*: Select "Urban", click "Next".
-        *   *Step 8 (Military Safety)*: Select card for score "3" (High importance), click "View Matches".
+        *   *Step 8 (Geopolitical and Conflict Risk)*: Select card for score "3" (High importance), click "View Matches".
     4.  **View Ranked Results**:
         *   Verify redirection to `/results`.
         *   Verify exactly 10 cards load.
@@ -56,7 +56,7 @@ This document specifies the end-to-end (E2E) test scenarios for RelocateWise. Th
     7.  **Inspect Side-by-Side Comparison**:
         *   Verify route is `/compare`.
         *   Verify two columns are rendered (Lisbon and Tokyo).
-        *   Verify the "winner" highlighting is applied on the Cost, Climate, and Military Safety rows.
+        *   Verify the "winner" highlighting is applied on the Cost, Climate, and Geopolitical and Conflict Risk rows.
         *   Click "Back to Results".
         *   Verify return to `/results` with the shortlist intact.
 *   **Pass Criteria**: All navigation transitions happen without layout failure, session state is preserved correctly in client memory, and correct winner cells are highlighted.
@@ -99,3 +99,42 @@ This document specifies the end-to-end (E2E) test scenarios for RelocateWise. Th
     *   The `sessionStorage` is empty.
     *   Navigating back to `/results` shows an empty shortlist.
 *   **Priority**: Medium
+
+---
+
+## 3. Localization & Responsive Journeys
+
+### Scenario E2E-5: Dynamic Bilingual Switch
+*   **Description**: Verify that the user can toggle the interface language between English and Chinese Simplified at any step of their journey, and that all text translates instantly without state loss.
+*   **Actor**: Unauthenticated User
+*   **Execution Steps**:
+    1.  **Arrive at `/`**:
+        *   Locate the language toggle in the header. Click "中文".
+        *   Verify that page headings, description, and the main CTA button translate to Simplified Chinese.
+    2.  **Start Questionnaire**:
+        *   Click "开始问卷" (Start Questionnaire).
+        *   Advance through Step 1 (Climate) and Step 2 (Cost) in Chinese.
+    3.  **Toggle Mid-Quiz**:
+        *   On Step 3, click "English" in the header.
+        *   Verify that the current question title and options immediately translate to English.
+        *   Verify progress remains on Step 3 of 8.
+    4.  **Submit and View Results**:
+        *   Complete the remaining steps. Submit to view results.
+        *   Verify that the results page, result cards, and "Why this fits you" templates render in English.
+        *   Click "中文" in the header.
+        *   Verify that the result cards, match percentages, and the "why" explanation templates translate to Chinese (Simplified) dynamically.
+*   **Pass Criteria**: Language switches dynamically at any point with zero latency and zero state loss.
+*   **Priority**: High
+
+### Scenario E2E-6: Responsive Mobile Flow
+*   **Description**: Verify the complete end-to-end relocation decision-support loop functions seamlessly on simulated mobile viewports.
+*   **Actor**: Mobile Browser User
+*   **Execution Steps**:
+    1.  Initialize the test runner with viewport dimensions matching standard mobile screens (e.g. 375x812 viewport).
+    2.  Load `/`. Verify the layout stacks vertically, and no horizontal scrollbars are present.
+    3.  Complete the questionnaire. Verify option card buttons are easy to tap and fit within screen boundaries.
+    4.  Verify results load. Scroll to verify that result cards stack vertically, and the floating shortlist bar remains pinned to the bottom of the viewport.
+    5.  Add 2 cities to comparison and navigate to `/compare`.
+    6.  Verify the comparison table is readable and supports horizontal scrolling for columns without visual clipping or overlap.
+*   **Pass Criteria**: Complete flow compiles with no visual layout failures or overlapping text components on mobile viewports.
+*   **Priority**: High

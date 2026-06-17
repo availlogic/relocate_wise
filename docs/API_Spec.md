@@ -2,7 +2,7 @@
 
 This document describes the REST API surface for the RelocateWise Minimum Viable Product (MVP). 
 
-The base URL is `/api` in production (served via Netlify Edge Functions Proxy) and matches `http://localhost:3000` in development.
+The base URL is `/api` in production (served via Cloudflare Pages edge proxy rules) and matches `http://localhost:3000` in development.
 
 ---
 
@@ -104,7 +104,7 @@ Retrieve the complete profile for a single city by its unique slug identifier, i
         "family_oriented": 1,
         "expat_friendly": 3
       },
-      "military_safety": 5
+      "military_safety": 5 // Represents Geopolitical and Conflict Risk dimension
     }
   }
   ```
@@ -136,7 +136,7 @@ Submit the user's questionnaire choices to run the deterministic matching engine
 | `career_industry` | string/null | `tech`, `finance`, `healthcare`, `creative`, `manufacturing`, `null` | User's industry cluster |
 | `education` | string | `important`, `somewhat`, `not_relevant` | Priority for education quality |
 | `healthcare_importance`| integer | `0`, `1`, `2`, `3` | Importance of healthcare index |
-| `military_safety_importance`| integer | `0`, `1`, `2`, `3` | Importance of military safety index |
+| `military_safety_importance`| integer | `0`, `1`, `2`, `3` | Importance of Geopolitical and Conflict Risk (internal key: `military_safety_importance`) |
 | `lifestyle_tags` | array of strings | `urban`, `suburban`, `coastal`, `mountain`, `arts_culture`, `family_oriented`, `expat_friendly` | Preferred community vibe tags |
 
 - **Request Body Example**:
@@ -200,13 +200,13 @@ Submit the user's questionnaire choices to run the deterministic matching engine
 
 ## 3. Operational Policies
 
-### 3.1 Caching (Netlify Functions Layer)
-To protect the backend Ubuntu server from traffic spikes, the edge proxy layer (`netlify/functions/proxy.ts`) applies caching:
-- **`GET /api/cities/:slug`**: Cached in-memory at the edge for **60 seconds** (TTL).
-- **`GET /api/cities`**: Cached in-memory at the edge for **60 seconds** (TTL).
+### 3.1 Caching (Cloudflare Edge Tier)
+To protect the backend Ubuntu server from traffic spikes, the Cloudflare edge proxy tier applies caching:
+- **`GET /api/cities/:slug`**: Cached at the edge for **60 seconds** (TTL).
+- **`GET /api/cities`**: Cached at the edge for **60 seconds** (TTL).
 - **`POST /api/match`**: Dynamic questionnaire matching requests are **never** cached.
 
 ### 3.2 Rate Limiting
 Rate limiting is applied at two independent tiers:
-1. **Edge Tier (Netlify proxy)**: Requests are rate limited to **60 requests per 10 minutes** per client IP address. Exceeding this rate returns a standard `429 Too Many Requests` status code.
-2. **Backend Server Tier (Node.js API)**: Utilizes a token-bucket algorithm configured to allow up to **100 requests per minute** per IP address to safeguard database resources.
+1. **Edge Tier (Cloudflare WAF)**: Requests are rate limited to **60 requests per 10 minutes** per client IP address. Exceeding this rate returns a standard `429 Too Many Requests` status code.
+2. **Backend Server Tier (Node.js API)**: Utilizes a token-bucket algorithm configured to allow up to **100 requests per minute** per IP address to safeguard database resources. Since Cloudflare Tunnel routes traffic directly to the local Caddy container, edge-to-backend requests do not require token/secret header verification.

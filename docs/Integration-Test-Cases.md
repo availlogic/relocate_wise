@@ -1,10 +1,10 @@
 ---
 title: "Integration Test Cases"
-version: "1.0.0"
+version: "1.1.0"
 status: draft
-author: "QA Agent"
+author: "QA Agent / Antigravity"
 created: "2026-06-10"
-updated: "2026-06-10"
+updated: "2026-06-17"
 related_docs:
   - "docs/API_Spec.md"
   - "docs/Database.md"
@@ -32,6 +32,7 @@ This document describes the backend and system integration test cases for the Re
       "career_industry": "tech",
       "education": "important",
       "healthcare_importance": 2,
+      "military_safety_importance": 3,
       "lifestyle_tags": ["urban", "coastal"]
     }
     ```
@@ -90,20 +91,20 @@ This document describes the backend and system integration test cases for the Re
 
 ---
 
-## 3. Caching & Operations (Netlify Proxy & Edge Tier)
+## 3. Caching & Operations (Cloudflare Pages Proxy & Tunnel Edge Tier)
 
 #### ITC-5: Edge Caching for Static City Profiles
-*   **Purpose**: Verify that the Netlify function proxy handles caching headers for GET requests.
-*   **Request Method & Path**: `GET /api/cities/lisbon-pt` (sent via Proxy function)
+*   **Purpose**: Verify that the Cloudflare edge proxy handles caching headers for GET requests.
+*   **Request Method & Path**: `GET /api/cities/lisbon-pt` (sent via Cloudflare proxy rule/Page function)
 *   **Verification Steps**:
     1. Send the first GET request. Inspect the headers.
     2. Send the second GET request within 5 seconds.
 *   **Expected Result**:
     *   The backend database receives only 1 query (confirmed via SQL logs).
-    *   Response headers reflect caching TTL policies.
+    *   Response headers reflect caching TTL policies (e.g. Cloudflare Cache-Control headers).
 
 #### ITC-6: Edge Proxy Rate Limiting
-*   **Purpose**: Verify that the Netlify Proxy blocks spam requests.
+*   **Purpose**: Verify that the Cloudflare Edge WAF rate limiting blocks spam requests.
 *   **Verification Steps**:
     1. Send 65 rapid requests from a single client IP address within 1 minute.
 *   **Expected Result**:
@@ -128,3 +129,16 @@ This document describes the backend and system integration test cases for the Re
          "message": "Database connection failed."
        }
        ```
+
+---
+
+## 5. Background Pipeline Integration
+
+#### ITC-8: Ingestion Pipeline Execution
+*   **Purpose**: Verify that the background Ingestion Worker successfully fetches raw indicator data, normalizes values to a 1–5 scale, updates the database records (including Geopolitical and Conflict Risk), and updates timestamps.
+*   **Preconditions**: Test database holds seed data, mock endpoints are active for primary sources (UN, OECD, Wikipedia, Numbeo).
+*   **Verification Steps**:
+    1. Manually trigger the ingestion task via CLI (e.g. `uv run npm run job:ingestion` or worker trigger).
+    2. Query database for a test city (e.g., Lisbon) in `city_scores` and verify that dimension scores (e.g., `cost`, `military_safety`) have been updated according to mock source data.
+    3. Query database `cities` table and verify `last_updated` date has been set to the current UTC date.
+*   **Expected Result**: The transaction executes successfully, scores are updated cleanly in the database, and `last_updated` matches the current date.

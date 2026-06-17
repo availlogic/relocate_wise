@@ -3,6 +3,30 @@
 This document outlines the detailed specifications for each screen in the RelocateWise MVP, establishing clear requirements for frontend component architecture, user interactions, validation logic, loading states, and navigation actions.
 
 ---
+ 
+## 0. Global Page Shell & Shared Components
+ 
+These elements are rendered globally across all views to maintain structural and interactive consistency.
+ 
+### Components & User Interactions
+*   **Global Header**:
+    *   *Brand Logo / Name*: Clicking navigates to the Landing Screen, resetting all state except language.
+    *   *Bilingual Language Toggle*: A manual button group (EN / 中文) allowing users to switch the interface language dynamically at any point.
+        *   *Default*: English (EN active).
+        *   *Behavior*: Clicking 中文 instantly translates all copy (questions, labels, metrics, descriptions) to Chinese (Simplified) without refreshing the page or losing wizard/shortlist progress. Clicking EN restores the English copy.
+    *   *Compare Shortcut Button*: Displays current shortlist count (e.g. Compare (0)). Dynamic check/highlight behavior.
+*   **Global Footer**:
+    *   Links to "Privacy Policy", "Terms of Service". Displays copyright details.
+*   **Cookie Consent Banner**:
+    *   Sticky overlay banner appearing at the bottom of the viewport on first visit.
+    *   *Buttons*: "Accept All" (Sets non-essential cookie flag to true), "Decline" (Sets non-essential cookie flag to false).
+    *   *Links*: "Privacy Policy".
+
+### Validation Rules & Data Requirements
+*   Cookie consent choice must be stored in browser `localStorage` to prevent repeating the prompt.
+*   Selected language choice (`en` / `zh`) must be stored in client state to persist across transitions.
+
+---
 
 ## 1. Landing Screen
 
@@ -19,15 +43,10 @@ This document outlines the detailed specifications for each screen in the Reloca
     1.  *Objective Matching*: No sponsor bias, powered strictly by UN/OECD data.
     2.  *Deep Comparisons*: View metrics side-by-side.
     3.  *Privacy First*: No sign-up required, zero persistent tracking.
-*   **Cookie Consent Banner**:
-    *   Sticky banner appearing at the bottom of the viewport on first visit.
-    *   *Buttons*: "Accept All" (Sets non-essential cookie flag to true), "Decline" (Sets non-essential cookie flag to false).
-    *   *Links*: "Privacy Policy".
-*   **Footer**: Links to "Privacy Policy".
+*   **Footer**: Links to "Privacy Policy" (matches Global Footer behavior).
 
 ### Validation Rules & Data Requirements
 *   No input validation required on this screen.
-*   Cookie consent choice must be stored in browser `localStorage` to prevent repeating the prompt.
 
 ### States
 *   **Success (Default)**: Normal page render.
@@ -42,27 +61,36 @@ This document outlines the detailed specifications for each screen in the Reloca
 ## 2. Questionnaire Screen (Multi-Step Template)
 
 ### Purpose & User Goals
-*   **Purpose**: Dynamically guide the user through 7 preference questions.
+*   **Purpose**: Dynamically guide the user through 8 preference questions.
 *   **User Goals**: Input preferences quickly and skip dimensions that are not important.
 
 ### Components & User Interactions
 *   **Progress Header**:
-    *   *Progress Bar*: Fills incrementally (14.2% per step for 7 steps).
-    *   *Step Indicator*: Text "Step X of 7".
+    *   *Progress Bar*: Fills incrementally (12.5% per step for 8 steps).
+    *   *Step Indicator*: Text "Step X of 8".
 *   **Question Area**:
-    *   *Question Title*: Clear, bold question (e.g., "What is your ideal climate?").
-    *   *Instruction Subtext*: Optional helper text (e.g., "Select the temperature profile you feel most comfortable in.").
+    *   *Question Title*: Clear, bold question.
+    *   *Instruction Subtext*: Optional helper text.
 *   **Selection Grid**:
     *   Grid of clickable visual cards representing choices.
     *   Cards highlight with an active border and background color when selected.
 *   **Action Controls**:
     *   *Back Button*: (Disabled on Step 1) Returns to previous step.
     *   *Skip Button*: Moves to next step without selecting.
-    *   *Next Button*: Moves to next step. Replaced by **"View Matches"** (Primary CTA styling) on Step 7.
+    *   *Next Button*: Moves to next step. Replaced by **"View Matches"** (Primary CTA styling) on Step 8.
 
 ### Validation Rules & Data Requirements
 *   No strict validation. Skipping a question is allowed (a default neutral value is recorded for that parameter).
 *   State is managed in client-side memory during the quiz.
+*   **Questionnaire Dimensions (8 Steps)**:
+    1.  **Climate Preference**: categorical profile match (e.g. Mediterranean, Continental, Tropical).
+    2.  **Housing Budget Range**: Relative index (1–5 scale).
+    3.  **Career & Industry Focus**: Selected sector filters career fit metrics.
+    4.  **Healthcare Quality**: Importance rating (1–5 scale).
+    5.  **Education Quality**: Importance rating (1–5 scale, with "Not Applicable" option).
+    6.  **Community & Lifestyle Fit**: Selects preferred lifestyle tags.
+    7.  **Location Density**: Urban, Suburban, or Rural preference.
+    8.  **Geopolitical and Conflict Risk**: Importance rating (1–5 scale) for political stability.
 
 ### States
 *   **Success (Default)**: Question and options render immediately.
@@ -70,8 +98,8 @@ This document outlines the detailed specifications for each screen in the Reloca
 
 ### Navigation Actions
 *   "Back" -> Loads previous step.
-*   "Next" / "Skip" (Steps 1–6) -> Loads next step.
-*   "View Matches" (Step 7) -> Triggers matching algorithm API request and navigates to **Ranked Results Screen**.
+*   "Next" / "Skip" (Steps 1–7) -> Loads next step.
+*   "View Matches" (Step 8) -> Triggers matching algorithm API request and navigates to **Ranked Results Screen**.
 
 ---
 
@@ -128,12 +156,14 @@ This document outlines the detailed specifications for each screen in the Reloca
 
 ### Components & User Interactions
 *   **Profile Header**:
-    *   *Title*: City Name, Country.
+    *   *Title*: City Name, Country, accompanied by a high-quality country flag image (SVG/PNG graphic, bypassing standard text emoji).
     *   *Back Button*: "Back to Results" (Returns user to Results).
     *   *Action Button*: "Add to Comparison" / "Remove from Comparison" (Updates shortlist state).
+*   **Visual Assets**:
+    *   *Landmark Photo*: A representative landscape, landmark, or aerial photo. Optimized and lazy-loaded.
 *   **Qualitative Summary**: A 2–3 sentence description paragraph explaining the city's character.
 *   **Metrics Grid**: The 8 dimensions displayed as horizontal progress bars:
-    *   *Dimensions*: Climate (Label + numeric range), Cost of Living (1-5 scale), Housing Affordability (1-5 scale), Career/Industry Fit (1-5 scale), Healthcare (1-5 scale), Education (1-5 scale), Community & Lifestyle (1-5 scale), and Military Safety (1-5 scale).
+    *   *Dimensions*: Climate (Label + numeric range), Cost of Living (1-5 scale), Housing Affordability (1-5 scale), Career/Industry Fit (1-5 scale), Healthcare (1-5 scale), Education (1-5 scale), Community & Lifestyle (1-5 scale), and Geopolitical and Conflict Risk (1-5 scale).
 *   **Metadata Footer**: Shows a "Data last updated: YYYY-MM-DD" label.
 *   **Floating Shortlist Bar**: Persistent at bottom (matches Results screen behavior) to allow quick comparison.
 

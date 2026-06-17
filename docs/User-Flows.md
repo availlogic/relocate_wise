@@ -11,6 +11,7 @@ This document maps out the user journeys, entry points, navigation paths, decisi
 *   **Analyze City Profiles**: Dive into individual city details to understand quantitative ratings and qualitative summaries.
 *   **Compare Candidates**: Select 2 or 3 cities and compare their metrics side-by-side to understand trade-offs.
 *   **Understand Match Quality**: See a clear, deterministic explanation of why each city matched their preferences.
+*   **Toggle Language Dynamically**: Switch the entire application interface between English and Chinese (Simplified) on any screen without losing current state.
 
 ### Entry Points
 *   **Direct Traffic / Search Engines**: Users land on the homepage/landing screen.
@@ -30,7 +31,7 @@ graph TD
     Q4 --> |Next / Skip| Q5[Questionnaire Step 5: Education]
     Q5 --> |Next / Skip| Q6[Questionnaire Step 6: Community Fit]
     Q6 --> |Next / Skip| Q7[Questionnaire Step 7: Location Density]
-    Q7 --> |Next / Skip| Q8[Questionnaire Step 8: Military Safety]
+    Q7 --> |Next / Skip| Q8[Questionnaire Step 8: Geopolitical & Conflict Risk]
     Q8 --> |Submit| MatchEngine{Deterministic Matching}
     MatchEngine --> |Calculates weighted scores| Results[2. Ranked Results Screen]
     
@@ -51,6 +52,7 @@ graph TD
 *   **Decision Point**: A cookie consent banner is presented.
     *   *Path A (Consent)*: User clicks "Accept". Non-essential cookies/analytics are initialized. Banner disappears.
     *   *Path B (Decline)*: User clicks "Decline" or closes the banner. No non-essential cookies are set.
+*   **Language Selection**: User can toggle the manual language selector (`EN` / `ZH`) in the global header to switch between English and Chinese (Simplified) dynamically.
 *   **Navigation**: User clicks the primary Call to Action (CTA) "Start Questionnaire" to move to Step 2.
 
 #### Step 2: Questionnaire Progression
@@ -62,7 +64,7 @@ graph TD
     5.  **Education Quality Priority** (Importance rating 1–5, with a "Not Applicable" option for households without children).
     6.  **Community & Lifestyle Fit** (e.g., Urban, Suburban, Coastal, Mountain, Arts/Culture).
     7.  **Location Density Preference** (Urban, Suburban, Rural).
-    8.  **Military Safety Priority** (Importance rating 1–5).
+    8.  **Geopolitical & Conflict Risk Priority** (Importance rating 1–5).
 *   **Controls on Each Screen**:
     *   *Next / Select Option*: Progresses to the next step.
     *   *Back*: Returns to the previous step (retaining the selected option).
@@ -136,3 +138,11 @@ graph TD
 *   **Scenario**: User closes the browser tab or submits a brand new questionnaire.
 *   **Behavior**: Browser session storage is cleared. The shortlist is reset to empty.
 *   **Outcome**: User privacy is respected; no persistent footprint remains.
+
+### F. Dynamic Language Selection
+*   **Scenario**: User toggles language (e.g. from EN to ZH) midway through the questionnaire, on results, or on a city profile.
+*   **Behavior**:
+    1. UI immediately shifts all static text and components into the selected language translations.
+    2. Any session state (shortlisted cities, currently answered questions in the wizard) is preserved exactly as is.
+    3. The application does not refresh or lose page history.
+*   **Outcome**: Seamless multilingual user experience with zero state loss.

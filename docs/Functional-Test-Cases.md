@@ -1,10 +1,10 @@
 ---
 title: "Functional Test Cases"
-version: "1.0.0"
+version: "1.1.0"
 status: draft
-author: "QA Agent"
+author: "QA Agent / Antigravity"
 created: "2026-06-10"
-updated: "2026-06-10"
+updated: "2026-06-17"
 related_docs:
   - "docs/PRD.md"
   - "docs/Screen-Specs.md"
@@ -193,10 +193,10 @@ To ensure test repeatability and TDD reproducibility, the following mock dataset
 *   **Preconditions**: User navigates to `/city/lisbon-pt`.
 *   **Steps**:
     1. Verify the profile page shows the city name "Lisbon" and country "Portugal".
-    2. Verify 8 horizontal progress bars are rendered (Climate, Cost, Housing, Career, Healthcare, Education, Community, Military Safety).
+    2. Verify 8 horizontal progress bars are rendered (Climate, Cost, Housing, Career, Healthcare, Education, Community, Geopolitical and Conflict Risk).
     3. Verify Climate shows label "Mediterranean".
-    4. Verify Cost, Housing, Career, Healthcare, Education, Community, and Military Safety display ratings matching the mock dataset (e.g. Cost: 2/5, Housing: 2/5, Military Safety: 5/5).
-*   **Expected Result**: Ratings align with database/JSON scores.
+    4. Verify Cost, Housing, Career, Healthcare, Education, Community, and Geopolitical and Conflict Risk display ratings matching the mock dataset (e.g. Cost: 2/5, Housing: 2/5, Geopolitical and Conflict Risk: 5/5).
+*   **Expected Result**: Ratings align with database/JSON scores (internal key: `military_safety`).
 *   **Priority**: High
 
 #### FTC-11: Add/Remove from Shortlist on Profile Screen
@@ -230,4 +230,40 @@ To ensure test repeatability and TDD reproducibility, the following mock dataset
     2. Verify the Cost row highlights the Lisbon cell (index 2/5) as the winner.
     3. Verify the Career row highlights the Lisbon cell (tech 5/5 vs NYC tech 4/5) as the winner.
 *   **Expected Result**: Winner cells have CSS class applying the accent primary border and background shade.
+*   **Priority**: High
+
+---
+
+### 2.6 Localization & Responsiveness
+
+#### FTC-14: Bilingual Language Selection Toggle
+*   **Feature Name**: Bilingual i18n Support
+*   **Preconditions**: User is on landing page `/`, default browser language or current app language is English.
+*   **Steps**:
+    1. Verify heading, CTA button, and footer links render in English (default).
+    2. Click the language toggle button (e.g., "中文").
+    3. Verify heading and all UI controls immediately switch to Simplified Chinese (e.g. "开始问卷").
+    4. Start the questionnaire and verify question titles (e.g. Climate, Cost) render in Chinese.
+    5. Click the language toggle button (e.g., "English").
+*   **Expected Result**: All UI labels, static copy, and question cards update immediately without reloading the page or losing current session state.
+*   **Priority**: High
+
+#### FTC-15: Mobile Viewport Responsiveness
+*   **Feature Name**: Responsive UI
+*   **Preconditions**: Browser viewport is resized to mobile width (375px).
+*   **Steps**:
+    1. Navigate to `/` and verify layout stacks vertically, with no horizontal overflow scrollbars.
+    2. Complete the questionnaire and verify that the options and progress bar scale correctly to fit the screen.
+    3. Navigate to `/compare` and verify that the comparison table columns either wrap cleanly or allow horizontal scrolling, preventing text clipping.
+*   **Expected Result**: Visual integrity is maintained across all screens on simulated mobile viewports.
+*   **Priority**: High
+
+#### FTC-16: Rich Profile Elements (Flag and Landmark)
+*   **Feature Name**: Rich City Profiles
+*   **Preconditions**: User is on the city profile page `/city/lisbon-pt`.
+*   **Steps**:
+    1. Verify the city profile header shows the country name "Portugal".
+    2. Verify a graphical flag image (SVG/PNG) for Portugal is displayed adjacent to the country name (no raw text emojis).
+    3. Verify the city landmark image displays correctly, has a `loading="lazy"` attribute, and fits within a 16:9 aspect ratio container.
+*   **Expected Result**: Graphics files load successfully, flags are graphical, and landmark images are lazy loaded.
 *   **Priority**: High

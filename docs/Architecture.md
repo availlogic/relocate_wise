@@ -1,8 +1,8 @@
 ---
 title: "System Architecture"
-version: "1.2.0"
+version: "1.3.0"
 status: draft
-author: "Architecture Agent"
+author: "Architecture Agent / Antigravity"
 created: "2026-06-02"
 updated: "2026-06-17"
 related_docs:
@@ -15,7 +15,7 @@ related_docs:
 
 # RelocateWise — System Architecture
 
-This document describes the technical design for the RelocateWise system. It is grounded in `Vision.md`, `Constraints.md`, and `PRD.md` (v3.1.0). The dominant infrastructure constraints are the global CDN deployment for the frontend, self-hosted Docker backend, and the asynchronous scheduled worker for raw data collection.
+This document describes the technical design for the RelocateWise system. It is grounded in `Vision.md`, `Constraints.md`, and `PRD.md` (v3.2.0). The dominant infrastructure constraints are the global CDN deployment for the frontend, self-hosted Docker backend, and the asynchronous scheduled worker for raw data collection.
 
 ## 1. Design Principles
 
@@ -30,7 +30,7 @@ The architecture follows six rules derived from the product principles in `Visio
 
 ## 2. System Topology
 
-The deployment uses a **two-tier hybrid deployment**: a static + edge tier on Netlify, and a private backend tier on the CEO's Ubuntu server. The Ubuntu server hosts the database, API server, and the asynchronous scheduled data collection worker.
+The deployment uses a **two-tier secure deployment**: a static tier on Cloudflare Pages and a private backend tier on the CEO's Ubuntu server. The Ubuntu server runs the database, API server, and scheduled ingestion worker in a Docker Compose environment. All public API traffic is routed securely to the server via an outbound **Cloudflare Tunnel (`cloudflared`)**, ensuring no ports need to be opened on the host firewall.
 
 ```
                   ┌─────────────────────────────────────────────┐
@@ -38,22 +38,32 @@ The deployment uses a **two-tier hybrid deployment**: a static + edge tier on Ne
                   │  React + Vite, static assets, no server     │
                   │  state, shortlist in sessionStorage         │
                   └────────────────────┬────────────────────────┘
-                                       │ HTTPS (JSON over fetch)
+                                       │ HTTPS (via Cloudflare Pages CDN)
                                        ▼
         ┌──────────────────────────────────────────────────────┐
-        │          Netlify (free tier)                         │
+        │                 Cloudflare Edge                      │
         │  ┌────────────────┐    ┌────────────────────────┐    │
-        │  │  Static CDN    │    │  Netlify Functions      │   │
-        │  │  /app/*        │    │  /api/*  (proxy + edge)  │   │
-        │  └────────────────┘    └─────────────┬──────────┘   │
+        │  │  Pages CDN     │    │  Cloudflare WAF /      │    │
+        │  │  Static Assets │    │  Rate Limiting Rules   │    │
+        │  └────────────────┘    └─────────────┬──────────┘    │
         └──────────────────────────────────────┼───────────────┘
-                                               │ HTTPS (server-to-server)
+                                               │ HTTPS (Cloudflare Tunnel)
                                                ▼
                   ┌─────────────────────────────────────────────┐
                   │  Ubuntu server (Docker Compose)             │
                   │  ┌──────────────────────┐                   │
-                  │  │ api  (Node.js)       │  ◄── TLS via Caddy │
-                  │  │ Express API Server   │      (Let's Encrypt)│
+                  │  │ cloudflared (Tunnel) │                   │
+                  │  │ Outbound daemon      │                   │
+                  │  └──────────┬───────────┘                   │
+                  │             │ local network (HTTP)          │
+                  │  ┌──────────▼───────────┐                   │
+                  │  │ caddy (Web server)   │                   │
+                  │  │ Local proxy          │                   │
+                  │  └──────────┬───────────┘                   │
+                  │             │                               │
+                  │  ┌──────────▼───────────┐                   │
+                  │  │ api  (Node.js)       │                   │
+                  │  │ Express/Fastify API  │                   │
                   │  └──────────┬───────────┘                   │
                   │             │                               │
                   │  ┌──────────▼───────────┐                   │
@@ -69,7 +79,7 @@ The deployment uses a **two-tier hybrid deployment**: a static + edge tier on Ne
                   └─────────────────────────────────────────────┘
 ```
 
-**Why hybrid?** The CEO's Ubuntu server is the only place we can run PostgreSQL with PostGIS on a $0 budget. Netlify gives us free global CDN and TLS for the static SPA. The scheduled ingestion worker runs on the same server, triggering updates to the Postgres instance without exposing write endpoints to the public internet.
+**Why Cloudflare Tunnel?** Using Cloudflare Tunnel (`cloudflared`) allows us to securely route traffic from Cloudflare Edge directly into the containerized Docker network on the Ubuntu server without opening any inbound ports (e.g., 80 or 443) on the server's firewall. Cloudflare Pages provides free global CDN for the React SPA, and routes `/api/*` to the backend via a Page Rule/Worker proxy. Caddy acts as a lightweight local proxy for incoming traffic inside the Docker network, routing `/api/*` requests to the Fastify API. The scheduled ingestion worker runs asynchronously on the same server, triggering updates to the Postgres instance without exposing write endpoints to the public internet.
 
 ## 3. Technology Stack
 
@@ -85,9 +95,10 @@ The deployment uses a **two-tier hybrid deployment**: a static + edge tier on Ne
 | Database     | **PostgreSQL 16 + PostGIS 3.4**       | Robust relational data, excellent geospatial extensions (PostGIS), ACID compliance.                     |
 | ORM / query  | **Knex (raw query builder)**          | Lighter than Prisma; explicit SQL. Migrations included.                                                |
 | Scheduling   | **Node-Cron**                         | Standard scheduler running inside the API/worker container.                                            |
-| TLS          | **Caddy on Ubuntu** (auto Let's Encrypt) | One container, zero config, automatic renewal.                                                     |
+| Local Proxy  | **Caddy** (Docker runtime)            | Acts as local reverse proxy, response compression, and development HTTPS provider.                    |
+| Tunnel       | **Cloudflare Tunnel (cloudflared)**   | Outbound-only tunnel daemon mapping public hostnames to Caddy/API inside the Docker network.            |
 | CI/CD        | **GitHub Actions**                    | Lint, test, build on every push. Manual `docker compose pull && up -d` on server.                      |
-| Frontend CDN | **Netlify** (free tier)               | Auto-deploy from `main`. Build settings: `npm run build`, publish `dist/`.                              |
+| Frontend CDN | **Cloudflare Pages** (free tier)      | Auto-deploy from `main`. Build settings: `npm run build`, publish `dist/`.                              |
 
 ## 4. Component Responsibilities
 
@@ -97,10 +108,11 @@ The deployment uses a **two-tier hybrid deployment**: a static + edge tier on Ne
 - Submit questionnaire answers to `POST /api/match` and render the response.
 - Read city profiles from `GET /api/cities/:id`.
 
-### 4.2 Netlify Functions (edge tier)
-- Provide a **single CORS origin** for the SPA.
-- Add a **short-lived in-memory cache** for `GET /api/cities/:id` (60s TTL).
-- Add **rate limiting** at the edge by client IP (e.g., 60 requests / 10 min) before traffic reaches the Ubuntu server.
+### 4.2 Cloudflare Edge Proxy & WAF (edge tier)
+- Provide global CDN distribution and SSL/TLS termination for frontend assets.
+- Enforce Web Application Firewall (WAF) rate limiting (e.g. 60 requests / 10 min per client IP) to block DDoS attempts.
+- Handle edge caching for static assets and proxy `/api/*` queries to the backend tunnel.
+- Cache single city profiles (`GET /api/cities/:slug`) for **60 seconds** (TTL) at the edge to optimize database load.
 
 ### 4.3 Backend API Server (Node.js API on Ubuntu)
 - Accept questionnaire submissions, run the matching algorithm against the local database, return the top 10.
@@ -182,7 +194,7 @@ For each city `c` and each dimension `d`, compute `m(c, d) ∈ [0, 1]`:
 | education   | `c.education / 5` if `user.education != "not_relevant"`, else dimension **excluded**.      |
 | healthcare  | `c.healthcare / 5`.                                                                       |
 | community   | `max(c.community[tag] for tag in user.lifestyle_tags) / 5`, or `0.5` if no tags chosen.   |
-| military_safety | `c.military_safety / 5` (Lower scores heavily depress overall city match rating).         |
+| military_safety | `c.military_safety / 5` (Internal representation of **Geopolitical and Conflict Risk** dimension. Lower scores heavily depress overall city match rating). |
 
 ### 6.3 Per-dimension weight
 
@@ -195,7 +207,7 @@ For each city `c` and each dimension `d`, compute `m(c, d) ∈ [0, 1]`:
 | education   | `0` if `not_relevant`, else `1` |
 | healthcare  | `healthcare_importance` mapped to `{0, 0.5, 1, 2}` |
 | community   | `1` if user picked ≥1 tag, else `0` |
-| military_safety | `military_safety_importance` mapped to `{0, 1, 2.5, 4}` (Higher safety priority acts as a heavy filter) |
+| military_safety | `military_safety_importance` mapped to `{0, 1, 2.5, 4}` (Higher Geopolitical and Conflict Risk priority acts as a heavy filter) |
 
 Weights are normalized: `w_d' = w_d / Σ w_d` over the **included** dimensions.
 
@@ -214,7 +226,7 @@ Weights are normalized: `w_d' = w_d / Σ w_d` over the **included** dimensions.
 | education     | "Strong schools and education options"                                 |
 | healthcare    | "Strong healthcare access"                                             |
 | community     | "Matches your {tag1, tag2} lifestyle"                                 |
-| military_safety | "High geopolitical stability and physical safety"                      |
+| military_safety | "High geopolitical stability and physical safety" (Represents Geopolitical and Conflict Risk) |
 
 ## 7. API Surface
 
@@ -236,6 +248,16 @@ Weights are normalized: `w_d' = w_d / Σ w_d` over the **included** dimensions.
 | `/city/:slug`    | City profile          | 8 dimensions on a 1–5 scale + description + last_updated.             |
 | `/compare`       | Comparison            | 2–3 cities × 8 dimensions, best-per-row highlighted.                   |
 | `/privacy`       | Privacy policy        | Static page. Linked from footer and consent banner.                   |
+
+### 8.2 Bilingual Localization (i18n)
+
+- Supports dynamically toggling the entire user interface between **English** (default) and **Chinese (Simplified)**.
+- Localized strings are stored in static JSON translation files, bundled into the frontend assets to guarantee zero latency during language switches.
+
+### 8.3 Responsive Layouts & Mobile Access
+
+- Built strictly using custom media queries and modern responsive layout strategies (CSS Flexbox/Grid).
+- Guaranteed full operational usability (questionnaire, cards, side-by-side comparison tables, interactive charts) on desktop, tablet, and mobile browsers (simulated iOS and Android viewports).
 
 ## 9. End-to-End Data Flow
 
@@ -288,3 +310,4 @@ relocatewise/
 | 2026-06-02 | 1.0.0   | Architecture Agent | Initial version. |
 | 2026-06-10 | 1.1.0   | Architecture Agent | Updated related docs and references to align with Database.md, API_Spec.md.                        |
 | 2026-06-17 | 1.2.0   | Antigravity        | Added raw data collection background worker, node-cron scheduling layout, military safety formulas |
+| 2026-06-17 | 1.3.0   | Antigravity        | Replaced Netlify with Cloudflare Pages & Tunnel, mapped military_safety to Geopolitical and Conflict Risk, added bilingual i18n & mobile layouts. |

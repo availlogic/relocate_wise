@@ -6,7 +6,7 @@ This document details the database architecture for RelocateWise. Under the proj
 
 ## 1. Design Principles
 
-1. **Normalized Dimension Scoring**: Rather than flattening scores as columns on the `cities` table, dimension scores are stored in a separate `city_scores` table (one row per city per dimension). This allows adding new metrics (e.g., "Air Quality" or "Military Safety") in the future without modifying the table schema or running database migrations.
+1. **Normalized Dimension Scoring**: Rather than flattening scores as columns on the `cities` table, dimension scores are stored in a separate `city_scores` table (one row per city per dimension). This allows adding new metrics (e.g., "Air Quality" or "Geopolitical and Conflict Risk") in the future without modifying the table schema or running database migrations.
 2. **Zero-PII Footprint**: In compliance with the GDPR-compliant state requirements defined in the PRD, the database stores **only** global city data. No user sessions, questionnaire profiles, shortlists, or lead captures are persisted.
 3. **Primary Source Dynamic Updates & Seed Decoupling**: While the database is seeded from a static JSON (`db/seeds/cities.json`) on initial startup, it acts as a dynamic store. An automated ingestion worker periodically updates the scores directly from authoritative primary sources.
 
@@ -96,7 +96,7 @@ Stores the standardized dimension scores (0–5 rating, where 5 is best/highest 
     `{ "label": "Mediterranean" }`
   * **Career sub-scores**: Key-value pairs containing 1-5 ratings across major industry clusters (Tech, Finance, Healthcare, Creative, Manufacturing).
   * **Community sub-scores**: Ratings for tags (Urban, Suburban, Coastal, Mountain, Arts/Culture, Family-oriented, Expat-friendly).
-  * **Military Safety sub-scores**: Contextual details like regional conflict level, travel advisory code, or security indexes.
+  * **Geopolitical and Conflict Risk sub-scores (stored under 'military_safety')**: Contextual details like regional conflict level, travel advisory code, or security indexes.
     `{ "conflict_risk": "low", "travel_advisory": "level_1" }`
 
 ---

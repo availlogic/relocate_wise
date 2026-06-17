@@ -55,6 +55,7 @@ Typography must use premium, modern fonts loaded from Google Fonts.
 
 *   **Headings Font**: `'Outfit', sans-serif` (Provides a geometric, clean, modern feel).
 *   **Body & UI Font**: `'Inter', sans-serif` (Provides extreme readability at small font sizes).
+*   **Bilingual Chinese Font Stack**: `system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif` (Ensures optimal legibility and matches line heights when toggled to Chinese Simplified).
 
 | Token Name | Font Family | Size | Weight | Line Height | Use Case |
 |---|---|---|---|---|---|
@@ -122,6 +123,14 @@ We enforce an **8px grid system** for consistent rhythm and alignment.
 *   **Track**: Height `8px`, border-radius `9999px`, background `var(--color-bg-secondary)`.
 *   **Fill**: Border-radius `9999px`, background `var(--color-accent-primary)`.
 *   **Scale**: Color indicator shifting (1-2 fill is red/danger, 3 is yellow/warning, 4-5 is teal/success).
+
+### 5. Country Flag Graphic
+*   **Format**: Rendered via SVG or high-resolution PNG image (bypassing raw text emoji for cross-device styling consistency).
+*   **Dimensions**: Width `24px` (aspect ratio 3:2), rendered inline with text, featuring a subtle `border-radius: 2px` and a border wrapper `1px solid var(--color-border-glass)` to prevent blending into the dark charcoal background.
+
+### 6. Landmark Image Box
+*   **Layout**: 16:9 aspect ratio container (`aspect-ratio: 16 / 9`).
+*   **Styling**: Border radius `8px` (`0.5rem`), `object-fit: cover`, and lazy loaded (`loading="lazy"`) to optimize bandwidth on mobile connections.
 
 ---
 

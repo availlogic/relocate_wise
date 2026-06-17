@@ -10,7 +10,7 @@ Every screen inherits a global container shell to maintain UI consistency.
 
 ```
 +-------------------------------------------------------------+
-|  [Logo] RelocateWise                   [Compare (0) Button] | <-- Header
+|  [Logo] RelocateWise      [EN/ZH]      [Compare (0) Button] | <-- Header
 +-------------------------------------------------------------+
 |                                                             |
 |                      [ MAIN CONTENT ]                       | <-- Responsive Content
@@ -22,7 +22,7 @@ Every screen inherits a global container shell to maintain UI consistency.
 +-------------------------------------------------------------+
 ```
 
-*   **Header**: Sticky at the top (`position: sticky; top: 0; z-index: 100`). Contains the brand logo (left) and the "Compare Shortlist" shortcut button (right).
+*   **Header**: Sticky at the top (`position: sticky; top: 0; z-index: 100`). Contains the brand logo (left), the bilingual dynamic language selector `[EN/ZH]` toggle (middle), and the "Compare Shortlist" shortcut button (right).
 *   **Footer**: Placed at bottom. Standard horizontal link items.
 *   **Cookie Consent Banner**: Positioned at bottom (`position: fixed; bottom: 0; left: 0; width: 100%; z-index: 150`). Dismissed elements update the CSS grid layout.
 
@@ -134,25 +134,28 @@ Detailed layout featuring a split layout on large viewports.
 |  < Back to Results                                          |
 +-------------------------------------------------------------+
 |                                                             |
-|  Amsterdam, Netherlands                                     |
+|  [Flag SVG] Amsterdam, Netherlands                          |
 |  [ Add to Comparison ]                                      |
 |                                                             |
 |  +-----------------------------+ +------------------------+  |
-|  | Summary                     | | Metrics                |  |
-|  | Amsterdam is the capital of | | Climate: Continental    |  |
-|  | the Netherlands, known for  | | Cost of Living: =====  |  |
-|  | its artistic heritage,      | | Housing:       =====  |  |
-|  | elaborate canal system, and | | Career Fit:    ====   |  |
-|  | cycling paths.              | | Healthcare:    =====  |  |
+|  | Landmark Image              | | Metrics                |  |
+|  | +-------------------------+ | | Climate: Continental    |  |
+|  | |      [Landmark Photo]   | | | Cost of Living: =====  |  |
+|  | +-------------------------+ | | Housing:       =====  |  |
+|  |                             | | Career Fit:    ====   |  |
+|  | Summary                     | | Healthcare:    =====  |  |
+|  | Amsterdam is the capital of | | Education:     =====  |  |
+|  | the Netherlands, known for  | | Lifestyle:     =====  |  |
+|  | its artistic heritage.      | | Geop. Risk:    =====  |  |
 |  +-----------------------------+ +------------------------+  |
 |                                                             |
-|  Data last updated: 2026-06-10                              |
+|  Data last updated: 2026-06-17                              |
 +-------------------------------------------------------------+
 ```
 
 ### Grid Layout Settings
 *   **Profile Grid**: `display: grid; grid-template-columns: 1.2fr 1.8fr; gap: var(--space-xl)`.
-    *   *Mobile Adaptation*: Drops to `grid-template-columns: 1fr` (Summary on top, Metrics directly underneath).
+    *   *Mobile Adaptation*: Drops to `grid-template-columns: 1fr` (Flag, Title, and Action button on top; Landmark Image container next, followed by Summary, and Metrics at the bottom).
 *   **Metrics Row**: `display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: var(--space-md); margin-bottom: var(--space-sm)`.
 
 ---
@@ -179,7 +182,13 @@ Responsive matrix layout matching columns to shortlisted cities.
 |  ---------------+-------------------+-----------------------|
 |  Healthcare     | Index: 5/5        | Index: 4/5            |
 |  ---------------+-------------------+-----------------------|
+|  Education      | Index: 5/5        | Index: 1/5            |
+|  ---------------+-------------------+-----------------------|
 |  Climate        | Continental       | Medit. [Winner]       | <-- Highlighted Cell
+|  ---------------+-------------------+-----------------------|
+|  Lifestyle Fit  | Index: 4/5        | Index: 5/5 [Winner]   | <-- Highlighted Cell
+|  ---------------+-------------------+-----------------------|
+|  Geop. Risk     | Index: 5/5 [Winner]| Index: 4/5           | <-- Highlighted Cell
 |                                                             |
 +-------------------------------------------------------------+
 ```

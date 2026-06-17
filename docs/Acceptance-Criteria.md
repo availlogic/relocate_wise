@@ -1,10 +1,10 @@
 ---
 title: "Acceptance Criteria & Definition of Done"
-version: "1.0.0"
+version: "1.1.0"
 status: draft
-author: "QA Agent"
+author: "QA Agent / Antigravity"
 created: "2026-06-10"
-updated: "2026-06-10"
+updated: "2026-06-17"
 related_docs:
   - "docs/PRD.md"
   - "docs/Architecture.md"
@@ -54,8 +54,26 @@ This document provides the final acceptance criteria for each major feature area
 *   **Acceptance Conditions**:
     *   Matrix aligns the 8 dimensions row-by-row for 2 or 3 shortlisted cities.
     *   For each row, the cell containing the highest score must be highlighted with a distinctive border and background.
-    *   If Cost of Living is evaluated, the lower index score (representing cheaper cost) must be treated as the winner.
+    *   If Cost of Living is evaluated, the lower index score (representing cheaper cost) must be treated as the winner. For Geopolitical and Conflict Risk (internal key: `military_safety`), the higher index score (representing safer/more stable) is the winner.
     *   Removing a city from the comparison must adjust the columns immediately. If columns fall below 2, the user is redirected to the `/results` view.
+
+### Feature 6: Bilingual Localization (i18n)
+*   **Acceptance Conditions**:
+    *   The header must feature a dynamic language toggle for English and Simplified Chinese.
+    *   Toggling the language immediately translates all static page headers, questionnaires, results cards, "why this fits" summaries, and city profile dimensions.
+    *   Toggling the language must preserve the user's current session state (e.g. current questionnaire screen, selected shortlist).
+
+### Feature 7: Responsive Mobile Layouts
+*   **Acceptance Conditions**:
+    *   All UI screens must be fully functional and fit within mobile viewport widths (320px–375px) without horizontal page overflow.
+    *   Option cards and buttons must meet mobile accessibility touch targets.
+    *   The comparison table must enable horizontal scrolling or column wrapping to prevent clipping on mobile viewports.
+
+### Feature 8: Scheduled Ingestion Pipeline
+*   **Acceptance Conditions**:
+    *   The background task successfully executes via the node-cron scheduler or manual trigger.
+    *   Sourced indicators from UN, OECD, Wikipedia, Numbeo, and geopolitical/security advisory feeds are successfully parsed and written to the database.
+    *   The affected city records' `last_updated` timestamps are updated to the current date.
 
 ---
 
@@ -77,7 +95,7 @@ Before any task or feature is marked as complete, it must meet the following Def
 
 ### 3. Build & Deployment
 *   [ ] React client builds successfully (`npm run build`) without errors.
-*   [ ] Backend runs successfully in a local Docker Compose environment.
+*   [ ] Backend runs successfully in a local Docker Compose environment and supports secure deployment exposed via Cloudflare Tunnel.
 *   [ ] A GitHub Actions CI script executes and passes lint, unit tests, and smoke builds on push.
 
 ### 4. Documentation & Consistency
