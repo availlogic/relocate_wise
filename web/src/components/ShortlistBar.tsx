@@ -10,13 +10,17 @@
  *
  * Renders nothing when there are no items; pages can mount it
  * unconditionally.
+ *
+ * v0.4.0: copy is routed through i18next (PRD v3.2.0 S11).
  */
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { SHORTLIST_MAX, useShortlist } from '../state/shortlist';
 import './ShortlistBar.css';
 
 export function ShortlistBar() {
   const { items, remove, clear, count } = useShortlist();
+  const { t } = useTranslation();
   if (items.length === 0) return null;
 
   return (
@@ -28,7 +32,7 @@ export function ShortlistBar() {
     >
       <div className="shortlist-bar__left">
         <span className="shortlist-bar__count" data-testid="shortlist-bar-count">
-          {count} of {SHORTLIST_MAX} selected
+          {t('shortlist.count', { count, max: SHORTLIST_MAX })}
         </span>
         <ul className="shortlist-bar__chips">
           {items.map((city) => (
@@ -40,7 +44,7 @@ export function ShortlistBar() {
               <span>{city.city.name}</span>
               <button
                 type="button"
-                aria-label={`Remove ${city.city.name} from comparison`}
+                aria-label={t('shortlist.remove', { name: city.city.name })}
                 onClick={() => remove(city.city.slug)}
                 data-testid={`shortlist-bar-remove-${city.city.slug}`}
                 className="shortlist-bar__chip-x"
@@ -58,7 +62,7 @@ export function ShortlistBar() {
           onClick={clear}
           data-testid="shortlist-bar-clear"
         >
-          Clear all
+          {t('shortlist.clear')}
         </button>
         <Link
           to="/compare"
@@ -69,7 +73,7 @@ export function ShortlistBar() {
             if (count < 2) e.preventDefault();
           }}
         >
-          Compare now
+          {t('shortlist.compare')}
         </Link>
       </div>
     </aside>

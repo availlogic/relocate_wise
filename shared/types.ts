@@ -140,6 +140,13 @@ export interface UserProfile {
 
   /** 0..N lifestyle tags. Empty array = no preference for community dimension. */
   lifestyle_tags: LifestyleTag[];
+
+  /**
+   * UI language the form was submitted in. Optional — defaults to
+   * English when absent. The match engine uses it to localise the
+   * templated "why this fits you" line (Architecture §8.2, PRD S11).
+   */
+  language?: 'en' | 'zh';
 }
 
 // ---------------------------------------------------------------------------
@@ -202,6 +209,18 @@ export interface City {
   lng: number;
   description: string;
   last_updated: string; // ISO date, e.g. "2026-05-15"
+  /**
+   * URL or path to a representative landmark image (16:9 aspect, lazy-
+   * loaded). Required by PRD v3.2.0 S5 / FR-8 / AC-6 and Screen-Specs
+   * §4. The MVP ships the SVG flags locally and references public-
+   * domain landmark assets from Wikimedia Commons.
+   */
+  landmark_image_url: string;
+  /**
+   * URL or path to the country's graphical flag (SVG/PNG, never an
+   * emoji). 24x16 / 3:2 aspect per Visual-Guidelines §4.5.
+   */
+  flag_image_url: string;
   dimensions: CityDimensions;
 }
 
@@ -221,6 +240,17 @@ export interface MatchedCity {
   score: number;
   /** Templated one-line "why this fits you" explanation. */
   why: string;
+  /**
+   * Localisable key for the "why this fits you" template. The frontend
+   * resolves it via i18next with `why_vars` to render a translated
+   * sentence. Always set; kept alongside the English `why` string so
+   * non-localised callers can still render something sensible.
+   *
+   * v0.4.0 addition (PRD v3.2.0 S11 + Architecture §8.2).
+   */
+  why_key: string;
+  /** Variables to interpolate into the `why_key` template. */
+  why_vars?: Record<string, string>;
 }
 
 export interface MatchResult {

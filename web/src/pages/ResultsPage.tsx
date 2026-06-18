@@ -16,9 +16,12 @@
  *
  * "Start Over" clears the shortlist and routes to "/" (Acceptance-
  * Criteria Feature 3 + E2E-3).
+ *
+ * v0.4.0: copy is routed through i18next (PRD v3.2.0 S11).
  */
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RankCard } from '../components/RankCard';
 import { ShortlistBar } from '../components/ShortlistBar';
 import { useToast } from '../components/Toast';
@@ -35,6 +38,7 @@ export function ResultsPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
+  const { t } = useTranslation();
   const locationState = (location.state ?? null) as ResultsLocationState | null;
   // Rehydrate from sessionStorage if the location.state is missing
   // (e.g. the user landed here from a <Navigate replace /> or hit the
@@ -73,13 +77,10 @@ export function ResultsPage() {
   if (results.length === 0) {
     return (
       <div className="results-page results-page--empty" data-testid="results-empty">
-        <h1>No results yet</h1>
-        <p>
-          Submit the questionnaire to see your top matches. We don’t keep
-          any of your answers, so a refresh means starting fresh.
-        </p>
+        <h1>{t('results.emptyTitle')}</h1>
+        <p>{t('results.emptyBody')}</p>
         <Link to="/" className="btn btn--primary">
-          Back to the questionnaire
+          {t('results.emptyCta')}
         </Link>
       </div>
     );
@@ -93,31 +94,37 @@ export function ResultsPage() {
   const handleToggle = (city: MatchResponseFull['results'][number]) => {
     const willBeIn = !has(city.city.slug);
     if (willBeIn && count >= SHORTLIST_MAX) {
-      toast.push('You can compare up to 3 cities. Please remove one first.');
+      toast.push(t('results.shortlistFull'));
       return;
     }
     toggle(city);
   };
 
+  const generatedAtText = generatedAt
+    ? new Date(generatedAt).toLocaleString()
+    : '';
+
   return (
     <div className="results-page" data-testid="results-page">
       <header className="results-page__header">
-        <h1>Your top matches</h1>
-        <p className="results-page__sub">
-          {results.length} {results.length === 1 ? 'city' : 'cities'} ranked by overall fit.
-          {generatedAt ? (
+        <h1>{t('results.title')}</h1>
+        <p className="results-page__sub" data-testid="results-sub">
+          {t('results.sub', {
+            count: results.length,
+            city: t(`results.subCity_${results.length === 1 ? 'one' : 'other'}`),
+          })}
+          {generatedAtText ? (
             <>
-              {' '}Computed{' '}
+              {' '}
               <time dateTime={generatedAt}>
-                {new Date(generatedAt).toLocaleString()}
+                {t('results.subComputed', { when: generatedAtText })}
               </time>
-              .
             </>
           ) : null}
         </p>
         <div className="results-page__actions">
           <Link to="/" className="btn btn--secondary">
-            ← Edit my preferences
+            {t('results.editPreferences')}
           </Link>
           <button
             type="button"
@@ -125,7 +132,7 @@ export function ResultsPage() {
             onClick={handleStartOver}
             data-testid="results-start-over"
           >
-            Start over
+            {t('results.startOver')}
           </button>
           {count >= 2 ? (
             <Link
@@ -133,15 +140,18 @@ export function ResultsPage() {
               className="btn btn--primary"
               data-testid="results-compare-cta"
             >
-              Compare {count} {count === 1 ? 'city' : 'cities'} →
+              {t(`results.compare${count === 1 ? 'One' : 'Many'}`, { count })}
             </Link>
           ) : (
             <span
               className="results-page__hint"
               data-testid="results-compare-hint"
             >
-              Pick {2 - count} more {2 - count === 1 ? 'city' : 'cities'} to compare
-              side by side (up to {SHORTLIST_MAX}).
+              {t('results.hint', {
+                count: 2 - count,
+                city: t(`results.hintCity_${2 - count === 1 ? 'one' : 'other'}`),
+                max: SHORTLIST_MAX,
+              })}
             </span>
           )}
         </div>
@@ -161,9 +171,7 @@ export function ResultsPage() {
       </ol>
       {items.length > 0 ? (
         <p className="results-page__shortlist-summary" data-testid="results-shortlist-summary">
-          {items.length === 1
-            ? `1 city saved for comparison. Pick at least one more.`
-            : `${items.length} cities saved for comparison.`}
+          {t(`results.summary_${items.length === 1 ? 'one' : 'other'}`, { count: items.length })}
         </p>
       ) : null}
       <ShortlistBar />

@@ -1,0 +1,19 @@
+# Cloudflare Pages configuration for the RelocateWise SPA
+# (Architecture v1.3.0 §3 / PRD v3.2.0 S9 / FR-15 / AC-14).
+#
+# `wrangler pages deploy ./dist` from the `web/` directory is the
+# production deploy command. We commit a `wrangler.toml` so the
+# project name + build output are pinned in source.
+#
+# The Cloudflare Pages routing for `/api/*` is handled in the
+# Cloudflare dashboard (Functions → Routes) and forwards to the
+# Ubuntu API via Cloudflare Tunnel. See
+# `artifacts/Deployment_Report.md` for the full runbook.
+name = "relocatewise"
+compatibility_date = "2026-06-01"
+pages_build_output_dir = "./dist"
+
+# Build settings are inferred from `web/package.json`:
+#   build command: npm run build
+#   publish dir:   ./dist
+# The CEO sets `NODE_VERSION=20` in the Cloudflare Pages dashboard.

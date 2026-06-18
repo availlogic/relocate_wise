@@ -1,0 +1,63 @@
+name: Deploy to Cloudflare Pages
+
+# Cloudflare Pages deploy is documented as manual for the MVP
+# (`Constraints.md` §"CI/CD: GitHub Actions runs lint, unit tests, and a
+# smoke build on every push to main. Manual deploy to the chosen
+# free-tier host is acceptable for the MVP."). This workflow exposes
+# a `workflow_dispatch` trigger so the CEO can deploy on demand.
+#
+# Required GitHub repository secrets (set under
+#   Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN   — Cloudflare API token with "Pages: Edit"
+#                            + "Account: Read" permissions.
+#   CLOUDFLARE_ACCOUNT_ID  — Cloudflare account ID.
+#
+# The Cloudflare project name is pinned in `web/wrangler.toml`
+# (`name = "relocatewise"`). Build settings in the Cloudflare dashboard:
+#   Build command:     npm run build
+#   Build output:      dist
+#   Root directory:     web
+#   Node version:       20
+#
+# Local equivalent:
+#   cd web
+#   npm install
+#   npm run build
+#   CLOUDFLARE_API_TOKEN=... npx wrangler pages deploy ./dist \
+#     --project-name=relocatewise --branch=main
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to deploy"
+        required: true
+        default: "main"
+
+jobs:
+  deploy-pages:
+    name: Build SPA and publish to Cloudflare Pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web bundle
+        run: npm -w @relocatewise/web run build
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: relocatewise
+          directory: web/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ inputs.branch }}

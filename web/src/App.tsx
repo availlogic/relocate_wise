@@ -13,11 +13,16 @@
  *
  * `ShortlistProvider` is mounted inside the router so any page that
  * needs the session-scoped compare shortlist can call `useShortlist()`.
- * `HeaderShortlistBadge` is rendered on every page and reacts to the
- * live count. `ConsentBanner` sits at the top of the shell and is
- * visible until the user makes a first-visit choice (PRD FR-13, AC-11).
+ * `LanguageToggle` lives in the global header (Screen-Specs §0,
+ * Acceptance-Criteria Feature 6 / E2E-5) so the user can switch
+ * between English and Simplified Chinese on any page. Toggling does
+ * not reset questionnaire state or the shortlist (state lives in
+ * the parent providers, not in the toggle component).
+ * `ConsentBanner` sits at the top of the shell and is visible until
+ * the user makes a first-visit choice (PRD FR-13, AC-11).
  */
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ProfileForm } from './components/ProfileForm';
 import { ConsentBanner } from './components/ConsentBanner';
 import { ToastProvider } from './components/Toast';
@@ -27,6 +32,7 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { LandingPage } from './pages/LandingPage';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { ComparePage } from './pages/ComparePage';
+import { LanguageToggle } from './components/LanguageToggle';
 import { ShortlistProvider, useShortlist } from './state/shortlist';
 import './App.css';
 
@@ -38,11 +44,18 @@ export function App() {
           <div className="app-shell">
             <ConsentBanner />
             <header className="app-header">
-              <Link className="app-header__brand" to="/">RelocateWise</Link>
+              <Link className="app-header__brand" to="/">
+                <BrandLabel />
+              </Link>
               <nav className="app-header__nav" aria-label="Primary">
-                <Link to="/q">Questionnaire</Link>
+                <LanguageToggle />
+                <Link to="/q" data-testid="nav-questionnaire">
+                  <NavQuestionnaireLabel />
+                </Link>
                 <HeaderShortlistBadge />
-                <Link to="/privacy">Privacy</Link>
+                <Link to="/privacy" data-testid="nav-privacy">
+                  <NavPrivacyLabel />
+                </Link>
               </nav>
             </header>
             <main className="app-main">
@@ -56,24 +69,7 @@ export function App() {
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </main>
-            <footer className="app-footer">
-              <p>
-                RelocateWise is decision support, not legal or immigration
-                advice. Verify any visa or residency information with the
-                destination country’s official sources.
-              </p>
-              <p>
-                <Link to="/privacy">How your data is handled</Link>
-                {' · '}
-                <a
-                  href="https://github.com/"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  Source on GitHub
-                </a>
-              </p>
-            </footer>
+            <Footer />
           </div>
         </ShortlistProvider>
       </ToastProvider>
@@ -81,17 +77,34 @@ export function App() {
   );
 }
 
+function BrandLabel() {
+  const { t } = useTranslation();
+  return <span>{t('app.brand')}</span>;
+}
+
+function NavQuestionnaireLabel() {
+  const { t } = useTranslation();
+  return <>{t('app.nav.questionnaire')}</>;
+}
+
+function NavPrivacyLabel() {
+  const { t } = useTranslation();
+  return <>{t('app.nav.privacy')}</>;
+}
+
 /** Tiny header widget — links to /compare and shows the live count. */
 function HeaderShortlistBadge() {
   const { count } = useShortlist();
+  const { t } = useTranslation();
+  const aria = t('app.nav.compareAria', { count });
   return (
     <Link
       to="/compare"
       className="app-header__shortlist"
       data-testid="header-shortlist"
-      aria-label={`Shortlist with ${count} of 3 cities`}
+      aria-label={aria}
     >
-      Compare
+      {t('app.nav.compare')}
       <span
         className={
           'app-header__shortlist-count' +
@@ -102,5 +115,30 @@ function HeaderShortlistBadge() {
         {count}/3
       </span>
     </Link>
+  );
+}
+
+/**
+ * Footer rendered at the bottom of every page. Localised through
+ * i18next so the disclaimer + data-handling link update when the
+ * language toggles.
+ */
+function Footer() {
+  const { t } = useTranslation();
+  return (
+    <footer className="app-footer">
+      <p>{t('app.footer.disclaimer')}</p>
+      <p>
+        <Link to="/privacy">{t('app.footer.dataHandling')}</Link>
+        {' · '}
+        <a
+          href="https://github.com/"
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          {t('app.footer.source')}
+        </a>
+      </p>
+    </footer>
   );
 }

@@ -44,6 +44,7 @@ const c = (
   community: City['dimensions']['community'],
   military_safety: number,
   description: string,
+  landmark_image_url: string,
   last_updated = '2026-06-17',
 ): City => ({
   slug,
@@ -55,6 +56,8 @@ const c = (
   lng,
   description,
   last_updated,
+  flag_image_url: `/flags/${country_code.toLowerCase()}.svg`,
+  landmark_image_url,
   dimensions: {
     climate: { label: climate },
     cost,
@@ -106,6 +109,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 0, rural: 0, coastal: 2, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
     5,
     'The financial and cultural capital of the U.S., dense and walkable, with the largest metropolitan economy in the world.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/New_York_City_at_night_HDR.jpg'
   ),
   c(
     'austin-us',
@@ -124,6 +128,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 2, rural: 0, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
     5,
     "Austin's tech boom has made it one of the fastest-growing U.S. metros, with a young population, live-music scene, and (until recently) no state income tax.",
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Congress_Avenue_Bridge_Bats.jpg'
   ),
   c(
     'toronto-ca',
@@ -142,6 +147,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
     5,
     'Canada\'s largest city and financial centre, with a globally recognized diversity: over half of residents were born outside Canada.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Toronto_-_ON_-_CN_Tower.jpg'
   ),
   c(
     'vancouver-ca',
@@ -160,6 +166,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 3, mountain: 2, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
     5,
     'Pacific coast city framed by mountains and ocean, with strong Asian-Canadian cultural ties and a mild (rainy) climate.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Vancouver_skyline_at_night.jpg'
   ),
   c(
     'san-francisco-us',
@@ -178,6 +185,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 0, rural: 0, coastal: 3, mountain: 1, arts_culture: 3, family_oriented: 0, expat_friendly: 2 },
     5,
     'Pacific coast tech capital: high salaries offset by the highest cost of living in the U.S., with a famously entrepreneurial culture.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Golden_Gate_Bridge_from_Battery_Spencer.jpg'
   ),
   c(
     'seattle-us',
@@ -196,6 +204,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 2, mountain: 3, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
     5,
     'Pacific Northwest tech hub anchored by Amazon and Microsoft; surrounded by mountains and water, with a famously rainy climate.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Skyline_(49875804988).jpg'
   ),
   c(
     'boston-us',
@@ -214,6 +223,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 2, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     5,
     "America's college town: dense, walkable, and an anchor of biotech, higher education, and medical research.",
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Boston_Skyline_at_Twilight.jpg'
   ),
   c(
     'chicago-us',
@@ -232,6 +242,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 1, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     5,
     'Midwestern hub famous for its architecture, deep-dish pizza, and the Chicago Mercantile Exchange. Large and affordable by coastal standards.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Chicago_Skyline_at_Sunset.jpg'
   ),
   c(
     'denver-us',
@@ -250,6 +261,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 2, rural: 0, coastal: 0, mountain: 3, arts_culture: 2, family_oriented: 2, expat_friendly: 1 },
     5,
     'Mile-High City: sunny, dry, and a gateway to the Rocky Mountains. Growing fast as a remote-work destination.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Denver_Skyline_at_Dusk.jpg'
   ),
   c(
     'miami-us',
@@ -268,6 +280,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
     4,
     'Tropical coastal hub with strong Latin American ties, an active nightlife, and growing tech investment.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Miami_Skyline_at_Dusk_Panorama.jpg'
   ),
   c(
     'portland-us',
@@ -286,6 +299,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 1, mountain: 2, arts_culture: 3, family_oriented: 1, expat_friendly: 1 },
     5,
     'Pacific Northwest city famous for its food carts, indie culture, and easy access to mountains and ocean.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Portland_Skyline_at_Dusk.jpg'
   ),
   c(
     'montreal-ca',
@@ -304,6 +318,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     5,
     "Francophone North American city with the lowest rent among Canadian majors, a thriving AI and games industry, and a celebrated food scene.",
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Montreal_skyline_at_dusk.jpg'
   ),
   c(
     'mexico-city-mx',
@@ -322,6 +337,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 1, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     3,
     'Sprawling, high-altitude capital with deep history, a thriving arts scene, and one of the best food cultures in the Americas.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Mexico_City_at_dusk.jpg'
   ),
   c(
     'los-angeles-us',
@@ -340,6 +356,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 2, rural: 0, coastal: 3, mountain: 2, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
     5,
     'Car-dependent Pacific coast megacity centered on entertainment, tech, and the largest Mexican-American community in the U.S.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Los_Angeles_Skyline_at_Dusk.jpg'
   ),
   c(
     'atlanta-us',
@@ -358,6 +375,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 2, rural: 0, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 2, expat_friendly: 1 },
     5,
     "Southern business hub and home of the world's busiest airport. Fast-growing, with strong Black-American cultural institutions and a lower cost of living than coastal peers.",
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Atlanta_Skyline_at_Night.jpg'
   ),
 
   // -----------------------------------------------------------------------
@@ -380,6 +398,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
     5,
     'Atlantic-coast capital that has become Europe\'s leading digital-nomad hub, with the D7 visa and a famously low cost of living for Western Europe.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Lisbon_(36831531576).jpg'
   ),
   c(
     'porto-pt',
@@ -398,6 +417,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 2, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
     5,
     'Smaller, more traditional counterpart to Lisbon, with a strong identity, port-wine heritage, and lower cost of living.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Porto_(36751735360).jpg'
   ),
   c(
     'barcelona-es',
@@ -416,6 +436,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 0, rural: 0, coastal: 3, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
     5,
     'Catalan capital with Mediterranean beaches, Gaudí architecture, and a strong startup scene. Famous for food and outdoor lifestyle.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Barcelona_-_Sagrada_Fam%25C3%25ADlia_at_sunrise.jpg'
   ),
   c(
     'madrid-es',
@@ -434,6 +455,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 1, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     5,
     'Spain\'s high-altitude capital, with vibrant nightlife, strong public healthcare, and lower living costs than Paris or London.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Madrid_Skyline_(36199480953).jpg'
   ),
   c(
     'berlin-de',
@@ -452,6 +474,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 0, expat_friendly: 3 },
     5,
     'Germany\'s startup capital: cheap by Western European standards, intensely creative, and a magnet for English-speaking expats.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Berlin_Fernsehturm_at_Sunset.jpg'
   ),
   c(
     'amsterdam-nl',
@@ -470,6 +493,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 2, rural: 0, coastal: 1, mountain: 0, arts_culture: 3, family_oriented: 2, expat_friendly: 3 },
     5,
     'Compact canal city with the highest English proficiency in continental Europe and one of the strongest startup / tech ecosystems.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Amsterdam_Canals_at_Sunset.jpg'
   ),
   c(
     'paris-fr',
@@ -488,6 +512,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     4,
     'Global capital for culture, fashion, and finance. Expensive to live in, but with a strong public services backbone.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Paris_-_Eiffelturm_und_Trocad%25C3%25A9ro_bei_Nacht.jpg'
   ),
   c(
     'london-uk',
@@ -506,6 +531,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 1, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 3 },
     5,
     'Europe\'s largest financial centre and a global hub for tech, creative industries, and academia. Among the most expensive cities worldwide.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/London_Skyline_at_Dusk.jpg'
   ),
   c(
     'zurich-ch',
@@ -524,6 +550,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 2, rural: 0, coastal: 0, mountain: 2, arts_culture: 2, family_oriented: 2, expat_friendly: 1 },
     5,
     'Wealthy, efficient, and orderly Alpine city. Among the highest salaries and the highest costs of living in the world.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Zurich_Skyline_at_Sunset.jpg'
   ),
   c(
     'prague-cz',
@@ -542,6 +569,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
     5,
     'Central European capital with a beautiful historic core, low cost of living, and a fast-growing tech scene.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Prague_Bridge_at_Dawn.jpg'
   ),
 
   // -----------------------------------------------------------------------
@@ -564,6 +592,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 1, mountain: 0, arts_culture: 2, family_oriented: 2, expat_friendly: 3 },
     5,
     'City-state that consistently tops global rankings for education, healthcare, and ease of doing business.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Singapore_Skyline_at_Dusk.jpg'
   ),
   c(
     'tokyo-jp',
@@ -582,6 +611,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 1, mountain: 1, arts_culture: 3, family_oriented: 1, expat_friendly: 1 },
     5,
     'The world\'s largest metropolitan economy: ultra-safe, ultra-efficient, with famously low crime and excellent public transport.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Tokyo_Skyline_at_Sunset.jpg'
   ),
   c(
     'seoul-kr',
@@ -600,6 +630,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 1, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
     5,
     'Northeast Asian megacity famous for K-culture, ubiquitous connectivity, and a fast-growing startup scene.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Seoul_Skyline_at_Night.jpg'
   ),
   c(
     'sydney-au',
@@ -618,6 +649,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 2, rural: 0, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 2, expat_friendly: 2 },
     5,
     'Harbour city with a Mediterranean climate, strong points-based immigration pathways, and high quality of life.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Sydney_Opera_House_and_Harbour_Bridge_at_Dusk.jpg'
   ),
   c(
     'bangkok-th',
@@ -636,6 +668,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
     3,
     'Southeast Asian megacity famous for food, low cost of living, and a large long-stay expat community.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Bangkok_Skyline_at_Dusk.jpg'
   ),
 
   // -----------------------------------------------------------------------
@@ -658,6 +691,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 3, family_oriented: 1, expat_friendly: 2 },
     3,
     'Paris of South America: tango, steak, and European architecture, with chronic currency instability that distorts expat budgets.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Buenos_Aires_Skyline_at_Dusk.jpg'
   ),
   c(
     'santiago-cl',
@@ -676,6 +710,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 2, rural: 0, coastal: 0, mountain: 3, arts_culture: 1, family_oriented: 1, expat_friendly: 1 },
     5,
     'Modern, mid-sized Andean capital framed by the Andes. Most stable economy and strongest institutions in the region.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Santiago_de_Chile_skyline_at_dusk.jpg'
   ),
   c(
     'lima-pe',
@@ -694,6 +729,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 2, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
     3,
     'Coastal Pacific capital with a world-class food scene, and an arid microclimate kept cool by the Humboldt current.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Lima_skyline_at_dusk.jpg'
   ),
   c(
     'sao-paulo-br',
@@ -712,6 +748,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 0, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
     3,
     "Latin America's largest economy, with a dense, multicultural population and a strong business / tech scene.",
+    'https://commons.wikimedia.org/wiki/Special:FilePath/S%25C3%25A3o_Paulo_skyline_at_dusk.jpg'
   ),
   c(
     'medellin-co',
@@ -730,6 +767,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 0, mountain: 2, arts_culture: 1, family_oriented: 1, expat_friendly: 2 },
     2,
     'Once notorious, now a model of urban transformation: year-round spring weather, growing digital nomad scene, and a strong sense of place.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Medell%25C3%25ADn_skyline_at_dusk.jpg'
   ),
 
   // -----------------------------------------------------------------------
@@ -752,6 +790,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 3, mountain: 3, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
     3,
     'Coastal city below Table Mountain: Mediterranean climate, strong food / wine culture, and a critical-skills visa pathway.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Cape_Town_and_Table_Mountain.jpg'
   ),
   c(
     'dubai-ae',
@@ -770,6 +809,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 2, mountain: 0, arts_culture: 1, family_oriented: 1, expat_friendly: 3 },
     5,
     'Zero-income-tax Gulf city with a heavily expat population, a luxury lifestyle, and the Golden Visa long-stay program.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Dubai_Skyline_at_Night_(Pexels_4393660).jpg'
   ),
   c(
     'tel-aviv-il',
@@ -788,6 +828,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 0, rural: 0, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
     2,
     'Mediterranean tech hub, second only to Silicon Valley in startup density per capita. Beach-and-business lifestyle.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Tel_Aviv_skyline_at_dusk.jpg'
   ),
   c(
     'istanbul-tr',
@@ -806,6 +847,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 1, rural: 0, coastal: 2, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 1 },
     2,
     'Transcontinental megacity straddling Europe and Asia, with deep history, a strong food culture, and a recently launched citizenship-by-investment path.',
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Istanbul_skyline_at_dusk.jpg'
   ),
   c(
     'casablanca-ma',
@@ -824,5 +866,6 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 2, mountain: 0, arts_culture: 1, family_oriented: 1, expat_friendly: 1 },
     3,
     "Morocco's Atlantic-coast business hub, with French as a working language and an affordable Mediterranean lifestyle.",
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Hassan_II_Mosque_at_Casablanca.jpg'
   ),
 ];

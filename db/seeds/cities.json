@@ -9,6 +9,8 @@
     "lng": -74.006,
     "description": "The financial and cultural capital of the U.S., dense and walkable, with the largest metropolitan economy in the world.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/us.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/New_York_City_at_night_HDR.jpg",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -51,6 +53,8 @@
     "lng": -97.7431,
     "description": "Austin's tech boom has made it one of the fastest-growing U.S. metros, with a young population, live-music scene, and (until recently) no state income tax.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/us.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Congress_Avenue_Bridge_Bats.jpg",
     "dimensions": {
       "climate": {
         "label": "Tropical"
@@ -93,6 +97,8 @@
     "lng": -79.3832,
     "description": "Canada's largest city and financial centre, with a globally recognized diversity: over half of residents were born outside Canada.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/ca.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Toronto_-_ON_-_CN_Tower.jpg",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -135,6 +141,8 @@
     "lng": -123.1207,
     "description": "Pacific coast city framed by mountains and ocean, with strong Asian-Canadian cultural ties and a mild (rainy) climate.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/ca.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Vancouver_skyline_at_night.jpg",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -177,6 +185,8 @@
     "lng": -122.4194,
     "description": "Pacific coast tech capital: high salaries offset by the highest cost of living in the U.S., with a famously entrepreneurial culture.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/us.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Golden_Gate_Bridge_from_Battery_Spencer.jpg",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -219,6 +229,8 @@
     "lng": -122.3321,
     "description": "Pacific Northwest tech hub anchored by Amazon and Microsoft; surrounded by mountains and water, with a famously rainy climate.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/us.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Skyline_(49875804988).jpg",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -261,6 +273,8 @@
     "lng": -71.0589,
     "description": "America's college town: dense, walkable, and an anchor of biotech, higher education, and medical research.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/us.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Boston_Skyline_at_Twilight.jpg",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -303,6 +317,8 @@
     "lng": -87.6298,
     "description": "Midwestern hub famous for its architecture, deep-dish pizza, and the Chicago Mercantile Exchange. Large and affordable by coastal standards.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/us.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Chicago_Skyline_at_Sunset.jpg",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -345,6 +361,8 @@
     "lng": -104.9903,
     "description": "Mile-High City: sunny, dry, and a gateway to the Rocky Mountains. Growing fast as a remote-work destination.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/us.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Denver_Skyline_at_Dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -387,6 +405,8 @@
     "lng": -80.1918,
     "description": "Tropical coastal hub with strong Latin American ties, an active nightlife, and growing tech investment.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/us.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Miami_Skyline_at_Dusk_Panorama.jpg",
     "dimensions": {
       "climate": {
         "label": "Tropical"
@@ -429,6 +449,8 @@
     "lng": -122.6784,
     "description": "Pacific Northwest city famous for its food carts, indie culture, and easy access to mountains and ocean.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/us.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Portland_Skyline_at_Dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -471,6 +493,8 @@
     "lng": -73.5673,
     "description": "Francophone North American city with the lowest rent among Canadian majors, a thriving AI and games industry, and a celebrated food scene.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/ca.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Montreal_skyline_at_dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -513,6 +537,8 @@
     "lng": -99.1332,
     "description": "Sprawling, high-altitude capital with deep history, a thriving arts scene, and one of the best food cultures in the Americas.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/mx.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mexico_City_at_dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Highland"
@@ -555,6 +581,8 @@
     "lng": -118.2437,
     "description": "Car-dependent Pacific coast megacity centered on entertainment, tech, and the largest Mexican-American community in the U.S.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/us.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Los_Angeles_Skyline_at_Dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -597,6 +625,8 @@
     "lng": -84.388,
     "description": "Southern business hub and home of the world's busiest airport. Fast-growing, with strong Black-American cultural institutions and a lower cost of living than coastal peers.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/us.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Atlanta_Skyline_at_Night.jpg",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -639,6 +669,8 @@
     "lng": -9.1393,
     "description": "Atlantic-coast capital that has become Europe's leading digital-nomad hub, with the D7 visa and a famously low cost of living for Western Europe.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/pt.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lisbon_(36831531576).jpg",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -681,6 +713,8 @@
     "lng": -8.6291,
     "description": "Smaller, more traditional counterpart to Lisbon, with a strong identity, port-wine heritage, and lower cost of living.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/pt.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Porto_(36751735360).jpg",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -723,6 +757,8 @@
     "lng": 2.1734,
     "description": "Catalan capital with Mediterranean beaches, Gaudí architecture, and a strong startup scene. Famous for food and outdoor lifestyle.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/es.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Barcelona_-_Sagrada_Fam%25C3%25ADlia_at_sunrise.jpg",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -765,6 +801,8 @@
     "lng": -3.7038,
     "description": "Spain's high-altitude capital, with vibrant nightlife, strong public healthcare, and lower living costs than Paris or London.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/es.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Madrid_Skyline_(36199480953).jpg",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -807,6 +845,8 @@
     "lng": 13.405,
     "description": "Germany's startup capital: cheap by Western European standards, intensely creative, and a magnet for English-speaking expats.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/de.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Berlin_Fernsehturm_at_Sunset.jpg",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -849,6 +889,8 @@
     "lng": 4.9041,
     "description": "Compact canal city with the highest English proficiency in continental Europe and one of the strongest startup / tech ecosystems.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/nl.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Amsterdam_Canals_at_Sunset.jpg",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -891,6 +933,8 @@
     "lng": 2.3522,
     "description": "Global capital for culture, fashion, and finance. Expensive to live in, but with a strong public services backbone.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/fr.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Paris_-_Eiffelturm_und_Trocad%25C3%25A9ro_bei_Nacht.jpg",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -933,6 +977,8 @@
     "lng": -0.1278,
     "description": "Europe's largest financial centre and a global hub for tech, creative industries, and academia. Among the most expensive cities worldwide.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/gb.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/London_Skyline_at_Dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -975,6 +1021,8 @@
     "lng": 8.5417,
     "description": "Wealthy, efficient, and orderly Alpine city. Among the highest salaries and the highest costs of living in the world.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/ch.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Zurich_Skyline_at_Sunset.jpg",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -1017,6 +1065,8 @@
     "lng": 14.4378,
     "description": "Central European capital with a beautiful historic core, low cost of living, and a fast-growing tech scene.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/cz.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Prague_Bridge_at_Dawn.jpg",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -1059,6 +1109,8 @@
     "lng": 103.8198,
     "description": "City-state that consistently tops global rankings for education, healthcare, and ease of doing business.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/sg.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Singapore_Skyline_at_Dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Tropical"
@@ -1101,6 +1153,8 @@
     "lng": 139.6503,
     "description": "The world's largest metropolitan economy: ultra-safe, ultra-efficient, with famously low crime and excellent public transport.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/jp.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tokyo_Skyline_at_Sunset.jpg",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -1143,6 +1197,8 @@
     "lng": 126.978,
     "description": "Northeast Asian megacity famous for K-culture, ubiquitous connectivity, and a fast-growing startup scene.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/kr.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Seoul_Skyline_at_Night.jpg",
     "dimensions": {
       "climate": {
         "label": "Continental"
@@ -1185,6 +1241,8 @@
     "lng": 151.2093,
     "description": "Harbour city with a Mediterranean climate, strong points-based immigration pathways, and high quality of life.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/au.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sydney_Opera_House_and_Harbour_Bridge_at_Dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -1227,6 +1285,8 @@
     "lng": 100.5018,
     "description": "Southeast Asian megacity famous for food, low cost of living, and a large long-stay expat community.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/th.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bangkok_Skyline_at_Dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Tropical"
@@ -1269,6 +1329,8 @@
     "lng": -58.3816,
     "description": "Paris of South America: tango, steak, and European architecture, with chronic currency instability that distorts expat budgets.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/ar.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Buenos_Aires_Skyline_at_Dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -1311,6 +1373,8 @@
     "lng": -70.6693,
     "description": "Modern, mid-sized Andean capital framed by the Andes. Most stable economy and strongest institutions in the region.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/cl.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Santiago_de_Chile_skyline_at_dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -1353,6 +1417,8 @@
     "lng": -77.0428,
     "description": "Coastal Pacific capital with a world-class food scene, and an arid microclimate kept cool by the Humboldt current.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/pe.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Lima_skyline_at_dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Arid"
@@ -1395,6 +1461,8 @@
     "lng": -46.6333,
     "description": "Latin America's largest economy, with a dense, multicultural population and a strong business / tech scene.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/br.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/S%25C3%25A3o_Paulo_skyline_at_dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Tropical"
@@ -1437,6 +1505,8 @@
     "lng": -75.5658,
     "description": "Once notorious, now a model of urban transformation: year-round spring weather, growing digital nomad scene, and a strong sense of place.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/co.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Medell%25C3%25ADn_skyline_at_dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Tropical"
@@ -1479,6 +1549,8 @@
     "lng": 18.4241,
     "description": "Coastal city below Table Mountain: Mediterranean climate, strong food / wine culture, and a critical-skills visa pathway.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/za.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cape_Town_and_Table_Mountain.jpg",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -1521,6 +1593,8 @@
     "lng": 55.2708,
     "description": "Zero-income-tax Gulf city with a heavily expat population, a luxury lifestyle, and the Golden Visa long-stay program.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/ae.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Dubai_Skyline_at_Night_(Pexels_4393660).jpg",
     "dimensions": {
       "climate": {
         "label": "Arid"
@@ -1563,6 +1637,8 @@
     "lng": 34.7818,
     "description": "Mediterranean tech hub, second only to Silicon Valley in startup density per capita. Beach-and-business lifestyle.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/il.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tel_Aviv_skyline_at_dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"
@@ -1605,6 +1681,8 @@
     "lng": 28.9784,
     "description": "Transcontinental megacity straddling Europe and Asia, with deep history, a strong food culture, and a recently launched citizenship-by-investment path.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/tr.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Istanbul_skyline_at_dusk.jpg",
     "dimensions": {
       "climate": {
         "label": "Temperate"
@@ -1647,6 +1725,8 @@
     "lng": -7.5898,
     "description": "Morocco's Atlantic-coast business hub, with French as a working language and an affordable Mediterranean lifestyle.",
     "last_updated": "2026-06-17",
+    "flag_image_url": "/flags/ma.svg",
+    "landmark_image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Hassan_II_Mosque_at_Casablanca.jpg",
     "dimensions": {
       "climate": {
         "label": "Mediterranean"

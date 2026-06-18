@@ -1,16 +1,19 @@
 # RelocateWise — Caddy reverse proxy in front of the Fastify API.
 #
-# Two configurations live in this file:
-#   1. Production (default) — `{$API_DOMAIN}` is set to e.g. api.example.com.
-#      Caddy provisions a Let's Encrypt cert automatically.
-#   2. Local dev — uncomment the bottom block and run with
-#      `caddy run --config Caddyfile` inside the container. Caddy
-#      generates a self-signed cert via `tls internal`.
+# In production the API is exposed via Cloudflare Tunnel
+# (`docker-compose.cloudflared.yml`); cloudflared tunnels all HTTPS
+# traffic from Cloudflare's edge to this container over the
+# internal Docker network. No inbound ports are opened on the host
+# firewall — Caddy is reached only on the Docker network.
 #
 # Architecture references: §2 (topology), §10.3 (deploy), §11 (TLS).
+#
+# In local dev, uncomment the bottom block and run with
+# `caddy run --config Caddyfile` inside the container. Caddy
+# generates a self-signed cert via `tls internal`.
 
-# ----- Production -----
-{$API_DOMAIN:api.example.com} {
+# ----- Production (internal Docker network only) -----
+:80 {
     encode gzip zstd
     reverse_proxy api:3000 {
         header_up Host {host}

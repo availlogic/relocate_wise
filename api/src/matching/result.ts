@@ -1,19 +1,23 @@
 /**
  * Build the public MatchResponse from a list of ScoredCity records.
  *
- * The wire contract per Architecture §7.1 is:
+ * The wire contract per Architecture §7.1 / API_Spec.md §2.4 is:
  *   {
  *     results: [
- *       { city: { slug, name, country, ... }, score, why },
+ *       { city: { slug, name, country, ... }, score, why, why_key, why_vars },
  *       ...
- *     ]
+ *     ],
+ *     generated_at
  *   }
  *
- * We project just the city fields the results page needs plus the
- * integer score and the templated "why" line.
+ * v0.4.0: every result now exposes `why_key` (one of the documented
+ * dimension codes) and `why_vars` (template variables) so the frontend
+ * can render the "why this fits you" sentence in the active locale
+ * via i18next (PRD v3.2.0 S11). The English `why` string is kept as a
+ * backwards-compatible fallback.
  */
 import type { City } from '@relocatewise/shared';
-import { whyThisFitsYou } from './why.js';
+import { buildWhyTemplate } from './why.js';
 import type { ScoredCity } from './score.js';
 
 export interface MatchResult {
@@ -28,9 +32,14 @@ export interface MatchResult {
     | 'lng'
     | 'description'
     | 'dimensions'
+    | 'flag_image_url'
+    | 'landmark_image_url'
+    | 'last_updated'
   >;
   score: number;
   why: string;
+  why_key: string;
+  why_vars?: Record<string, string>;
 }
 
 export interface MatchResponse {
@@ -44,21 +53,29 @@ export function buildMatchResponse(
   generatedAt: string = new Date().toISOString(),
 ): MatchResponse {
   return {
-    results: scored.map((s) => ({
-      city: {
-        slug: s.city.slug,
-        name: s.city.name,
-        country: s.city.country,
-        country_code: s.city.country_code,
-        region: s.city.region,
-        lat: s.city.lat,
-        lng: s.city.lng,
-        description: s.city.description,
-        dimensions: s.city.dimensions,
-      },
-      score: s.score,
-      why: whyThisFitsYou(s),
-    })),
+    results: scored.map((s) => {
+      const why = buildWhyTemplate(s);
+      return {
+        city: {
+          slug: s.city.slug,
+          name: s.city.name,
+          country: s.city.country,
+          country_code: s.city.country_code,
+          region: s.city.region,
+          lat: s.city.lat,
+          lng: s.city.lng,
+          description: s.city.description,
+          dimensions: s.city.dimensions,
+          flag_image_url: s.city.flag_image_url,
+          landmark_image_url: s.city.landmark_image_url,
+          last_updated: s.city.last_updated,
+        },
+        score: s.score,
+        why: why.why,
+        why_key: why.whyKey,
+        ...(why.whyVars ? { why_vars: why.whyVars } : {}),
+      };
+    }),
     generated_at: generatedAt,
   };
 }

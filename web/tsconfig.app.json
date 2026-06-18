@@ -23,7 +23,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"]
+    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom", "@testing-library/react"]
   },
   "include": ["src", "test", "e2e", "playwright.config.ts"]
 }

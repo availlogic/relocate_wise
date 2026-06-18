@@ -1,9 +1,21 @@
 # Docker Compose for local development of the RelocateWise backend.
 #
 # One command: `docker compose up` brings up Postgres + PostGIS, the
-# Node API, and a Caddy reverse proxy with a self-signed cert for
-# local testing. The first boot applies migrations and seeds the
-# 40-city dataset automatically.
+# Node API, and a Caddy reverse proxy. The first boot applies both
+# migrations and seeds the 40-city dataset automatically.
+#
+# Production deploys use the Cloudflare Pages + Tunnel topology
+# described in Architecture v1.3.0 §3 and `artifacts/Deployment_Report.md`:
+#   - The SPA is built and deployed to Cloudflare Pages.
+#   - The backend is exposed via the `cloudflared` daemon defined in
+#     `docker-compose.cloudflared.yml` (overlay).
+#   - The `caddy` container listens only on the internal Docker
+#     network (no host port mappings). All public traffic enters via
+#     the outbound tunnel, so no inbound ports need to be opened.
+#
+# For local development with no Docker, the API falls back to the
+# in-memory seed (`npm -w @relocatewise/api run dev`). See the
+# README "Quick start" section.
 #
 # Architecture references: §2 (topology), §4.4 (DB), §10.1 (local dev),
 # §10.3 (production deploy), §11 (secrets & CORS).
@@ -24,6 +36,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    networks:
+      - relocatewise
 
   api:
     build:
@@ -38,12 +52,13 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-relocatewise}:${POSTGRES_PASSWORD:-relocatewise}@db:5432/${POSTGRES_DB:-relocatewise}
       PORT: 3000
       HOST: 0.0.0.0
-      # Allowed CORS origin. In production this is the Netlify-hosted
-      # SPA domain. In dev it can be the Vite dev server.
+      # Allowed CORS origin. In production this is the Cloudflare Pages
+      # domain (e.g. https://relocatewise.pages.dev or a custom domain).
+      # In dev it can be the Vite dev server.
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
       GIT_SHA: ${GIT_SHA:-dev}
-    ports:
-      - "3000:3000"
+    networks:
+      - relocatewise
 
   caddy:
     image: caddy:2-alpine
@@ -51,17 +66,21 @@ services:
     restart: unless-stopped
     depends_on:
       - api
-    ports:
-      - "8080:80"
-      - "8443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
-    # In production the Caddyfile uses automatic Let's Encrypt. For local
-    # dev, override Caddyfile to use a self-signed cert or `tls internal`.
+    # No host port mappings in production — cloudflared talks to
+    # Caddy over the internal Docker network. Local dev can expose
+    # ports via a docker-compose.override.yml.
+    networks:
+      - relocatewise
 
 volumes:
   pgdata:
   caddy_data:
   caddy_config:
+
+networks:
+  relocatewise:
+    name: relocatewise_relocatewise

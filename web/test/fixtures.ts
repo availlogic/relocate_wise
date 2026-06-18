@@ -21,6 +21,9 @@ export function makeCity(overrides: Partial<City> = {}): City {
     lng: -9.1393,
     description: 'Sunny Atlantic coast with great food.',
     last_updated: '2026-05-15',
+    flag_image_url: '/flags/pt.svg',
+    landmark_image_url:
+      'https://commons.wikimedia.org/wiki/Special:FilePath/Lisbon_(36831531576).jpg',
     dimensions: {
       climate: { label: 'Mediterranean' },
       cost: 3,
@@ -65,6 +68,9 @@ export function makeMatchedCity(
       lng: -9.1393,
       description: 'Sunny Atlantic coast with great food.',
       last_updated: '2026-05-15',
+      flag_image_url: '/flags/pt.svg',
+      landmark_image_url:
+        'https://commons.wikimedia.org/wiki/Special:FilePath/Lisbon_(36831531576).jpg',
       dimensions: {
         climate: { label: 'Mediterranean' },
         cost: 3,
@@ -84,6 +90,7 @@ export function makeMatchedCity(
     },
     score: 88,
     why: 'Strong overall fit.',
+    why_key: 'neutral',
     ...overrides,
     // Always keep the city overrides flat and re-apply on top.
   };

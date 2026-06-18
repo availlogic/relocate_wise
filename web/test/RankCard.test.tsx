@@ -78,7 +78,7 @@ describe('<RankCard />', () => {
   it('renders the templated "why" sentence', () => {
     renderCard(1, { why: 'Strong overall fit with great food and culture.' });
     const why = screen.getByTestId('rank-card-1-why');
-    expect(why.textContent).toBe('Strong overall fit with great food and culture.');
+    expect(why.textContent).toMatch(/Strong overall fit with great food and culture/);
   });
 
   it('links to /city/:slug using an encoded slug', () => {

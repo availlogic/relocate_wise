@@ -6,8 +6,7 @@
   "workspaces": [
     "shared",
     "api",
-    "web",
-    "netlify"
+    "web"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",

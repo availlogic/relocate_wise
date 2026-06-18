@@ -15,8 +15,8 @@
  *   - Removing the last-but-one (drops below 2) navigates with a
  *     "fewer than 2 cities" notice.
  */
-import { describe, expect, it, beforeEach } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { render, screen, within, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { ComparePage } from '../src/pages/ComparePage';
@@ -60,6 +60,15 @@ function renderPage(initial: MatchedCityFull[] = []) {
 describe('<ComparePage />', () => {
   beforeEach(() => {
     window.sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    // The ToastProvider schedules `setTimeout` for auto-dismiss that
+    // can keep the event loop alive after the test finishes. Unmount
+    // every component and run with fake timers so any pending
+    // dismissals are flushed and the runner can exit cleanly.
+    cleanup();
+    vi.useRealTimers();
   });
 
   it('redirects to /results when shortlist is empty (E2E-2)', () => {

@@ -61,9 +61,10 @@ describe('<ResultsPage />', () => {
   it('shows the count and the generated-at timestamp', () => {
     renderWithState(makeMatchResponse());
     const header = screen.getByRole('heading', { name: /your top matches/i }).parentElement!;
-    const sub = within(header).getByText(/2 cities ranked/i);
-    expect(sub).toBeInTheDocument();
-    const time = within(header).getByText(/2026/);
+    const sub = within(header).getByTestId('results-sub');
+    expect(sub.textContent).toMatch(/2 cities ranked/);
+    expect(sub.textContent).toMatch(/2026/);
+    const time = within(sub).getByText(/2026/);
     expect(time.tagName).toBe('TIME');
     expect(time.getAttribute('datetime')).toBe('2026-06-02T00:00:00Z');
   });

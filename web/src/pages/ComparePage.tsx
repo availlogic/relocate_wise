@@ -12,19 +12,19 @@
  *   - Cost of Living and Housing are inverted: a LOWER index represents
  *     a cheaper city, which is the winner condition (Acceptance-Criteria
  *     Feature 5, FTC-13).
+ *
+ * v0.4.0: copy is routed through i18next (PRD v3.2.0 S11).
  */
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useShortlist, SHORTLIST_MAX } from '../state/shortlist';
+import { renderWhyTemplate } from '../i18n/why';
 import './ComparePage.css';
-
-const COMPARISON_INSUFFICIENT_NOTICE =
-  'Please select at least 2 cities to compare.';
-const COMPARISON_DROPPED_NOTICE =
-  'You now have fewer than 2 cities in your comparison.';
 
 export function ComparePage() {
   const { items, remove, clear } = useShortlist();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Insufficient shortlist (direct access, or after the user removed
   // a city here and dropped below 2). We always emit the
@@ -35,7 +35,7 @@ export function ComparePage() {
       <Navigate
         to="/results"
         replace
-        state={{ compareNotice: COMPARISON_INSUFFICIENT_NOTICE }}
+        state={{ compareNotice: t('compare.insufficient') }}
       />
     );
   }
@@ -45,7 +45,7 @@ export function ComparePage() {
       // Removing the last-but-one drops the shortlist below 2 — flag it
       // so /results can show the appropriate notice.
       remove(slug);
-      navigate('/results', { state: { compareNotice: COMPARISON_DROPPED_NOTICE } });
+      navigate('/results', { state: { compareNotice: t('compare.dropped') } });
     } else {
       remove(slug);
     }
@@ -54,10 +54,9 @@ export function ComparePage() {
   return (
     <div className="compare-page" data-testid="compare-page">
       <header className="compare-page__header">
-        <h1>Compare cities</h1>
+        <h1>{t('compare.title')}</h1>
         <p className="compare-page__sub">
-          Comparing {items.length} of {SHORTLIST_MAX} possible cities. The
-          best match in each row is highlighted.
+          {t('compare.sub', { count: items.length, max: SHORTLIST_MAX })}
         </p>
         <div className="compare-page__actions">
           <button
@@ -66,10 +65,10 @@ export function ComparePage() {
             onClick={clear}
             data-testid="compare-clear"
           >
-            Clear all
+            {t('compare.clearAll')}
           </button>
           <Link to="/results" className="btn btn--secondary">
-            Back to results
+            {t('compare.backToResults')}
           </Link>
         </div>
       </header>
@@ -93,7 +92,7 @@ export function ComparePage() {
               {entry.score > 0 ? (
                 <div
                   className="compare-card__score"
-                  aria-label={`Match score ${entry.score} out of 100`}
+                  aria-label={t('results.scoreAria', { score: entry.score })}
                 >
                   {entry.score}
                   <span>/100</span>
@@ -105,11 +104,13 @@ export function ComparePage() {
                 onClick={() => handleRemove(entry.city.slug)}
                 data-testid={`compare-remove-${entry.city.slug}`}
               >
-                Remove
+                {t('compare.remove')}
               </button>
             </header>
             {entry.why ? (
-              <p className="compare-card__why">“{entry.why}”</p>
+              <p className="compare-card__why">
+                {t('compare.why', { why: renderWhyTemplate(t, entry.why, entry.why_key, entry.why_vars) })}
+              </p>
             ) : null}
           </section>
         ))}
@@ -121,7 +122,10 @@ export function ComparePage() {
 }
 
 interface DimensionRow {
-  label: string;
+  /** Stable slug used for the row's data-testid. Localisation-agnostic. */
+  slug: string;
+  /** i18next key for the human-readable label. */
+  labelKey: string;
   /** Lower is better if `invert` is true (cost / housing). */
   invert?: boolean;
   /** Format the value for display (defaults to `${n}/5`). */
@@ -139,30 +143,31 @@ function mean(values: number[]): number {
 
 const ROWS: ReadonlyArray<DimensionRow> = [
   {
-    label: 'Climate',
+    slug: 'climate',
+    labelKey: 'compare.rows.climate',
     pick: (city) => {
-      // No numeric value; render the label below as a special case.
-      // The "winner" highlighting is meaningless on a label, so we
-      // skip highlighting here by using a constant string match.
       const v = city.city.dimensions.climate.label;
       return LABEL_RANK[v] ?? 0;
     },
     format: (n) => LABEL_BY_RANK[n] ?? '—',
   },
   {
-    label: 'Cost of living',
+    slug: 'cost-of-living',
+    labelKey: 'compare.rows.cost',
     invert: true,
     pick: (city) => city.city.dimensions.cost,
     format: (n) => `${n}/5`,
   },
   {
-    label: 'Housing',
+    slug: 'housing',
+    labelKey: 'compare.rows.housing',
     invert: true,
     pick: (city) => city.city.dimensions.housing,
     format: (n) => `${n}/5`,
   },
   {
-    label: 'Career (avg)',
+    slug: 'career-avg',
+    labelKey: 'compare.rows.career',
     pick: (city) =>
       mean([
         city.city.dimensions.career.tech,
@@ -174,17 +179,20 @@ const ROWS: ReadonlyArray<DimensionRow> = [
     format: (n) => `${n.toFixed(1)}/5`,
   },
   {
-    label: 'Education',
+    slug: 'education',
+    labelKey: 'compare.rows.education',
     pick: (city) => city.city.dimensions.education,
     format: (n) => `${n}/5`,
   },
   {
-    label: 'Healthcare',
+    slug: 'healthcare',
+    labelKey: 'compare.rows.healthcare',
     pick: (city) => city.city.dimensions.healthcare,
     format: (n) => `${n}/5`,
   },
   {
-    label: 'Community (max)',
+    slug: 'community-max',
+    labelKey: 'compare.rows.community',
     pick: (city) =>
       Math.max(
         city.city.dimensions.community.urban,
@@ -198,7 +206,8 @@ const ROWS: ReadonlyArray<DimensionRow> = [
     format: (n) => `${n}/5`,
   },
   {
-    label: 'Military safety',
+    slug: 'military-safety',
+    labelKey: 'compare.rows.militarySafety',
     pick: (city) => city.city.dimensions.military_safety,
     format: (n) => `${n}/5`,
   },
@@ -224,6 +233,7 @@ function DimensionTable({
 }: {
   items: ReturnType<typeof useShortlist>['items'];
 }) {
+  const { t } = useTranslation();
   return (
     <table className="compare-page__table" data-testid="compare-table">
       <thead>
@@ -240,8 +250,8 @@ function DimensionTable({
           const target = row.invert ? Math.min(...values) : Math.max(...values);
           const allSame = values.every((v) => v === values[0]);
           return (
-            <tr key={row.label} data-testid={`compare-row-${slugify(row.label)}`}>
-              <th scope="row">{row.label}</th>
+            <tr key={row.slug} data-testid={`compare-row-${row.slug}`}>
+              <th scope="row">{t(row.labelKey)}</th>
               {items.map((c, idx) => {
                 const v = values[idx]!;
                 const isBest = !allSame && v === target;
@@ -249,7 +259,7 @@ function DimensionTable({
                   <td
                     key={c.city.slug}
                     className={isBest ? 'compare-page__cell--best' : undefined}
-                    data-testid={`compare-cell-${slugify(row.label)}-${c.city.slug}`}
+                    data-testid={`compare-cell-${row.slug}-${c.city.slug}`}
                   >
                     {row.format ? row.format(v) : `${v}/5`}
                   </td>
@@ -263,9 +273,5 @@ function DimensionTable({
   );
 }
 
-function slugify(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
+// (slugify helper was removed — rows now use stable English slugs
+// that survive localisation, e.g. `compare-row-military-safety`.)

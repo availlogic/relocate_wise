@@ -57,7 +57,7 @@ describe('ConsentBanner', () => {
     expect(link).toHaveAttribute('href', '/privacy');
   });
 
-  it('hides after Accept and remembers the choice in localStorage', async () => {
+  it('hides after Accept and remembers the choice in localStorage as "true"', async () => {
     const user = userEvent.setup();
     mount();
     await waitFor(() => {
@@ -65,10 +65,11 @@ describe('ConsentBanner', () => {
     });
     await user.click(screen.getByTestId('consent-accept'));
     expect(screen.queryByTestId('consent-banner')).not.toBeInTheDocument();
-    expect(window.localStorage.getItem(STORAGE_KEY)).toBe('accepted');
+    // FTC-1: Accept stores the boolean string "true".
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBe('true');
   });
 
-  it('hides after Decline and remembers the choice in localStorage', async () => {
+  it('hides after Decline and remembers the choice in localStorage as "false"', async () => {
     const user = userEvent.setup();
     mount();
     await waitFor(() => {
@@ -76,11 +77,12 @@ describe('ConsentBanner', () => {
     });
     await user.click(screen.getByTestId('consent-decline'));
     expect(screen.queryByTestId('consent-banner')).not.toBeInTheDocument();
-    expect(window.localStorage.getItem(STORAGE_KEY)).toBe('declined');
+    // FTC-1: Decline stores the boolean string "false".
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBe('false');
   });
 
   it('stays hidden on subsequent visits once a choice is stored', async () => {
-    window.localStorage.setItem(STORAGE_KEY, 'accepted');
+    window.localStorage.setItem(STORAGE_KEY, 'true');
     mount();
     // The initial render sets state to 'pending'; the effect then
     // reads localStorage and hides the banner. Give the effect a tick.

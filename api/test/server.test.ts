@@ -92,6 +92,30 @@ describe('GET /api/cities/:slug', () => {
     expect(d.military_safety).toBeLessThanOrEqual(5);
   });
 
+  it('returns the landmark + flag image URLs on the city profile (PRD v3.2.0 S5 / FR-8 / AC-6)', async () => {
+    const app = await newApp();
+    const res = await app.inject({ method: 'GET', url: '/api/cities/lisbon-pt' });
+    expect(res.statusCode).toBe(200);
+    const body = res.json();
+    expect(typeof body.flag_image_url).toBe('string');
+    expect(body.flag_image_url.length).toBeGreaterThan(0);
+    expect(body.flag_image_url).toMatch(/\/flags\/[a-z]{2}\.svg$/);
+    expect(typeof body.landmark_image_url).toBe('string');
+    expect(body.landmark_image_url.length).toBeGreaterThan(0);
+    expect(body.landmark_image_url).toMatch(/^https?:\/\//);
+  });
+
+  it('slim city list omits landmark/flag for compactness (Architecture §4.5)', async () => {
+    const app = await newApp();
+    const res = await app.inject({ method: 'GET', url: '/api/cities' });
+    expect(res.statusCode).toBe(200);
+    const body = res.json();
+    for (const c of body.cities) {
+      expect(c.flag_image_url).toBeUndefined();
+      expect(c.landmark_image_url).toBeUndefined();
+    }
+  });
+
   it('returns 404 + ApiError envelope for an unknown slug', async () => {
     const app = await newApp();
     const res = await app.inject({ method: 'GET', url: '/api/cities/atlantis-xx' });

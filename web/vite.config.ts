@@ -15,8 +15,8 @@ import react from '@vitejs/plugin-react';
  *     `API_PROXY_TARGET=http://localhost:8080 npm run dev`.
  *
  * The proxy only runs in the dev server, not in `vite build`. In
- * production, the Netlify function in `netlify/functions/proxy.ts`
- * takes over the same forwarding role.
+ * production, Cloudflare Pages' `/api/*` forward rule sends calls
+ * to the Ubuntu API via Cloudflare Tunnel (docker-compose.cloudflared.yml).
  */
 const API_PROXY_TARGET = process.env.API_PROXY_TARGET ?? 'http://localhost:3000';
 

@@ -3,7 +3,9 @@
  *
  * Used for one-of-N selections where the option labels are short (climate,
  * career industry, education priority). A `null` value is allowed by passing
- * `nullable` so the user can clear their choice.
+ * `nullable` so the user can clear their choice. The "No preference" label
+ * is localised via the `noPreferenceLabel` prop (default English text is
+ * kept as a fallback for callers that don't use i18n).
  */
 import type { ChangeEvent } from 'react';
 
@@ -22,6 +24,8 @@ export interface RadioGroupProps<T extends string> {
   nullable?: boolean;
   required?: boolean;
   helpText?: string;
+  /** Text for the "No preference" nullable option. Defaults to "No preference". */
+  noPreferenceLabel?: string;
 }
 
 export function RadioGroup<T extends string>({
@@ -33,6 +37,7 @@ export function RadioGroup<T extends string>({
   nullable = false,
   required = false,
   helpText,
+  noPreferenceLabel = 'No preference',
 }: RadioGroupProps<T>) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const next = e.target.value;
@@ -67,7 +72,7 @@ export function RadioGroup<T extends string>({
               onChange={handleChange}
               data-testid={`${name}-null`}
             />
-            <span>No preference</span>
+            <span>{noPreferenceLabel}</span>
           </label>
         ) : null}
         {options.map((opt) => (

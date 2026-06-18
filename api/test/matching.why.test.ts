@@ -7,9 +7,13 @@
  *   - Uses the documented templates per dimension.
  *   - When two dimensions tie within 10% of the top, both are emitted and
  *     joined with " and ".
+ *
+ * v0.4.0 additions (PRD v3.2.0 S11):
+ *   - The template now also exposes `why_key` + `why_vars` so the
+ *     frontend can localise the sentence via i18next.
  */
 import { describe, it, expect } from 'vitest';
-import { whyThisFitsYou } from '../src/matching/why.js';
+import { buildWhyTemplate, whyThisFitsYou } from '../src/matching/why.js';
 import { rankCities, scoreCity } from '../src/matching/score.js';
 import { withDefaults } from '../src/matching/defaults.js';
 import { CITIES, makeCity } from './fixtures.js';
@@ -180,5 +184,61 @@ describe('why this fits you — non-empty guarantee (PRD AC-5)', () => {
       why.includes('tech job market') ||
       why.includes('lifestyle');
     expect(mentions).toBe(true);
+  });
+});
+
+describe('why this fits you — why_key + why_vars (v0.4.0, PRD v3.2.0 S11)', () => {
+  const city = CITIES[0]!; // Lisbon
+
+  it('emits a why_key matching the dimension and the vars needed by the template', () => {
+    const user: UserProfile = withDefaults({ climate: 'mediterranean' });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('climate');
+    expect(tpl.whyVars).toEqual({ climate: 'Mediterranean' });
+    expect(tpl.why).toMatch(/Matches your Mediterranean climate preference/);
+  });
+
+  it('emits a cost why_key when cost is the leading dimension', () => {
+    const user: UserProfile = withDefaults({
+      cost_importance: 3,
+      cost_ceiling: 5,
+      housing_importance: 3,
+      housing_ceiling: 5,
+    });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('cost');
+    expect(tpl.why).toMatch(/Fits your housing and cost budget/);
+  });
+
+  it('emits a career why_key + industry var when the career dimension dominates', () => {
+    const user: UserProfile = withDefaults({
+      climate: 'no_preference',
+      career_industry: 'tech',
+    });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('career');
+    expect(tpl.whyVars).toEqual({ industry: 'tech' });
+  });
+
+  it('emits a community why_key with the user-selected tags as vars', () => {
+    const user: UserProfile = withDefaults({
+      climate: 'no_preference',
+      lifestyle_tags: ['urban', 'coastal'],
+    });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('community');
+    expect(tpl.whyVars).toEqual({ tags: 'urban and coastal' });
+  });
+
+  it('emits the neutral key when every dimension is skipped', () => {
+    const user: UserProfile = withDefaults({});
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('neutral');
+    expect(tpl.why).toMatch(/balanced match/i);
   });
 });

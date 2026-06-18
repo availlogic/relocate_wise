@@ -81,6 +81,13 @@ test('E2E-1 happy path: quiz → results → profile → shortlist → compare',
   await page.getByTestId('rank-card-1-link').click();
   await expect(page).toHaveURL(/\/city\//);
   await expect(page.getByTestId('city-page')).toBeVisible();
+  // FTC-16 v0.4.0: the city profile must show a graphical flag and a
+  // lazy-loaded landmark image.
+  await expect(page.getByTestId('city-page-flag')).toBeVisible();
+  await expect(page.getByTestId('city-page-landmark').locator('img')).toHaveAttribute(
+    'loading',
+    'lazy',
+  );
   await page.getByTestId('city-toggle-shortlist').click();
   await expect(page.getByTestId('shortlist-bar')).toBeVisible();
 

@@ -1,0 +1,31 @@
+# Sample Cloudflare Tunnel configuration.
+#
+# Copy this file to `~/.cloudflared/config.yml` (where cloudflared
+# reads it by default), substitute `<TUNNEL-UUID>` and `<DOMAIN>`,
+# then mount it as a Docker secret in
+# `docker-compose.cloudflared.yml`. cloudflared then exposes:
+#
+#   https://<DOMAIN>         → http://caddy:80  (the SPA shell)
+#   https://api.<DOMAIN>     → http://caddy:80  (API path is forwarded
+#                                              inside the SPA via the
+#                                              Pages Functions routing
+#                                              rule).
+#
+# Per Architecture §11 / API_Spec §3.2 the Cloudflare Edge tier
+# enforces a 60 req / 10 min per-IP rate limit via WAF rules (set up
+# in the Cloudflare dashboard, not in this config file).
+tunnel: <TUNNEL-UUID>
+credentials-file: /etc/cloudflared/<TUNNEL-UUID>.json
+
+ingress:
+  - hostname: <DOMAIN>
+    service: http://caddy:80
+  - hostname: api.<DOMAIN>
+    service: http://caddy:80
+  - service: http_status:404
+
+# Optional: enable Cloudflare Warp routing / metrics scraping.
+# metrics: 0.0.0.0:2000
+
+# Optional: logfile path inside the container.
+# logfile: /var/log/cloudflared.log

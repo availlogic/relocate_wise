@@ -120,3 +120,6 @@ caddy_config/
 
 # Vitest cache (used when --cache is passed; harmless otherwise)
 .vitest/
+
+# Agent configurations
+.agents

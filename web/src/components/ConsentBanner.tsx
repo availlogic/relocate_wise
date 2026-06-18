@@ -13,20 +13,25 @@
  *   - Banner is now bottom-fixed (Screen-Specs §1 + UI-Layouts §1)
  *     instead of a top strip.
  *
- * Storage key: `rw:cookie_consent` → `"accepted" | "declined" | null`.
- * The banner is rendered when the key is absent and dismissed on click.
+ * Storage key: `rw:cookie_consent` → `"true" | "false"`. The banner is
+ * rendered when the key is absent and dismissed on click. FTC-1
+ * expects the boolean string `"false"` for decline and `"true"` for
+ * accept.
+ *
+ * All copy is localised via i18next (PRD v3.2.0 S11).
  */
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './ConsentBanner.css';
 
 const STORAGE_KEY = 'rw:cookie_consent';
-type ConsentState = 'accepted' | 'declined';
+type ConsentState = 'true' | 'false';
 
 function readConsent(): ConsentState | null {
   if (typeof window === 'undefined') return null;
   const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (raw === 'accepted' || raw === 'declined') return raw;
+  if (raw === 'true' || raw === 'false') return raw;
   return null;
 }
 
@@ -36,7 +41,8 @@ function writeConsent(value: ConsentState): void {
 }
 
 export function ConsentBanner() {
-  // `null` while we don't know yet; `'accepted' | 'declined'` once the
+  const { t } = useTranslation();
+  // `null` while we don't know yet; `'true' | 'false'` once the
   // user has chosen; `'show'` while the banner is up.
   const [state, setState] = useState<ConsentState | 'show' | 'pending'>(
     'pending',
@@ -61,10 +67,9 @@ export function ConsentBanner() {
       data-testid="consent-banner"
     >
       <p className="consent-banner__text">
-        We don’t collect personal data and don’t set tracking cookies. We
-        only remember this choice on this device.{' '}
+        {t('app.consent.text')}{' '}
         <Link to="/privacy" className="consent-banner__link">
-          Read the privacy notice
+          {t('app.consent.readPolicy')}
         </Link>
         .
       </p>
@@ -72,18 +77,18 @@ export function ConsentBanner() {
         <button
           type="button"
           className="btn btn--secondary consent-banner__btn"
-          onClick={() => choose('declined')}
+          onClick={() => choose('false')}
           data-testid="consent-decline"
         >
-          Decline
+          {t('app.consent.decline')}
         </button>
         <button
           type="button"
           className="btn btn--primary consent-banner__btn"
-          onClick={() => choose('accepted')}
+          onClick={() => choose('true')}
           data-testid="consent-accept"
         >
-          Accept
+          {t('app.consent.accept')}
         </button>
       </div>
     </div>

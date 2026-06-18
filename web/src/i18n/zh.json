@@ -1,0 +1,228 @@
+{
+  "app": {
+    "brand": "RelocateWise",
+    "nav": {
+      "questionnaire": "问卷",
+      "compare": "对比",
+      "compareAria": "短名单中包含 {{count}} / 3 个城市",
+      "privacy": "隐私"
+    },
+    "footer": {
+      "disclaimer": "RelocateWise 仅作为决策辅助, 不构成法律或移民建议。请通过目的地国家的官方渠道核实签证或居留信息。",
+      "dataHandling": "了解数据处理方式",
+      "source": "GitHub 源代码"
+    },
+    "consent": {
+      "text": "我们不收集个人信息, 也不设置追踪 Cookie。仅在本设备上记住您的选择。",
+      "readPolicy": "阅读隐私声明",
+      "decline": "拒绝",
+      "accept": "同意"
+    },
+    "languageToggle": {
+      "english": "EN",
+      "chinese": "中文"
+    }
+  },
+  "landing": {
+    "title": "由数据驱动的下一个家。",
+    "sub": "完成 5 分钟问卷, 获取基于您的预算、气候与生活方式的客观城市推荐。",
+    "cta": "开始问卷",
+    "note": "无需注册, 无需邮箱, 无追踪。您的回答仅留在本设备上。",
+    "values": {
+      "objective": {
+        "title": "客观匹配",
+        "body": "无赞助偏向。排名来自一手公开数据 (联合国、经合组织、Numbeo、政府开放数据)。"
+      },
+      "comparisons": {
+        "title": "深度对比",
+        "body": "并排比较 2–3 个城市的 8 个维度, 每行突出最佳匹配项。"
+      },
+      "privacy": {
+        "title": "隐私优先",
+        "body": "无账号、无追踪 Cookie、无邮箱采集。整个体验在服务器端不保留任何状态。"
+      }
+    },
+    "footer": "了解数据处理方式"
+  },
+  "privacy": {
+    "title": "您在 RelocateWise 的隐私",
+    "lead": "RelocateWise 根据您的回答对城市进行排名。我们不收集任何个人信息, 没有账号、没有邮箱、也没有第三方追踪。",
+    "collectHeading": "我们收集什么",
+    "collectAnswers": "您在问卷中提供的回答 (气候偏好、预算优先级、行业类别等)。",
+    "collectNothing": "仅此而已。无姓名、无邮箱、无基于 IP 的画像、无广告 ID。",
+    "useHeading": "我们如何使用",
+    "useMatch": "我们将您的回答发送给匹配引擎, 返回一个城市排名列表。",
+    "useNoStore": "引擎仅在单次请求内运行, 您的回答不会存储在我们的服务器上, 也不会用于训练任何模型。",
+    "useShortlist": "您为对比而建立的短名单仅存在于浏览器标签页内。刷新页面即清除。",
+    "neverHeading": "我们绝不会做的事",
+    "never1": "我们绝不销售或共享您的数据。",
+    "never2": "我们绝不设置追踪 Cookie 或第三方分析。",
+    "never3": "我们绝不要求您注册。",
+    "contactHeading": "联系方式",
+    "contact": "如有隐私问题, 请在托管本项目的公开仓库中提交 Issue。我们没有收集邮件的支持邮箱。",
+    "back": "← 返回首页"
+  },
+  "wizard": {
+    "back": "← 上一步",
+    "skip": "跳过",
+    "next": "下一步 →",
+    "submit": "查看匹配",
+    "submitting": "正在匹配…",
+    "labels": {
+      "step": "第 {{step}} 步 / 共 {{total}} 步",
+      "climate": "气候偏好",
+      "climateHelp": "选择您最想居住的气候。",
+      "budget": "住房预算范围",
+      "budgetHelp": "选择等级 (1 = 非常便宜, 5 = 非常昂贵)。跳过表示成本不计入。",
+      "career": "行业方向",
+      "careerHelp": "选择您最希望从事的行业。",
+      "healthcare": "医疗优先级",
+      "healthcareHelp": "优质的医疗服务对您有多重要?",
+      "education": "教育质量",
+      "educationHelp": "学校与大学对您有多重要?",
+      "community": "社区与生活方式",
+      "communityHelp": "可多选 — 选择越多, 筛选越严格。",
+      "density": "城市密度偏好",
+      "densityHelp": "您希望周边环境有多密集?",
+      "militarySafety": "地缘政治与冲突风险",
+      "militarySafetyHelp": "地缘稳定性与公共安全对您有多重要? 优先级越高, 对匹配结果的过滤越强 (PRD §6.1 D8)。"
+    },
+    "healthcareLevels": ["跳过", "锦上添花", "重要", "关键"],
+    "militarySafetyLevels": ["跳过", "锦上添花", "重要", "关键"],
+    "titles": [
+      "您偏好什么气候?",
+      "多贵算太贵?",
+      "您从事什么行业?",
+      "医疗因素有多重要?",
+      "教育有多重要?",
+      "哪种社区氛围适合您?",
+      "您希望环境多密集?",
+      "地缘稳定性有多重要?"
+    ],
+    "climateLabels": {
+      "tropical": "热带",
+      "temperate": "温带",
+      "mediterranean": "地中海",
+      "continental": "大陆性",
+      "cold": "寒冷 / 多雪",
+      "arid": "干旱",
+      "no_preference": "无偏好"
+    },
+    "industryLabels": {
+      "tech": "科技",
+      "finance": "金融与银行",
+      "healthcare": "医疗健康",
+      "creative": "创意产业",
+      "manufacturing": "制造业"
+    },
+    "educationLabels": {
+      "not_relevant": "不重要",
+      "somewhat": "有些重要",
+      "important": "非常重要"
+    },
+    "lifestyleLabels": {
+      "urban": "都市 / 大城市",
+      "suburban": "近郊",
+      "rural": "乡村",
+      "coastal": "沿海",
+      "mountain": "山区",
+      "arts_culture": "艺术与文化",
+      "family_oriented": "适合家庭",
+      "expat_friendly": "对外籍人士友好"
+    },
+    "densityOptions": {
+      "urban": "都市 / 大城市",
+      "suburban": "近郊",
+      "rural": "乡村"
+    },
+    "budgetLevels": ["非常便宜", "便宜", "中等", "偏贵", "非常贵"],
+    "noPreference": "无偏好",
+    "noTagsSelected": "未选择标签 — 该维度视为「无偏好」。",
+    "tagsSelected": "已选 {{count}} 项。",
+    "error": {
+      "fallback": "出现错误。请重试。"
+    }
+  },
+  "results": {
+    "title": "您的最佳匹配",
+    "sub": "共 {{count}} 个 {{city}} 按综合契合度排名。",
+    "subComputed": "计算时间: {{when}}。",
+    "subCity_one": "城市",
+    "subCity_other": "城市",
+    "editPreferences": "← 修改我的偏好",
+    "startOver": "重新开始",
+    "compareOne": "对比 1 个城市 →",
+    "compareMany": "对比 {{count}} 个城市 →",
+    "hint": "再选 {{count}} 个 {{city}} 即可并排对比 (最多 {{max}} 个)。",
+    "hintCity_one": "城市",
+    "hintCity_other": "城市",
+    "summary_one": "已为对比保存 1 个城市。请至少再选一个。",
+    "summary_other": "已为对比保存 {{count}} 个城市。",
+    "emptyTitle": "暂无结果",
+    "emptyBody": "请提交问卷以查看最佳匹配。我们不会保留您的回答, 刷新即重新开始。",
+    "emptyCta": "返回问卷",
+    "rank": "第 {{rank}} 名",
+    "scoreAria": "匹配度 {{score}} / 100",
+    "whyLabel": "匹配原因",
+    "viewProfile": "查看详情",
+    "inCompare": "已在对比中",
+    "addCompare": "加入对比",
+    "compareMax": " (上限 3)",
+    "shortlistFull": "您最多可对比 3 个城市。请先移除一个。"
+  },
+  "shortlist": {
+    "count": "已选 {{count}} / {{max}}",
+    "remove": "从对比中移除 {{name}}",
+    "clear": "清空",
+    "compare": "立即对比"
+  },
+  "city": {
+    "back": "← 返回结果",
+    "add": "加入对比",
+    "remove": "从对比中移除",
+    "addToCompare": "加入对比",
+    "removeFromCompare": "从对比中移除",
+    "fullTitle": "短名单已满 (上限 3)。",
+    "flagAlt": "{{country}} 国旗",
+    "landmarkAlt": "{{name}} 天际线",
+    "dimensionsTitle": "维度评分",
+    "lastUpdated": "数据更新时间:",
+    "coordinates": "坐标",
+    "loading": "正在加载城市档案…",
+    "error": "无法加载此城市",
+    "backShort": "返回",
+    "loadFailFallback": "无法加载该城市。",
+    "metaLastUpdated": "最后更新"
+  },
+  "compare": {
+    "title": "城市对比",
+    "sub": "正在对比 {{count}} / {{max}} 个城市。每行高亮最佳匹配。",
+    "clearAll": "清空",
+    "backToResults": "返回结果",
+    "remove": "移除",
+    "insufficient": "请至少选择 2 个城市进行对比。",
+    "dropped": "您的对比项少于 2 个城市。",
+    "scoreLabel": "{{score}} / 100",
+    "why": "「{{why}}」",
+    "rows": {
+      "climate": "气候",
+      "cost": "生活成本",
+      "housing": "住房",
+      "career": "行业 (平均)",
+      "education": "教育",
+      "healthcare": "医疗",
+      "community": "社区 (最高)",
+      "militarySafety": "地缘政治与冲突风险"
+    }
+  },
+  "why": {
+    "climate": "契合您对 {{climate}} 气候的偏好",
+    "cost": "符合您的住房与生活成本预算",
+    "career": "强劲的 {{industry}} 就业市场",
+    "education": "优质的教育资源",
+    "healthcare": "出色的医疗条件",
+    "community": "契合您 {{tags}} 的生活方式",
+    "militarySafety": "高水平的政治稳定与人身安全",
+    "neutral": "在您的各项优先项上整体均衡"
+  }
+}

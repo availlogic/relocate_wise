@@ -10,9 +10,15 @@
  * renders an "Add to compare" checkbox (PRD S4 + S7). The props are
  * optional so the card stays usable in places that don't have a
  * ShortlistProvider in scope (e.g. storybook, simple preview surfaces).
+ *
+ * v0.4.0: the why-template is rendered via the i18next bundle using
+ * the server-emitted `why_key` and `why_vars`. The legacy English
+ * `why` string is kept as a final fallback when no key is present.
  */
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { MatchedCityFull } from '../api';
+import { renderWhyTemplate } from '../i18n/why';
 import './RankCard.css';
 
 export interface RankCardProps {
@@ -37,18 +43,20 @@ export function RankCard({
   onToggleShortlist,
   shortlistFull,
 }: RankCardProps) {
-  const { city, score, why } = result;
+  const { city, score, why, why_key, why_vars } = result;
+  const { t } = useTranslation();
   const tier = scoreTier(score);
   const showCompare =
     inShortlist !== undefined && onToggleShortlist !== undefined;
   const checkboxDisabled = Boolean(shortlistFull) && !inShortlist;
+  const whyText = renderWhyTemplate(t, why, why_key, why_vars);
   return (
     <article
       className={`rank-card rank-card--${tier}`}
       data-testid={`rank-card-${rank}`}
     >
       <header className="rank-card__header">
-        <div className="rank-card__rank" aria-label={`Rank ${rank}`}>
+        <div className="rank-card__rank" aria-label={t('results.rank', { rank })}>
           #{rank}
         </div>
         <div className="rank-card__title">
@@ -61,13 +69,14 @@ export function RankCard({
         <div
           className={`rank-card__score rank-card__score--${tier}`}
           data-testid={`rank-card-${rank}-score`}
-          aria-label={`Match score ${score} out of 100`}
+          aria-label={t('results.scoreAria', { score })}
         >
           {score}
         </div>
       </header>
       <p className="rank-card__why" data-testid={`rank-card-${rank}-why`}>
-        {why}
+        <span className="visually-hidden">{t('results.whyLabel')}: </span>
+        {whyText}
       </p>
       <footer className="rank-card__footer">
         {showCompare && (
@@ -83,8 +92,8 @@ export function RankCard({
               data-testid={`rank-card-${rank}-compare-checkbox`}
             />
             <span>
-              {inShortlist ? 'In compare set' : 'Add to compare'}
-              {checkboxDisabled && ' (max 3)'}
+              {inShortlist ? t('results.inCompare') : t('results.addCompare')}
+              {checkboxDisabled && t('results.compareMax')}
             </span>
           </label>
         )}
@@ -93,7 +102,7 @@ export function RankCard({
           className="btn btn--secondary"
           data-testid={`rank-card-${rank}-link`}
         >
-          View profile
+          {t('results.viewProfile')}
         </Link>
       </footer>
     </article>

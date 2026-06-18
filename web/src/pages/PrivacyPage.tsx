@@ -7,74 +7,58 @@
  *     tracking, no cookies, no server-side history")
  *   - Constraints.md ("server must not persist or share input data")
  *
- * We deliberately avoid legalese. The point is to make the commitment
- * legible to a non-lawyer in under 60 seconds.
+ * All copy is localised via i18next. We deliberately avoid legalese.
+ * The point is to make the commitment legible to a non-lawyer in under
+ * 60 seconds.
  */
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './PrivacyPage.css';
 
 export function PrivacyPage() {
+  const { t } = useTranslation();
   return (
     <main className="privacy" data-testid="privacy">
-      <h1>Your privacy on RelocateWise</h1>
-      <p className="privacy__lead">
-        RelocateWise ranks cities based on your answers. We do not collect
-        personal information. There is no account, no email, and no
-        third-party tracking.
-      </p>
+      <h1>{t('privacy.title')}</h1>
+      <p className="privacy__lead">{t('privacy.lead')}</p>
 
       <section>
-        <h2>What we collect</h2>
+        <h2>{t('privacy.collectHeading')}</h2>
         <ul>
           <li>
-            <strong>The answers you give</strong> in the questionnaire
-            (climate preference, cost priorities, career industry, etc.).
+            <strong>{t('privacy.collectAnswers')}</strong>
           </li>
           <li>
-            <strong>Nothing else.</strong> No name, no email, no IP-based
-            profile, no advertising ID.
+            <strong>{t('privacy.collectNothing')}</strong>
           </li>
         </ul>
       </section>
 
       <section>
-        <h2>What we do with it</h2>
+        <h2>{t('privacy.useHeading')}</h2>
         <ul>
-          <li>
-            We send your answers to our matching engine, which returns a
-            ranked list of cities.
-          </li>
-          <li>
-            The engine runs in a single request — your answers are not
-            stored on our servers and are not used to train any model.
-          </li>
-          <li>
-            The shortlist you build for comparison lives only in your
-            browser tab. Refreshing the page clears it.
-          </li>
+          <li>{t('privacy.useMatch')}</li>
+          <li>{t('privacy.useNoStore')}</li>
+          <li>{t('privacy.useShortlist')}</li>
         </ul>
       </section>
 
       <section>
-        <h2>What we never do</h2>
+        <h2>{t('privacy.neverHeading')}</h2>
         <ul>
-          <li>We never sell or share your data.</li>
-          <li>We never set tracking cookies or third-party analytics.</li>
-          <li>We never require you to sign up.</li>
+          <li>{t('privacy.never1')}</li>
+          <li>{t('privacy.never2')}</li>
+          <li>{t('privacy.never3')}</li>
         </ul>
       </section>
 
       <section>
-        <h2>Contact</h2>
-        <p>
-          If you have a privacy question, open an issue on the public
-          repository that hosts this project. There is no support inbox
-          collecting emails.
-        </p>
+        <h2>{t('privacy.contactHeading')}</h2>
+        <p>{t('privacy.contact')}</p>
       </section>
 
       <footer className="privacy__footer">
-        <Link to="/">← Back to the homepage</Link>
+        <Link to="/">{t('privacy.back')}</Link>
       </footer>
     </main>
   );

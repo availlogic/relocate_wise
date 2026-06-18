@@ -1,12 +1,12 @@
 /**
- * Templated "why this fits you" generator (Architecture §6.5, CEO decision 3
- * in PRD §9: "Templated for MVP").
+ * Templated "why this fits you" generator (Architecture §6.5, PRD
+ * v3.2.0 S11 / Acceptance-Criteria Feature 6).
  *
  * For each scored city, we look at the top 1–2 dimensions by contribution
  * (w_d' · m(c, d)). When two dimensions tie within 10% of each other we
  * emit both, joined with " and ".
  *
- * Templates:
+ * Templates (the i18n keys map to the documented copy):
  *   climate         | "Matches your {preference} climate preference"
  *   cost            | "Fits your housing and cost budget"
  *   housing         | "Fits your housing and cost budget"     (shared with cost)
@@ -15,6 +15,12 @@
  *   healthcare      | "Strong healthcare access"
  *   community       | "Matches your {tag1, tag2} lifestyle"
  *   military_safety | "High geopolitical stability and physical safety"
+ *
+ * v0.4.0 addition (PRD v3.2.0 S11): every result now also emits
+ * `why_key` and `why_vars` so the frontend can render the explanation
+ * in the active locale (English or Simplified Chinese) without
+ * re-running the matching engine. The legacy English `why` string is
+ * still returned for back-compat / non-localised callers.
  */
 import { CLIMATE_LABEL_TO_PREFERENCE } from '@relocatewise/shared/climate';
 import type { LifestyleTag } from '@relocatewise/shared';
@@ -51,11 +57,20 @@ const TAG_PRETTY: Record<LifestyleTag, string> = {
 };
 
 /**
- * Format the top 1–2 contributing dimensions as a single human-readable
- * sentence. Always returns a non-empty string (AC-5: "non-empty 'why this
- * fits you' line that references at least one user-stated priority").
+ * Build the templated "why" payload for a scored city.
+ *
+ * Returns the English fallback (`why`), the i18n key (`whyKey`), and
+ * the variables to interpolate (`whyVars`). The frontend's
+ * `renderWhyTemplate` resolves the key via i18next for the active
+ * locale.
  */
-export function whyThisFitsYou(scored: ScoredCity): string {
+export interface WhyTemplate {
+  why: string;
+  whyKey: string;
+  whyVars?: Record<string, string>;
+}
+
+export function buildWhyTemplate(scored: ScoredCity): WhyTemplate {
   // Only consider dimensions the user actually weighted in (rawW > 0).
   // For the special "user skipped everything" case we use a neutral line.
   const included = scored.contributions.filter(
@@ -63,7 +78,7 @@ export function whyThisFitsYou(scored: ScoredCity): string {
   );
 
   if (included.length === 0) {
-    return 'A balanced match across all your priorities';
+    return { why: 'A balanced match across all your priorities', whyKey: 'neutral' };
   }
 
   // Rank by contribution descending; if two are within 10% of each other,
@@ -84,9 +99,26 @@ export function whyThisFitsYou(scored: ScoredCity): string {
   // Cap at 2 dimensions.
   topReasons = topReasons.slice(0, 2);
 
-  const parts = topReasons.map(formatReason);
-  if (parts.length === 1) return parts[0]!;
-  return `${parts[0]} and ${parts[1]}`;
+  // Single-dimension case — emit one template.
+  if (topReasons.length === 1) {
+    const tpl = templateFor(top);
+    return tpl;
+  }
+
+  // Two-dimension case — join both with " and " in the active locale.
+  const a = templateFor(topReasons[0]!);
+  const b = templateFor(topReasons[1]!);
+  const joined = `${a.why} and ${b.why}`;
+  // When two dimensions are emitted, we expose the primary key as
+  // `why_key` and pack the secondary's rendered English into
+  // `why_vars.secondary`. The frontend joins the two halves; for the
+  // English fallback we ship the pre-joined string. Localised clients
+  // can opt to render `why_key` and `why_vars.secondary` separately.
+  return {
+    why: joined,
+    whyKey: a.whyKey,
+    whyVars: { ...(a.whyVars ?? {}), secondary: b.why },
+  };
 }
 
 function hasUserValue(c: PerDimensionContribution): boolean {
@@ -112,37 +144,64 @@ function hasUserValue(c: PerDimensionContribution): boolean {
   }
 }
 
-function formatReason(c: PerDimensionContribution): string {
+function templateFor(c: PerDimensionContribution): WhyTemplate {
   const v = c.userValue ?? {};
   switch (c.dimension) {
     case 'climate': {
       const pref = CLIMATE_PRETTY[String(v.climate)] ?? String(v.climate);
-      return `Matches your ${pref} climate preference`;
+      return {
+        why: `Matches your ${pref} climate preference`,
+        whyKey: 'climate',
+        whyVars: { climate: pref },
+      };
     }
     case 'cost':
     case 'housing':
       // Cost and housing share a template per the architecture.
-      return 'Fits your housing and cost budget';
+      return { why: 'Fits your housing and cost budget', whyKey: 'cost' };
     case 'career': {
       const ind = INDUSTRY_PRETTY[String(v.industry)] ?? String(v.industry);
-      return `Strong ${ind} job market`;
+      return {
+        why: `Strong ${ind} job market`,
+        whyKey: 'career',
+        whyVars: { industry: ind },
+      };
     }
     case 'education':
-      return 'Strong schools and education options';
+      return { why: 'Strong schools and education options', whyKey: 'education' };
     case 'healthcare':
-      return 'Strong healthcare access';
+      return { why: 'Strong healthcare access', whyKey: 'healthcare' };
     case 'community': {
       const tags = (v.tags as LifestyleTag[] | undefined) ?? [];
-      if (tags.length === 0) return 'Matches your lifestyle';
-      if (tags.length === 1) {
-        return `Matches your ${TAG_PRETTY[tags[0]!]} lifestyle`;
+      if (tags.length === 0) {
+        return { why: 'Matches your lifestyle', whyKey: 'community' };
       }
-      const pretty = tags.slice(0, 2).map((t) => TAG_PRETTY[t]);
-      return `Matches your ${pretty.join(' and ')} lifestyle`;
+      if (tags.length === 1) {
+        const pretty = TAG_PRETTY[tags[0]!];
+        return {
+          why: `Matches your ${pretty} lifestyle`,
+          whyKey: 'community',
+          whyVars: { tags: pretty },
+        };
+      }
+      const pretty = tags.slice(0, 2).map((t) => TAG_PRETTY[t]).join(' and ');
+      return {
+        why: `Matches your ${pretty} lifestyle`,
+        whyKey: 'community',
+        whyVars: { tags: pretty },
+      };
     }
     case 'military_safety':
-      return 'High geopolitical stability and physical safety';
+      return {
+        why: 'High geopolitical stability and physical safety',
+        whyKey: 'military_safety',
+      };
   }
+}
+
+// Legacy export kept for back-compat with the test suite.
+export function whyThisFitsYou(scored: ScoredCity): string {
+  return buildWhyTemplate(scored).why;
 }
 
 // Re-export for tests

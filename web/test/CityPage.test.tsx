@@ -5,7 +5,7 @@
  * deterministically.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor, within, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { CityPage } from '../src/pages/CityPage';
@@ -52,6 +52,8 @@ describe('<CityPage />', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    cleanup();
+    vi.useRealTimers();
   });
 
   it('shows a loading indicator before the request resolves', () => {
@@ -173,5 +175,46 @@ describe('<CityPage />', () => {
     const parsed = JSON.parse(stored!);
     expect(parsed).toHaveLength(1);
     expect(parsed[0].city.slug).toBe('lisbon');
+  });
+
+  it('renders the country flag SVG next to the country name (FTC-16, v0.4.0)', async () => {
+    getCityMock.mockResolvedValueOnce(
+      makeCity({
+        slug: 'lisbon',
+        country: 'Portugal',
+        country_code: 'PT',
+        flag_image_url: '/flags/pt.svg',
+      }),
+    );
+    renderCityPage('lisbon');
+    await screen.findByTestId('city-page');
+    const flag = screen.getByTestId('city-page-flag') as HTMLImageElement;
+    expect(flag.tagName).toBe('IMG');
+    expect(flag.src).toContain('/flags/pt.svg');
+    expect(flag.alt).toMatch(/flag of portugal/i);
+    // Visual-Guidelines §4.5: 24px wide, 3:2 aspect.
+    expect(flag.getAttribute('width')).toBe('24');
+    expect(flag.getAttribute('height')).toBe('16');
+  });
+
+  it('renders a lazy-loaded landmark photo in a 16:9 container (FTC-16, v0.4.0)', async () => {
+    getCityMock.mockResolvedValueOnce(
+      makeCity({
+        slug: 'lisbon',
+        landmark_image_url:
+          'https://commons.wikimedia.org/wiki/Special:FilePath/Lisbon.jpg',
+      }),
+    );
+    renderCityPage('lisbon');
+    await screen.findByTestId('city-page');
+    const figure = screen.getByTestId('city-page-landmark');
+    expect(figure).toBeInTheDocument();
+    // The container must enforce 16:9 aspect-ratio per Visual-Guidelines §4.6.
+    expect(figure.className).toMatch(/city-page__landmark/);
+    const img = figure.querySelector('img') as HTMLImageElement;
+    expect(img).not.toBeNull();
+    expect(img.getAttribute('loading')).toBe('lazy');
+    expect(img.getAttribute('decoding')).toBe('async');
+    expect(img.getAttribute('alt')).toMatch(/lisbon skyline/i);
   });
 });

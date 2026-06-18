@@ -11,8 +11,9 @@
  * same origin the SPA is served from. In dev that origin is the Vite
  * dev server on :5173, which forwards `/api/*` to the Fastify API on
  * :3000 via the proxy in `web/vite.config.ts`. In production the
- * origin is the Netlify CDN, and the `/api/*` redirect in `netlify.toml`
- * sends those calls to the edge function in `netlify/functions/proxy.ts`.
+ * origin is the Cloudflare Pages deployment, and the `/api/*` Pages
+ * Function rule forwards calls to the Ubuntu API via Cloudflare Tunnel
+ * (`docker-compose.cloudflared.yml`).
  *
  * To point at a remote API instead (e.g. for a staging environment or
  * to bypass the proxy in dev), set `VITE_API_BASE=https://staging.example.com`.
@@ -47,11 +48,17 @@ export interface MatchedCityFull {
     description: string;
     dimensions: CityDimensions;
     last_updated: string;
+    flag_image_url: string;
+    landmark_image_url: string;
   };
   /** Overall match score on a 0-100 integer scale. */
   score: number;
-  /** Templated one-line "why this fits you" explanation. */
+  /** Templated one-line "why this fits you" explanation (English fallback). */
   why: string;
+  /** i18next key for the why-template (Architecture §6.5, PRD v3.2.0 S11). */
+  why_key: string;
+  /** Variables to interpolate into the why-template. */
+  why_vars?: Record<string, string>;
 }
 
 export interface MatchResponseFull {

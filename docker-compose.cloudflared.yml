@@ -1,0 +1,75 @@
+# Production Docker Compose overlay for Cloudflare Pages + Tunnel
+# deployment (Architecture v1.3.0 §3, PRD v3.2.0 S9 / AC-14).
+#
+# Run alongside the base compose:
+#
+#   docker compose \
+#     -f docker-compose.yml \
+#     -f docker-compose.cloudflared.yml \
+#     up -d
+#
+# This adds the `cloudflared` daemon which establishes an outbound
+# tunnel from the CEO's Ubuntu server to Cloudflare's edge. Cloudflare
+# Pages proxies all browser requests for the SPA; pages' `/api/*`
+# forward rule sends those calls back through the tunnel to the local
+# API/Caddy stack.
+#
+# No inbound ports are opened on the host firewall: the tunnel is
+# outbound-only.
+#
+# Prereqs:
+#   1. `cloudflared tunnel login`  (interactively, once)
+#   2. `cloudflared tunnel create relocatewise-prod` (once; writes
+#      a tunnel UUID JSON to ~/.cloudflared/)
+#   3. Copy `cloudflared/CONFIG.example.yml` to
+#      `~/.cloudflared/config.yml` and substitute the tunnel UUID +
+#      zone hostname(s).
+#   4. Create a Docker secret named `cloudflared_credentials`
+#      containing the contents of `<UUID>.json` from step 2:
+#
+#        docker swarm init
+#        cat ~/.cloudflared/<UUID>.json \
+#          | docker secret create cloudflared_credentials -
+#
+#      (or `echo $JSON | docker secret create` from a file).
+#
+#   5. Update `cloudflared/CONFIG.example.yml` and mount it via the
+#      `cloudflared_config` secret below.
+#
+# The CEO's domain is configured in `cloudflared/CONFIG.example.yml`.
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:2026.6.1
+    container_name: relocatewise-cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_METRICS=0.0.0.0:2000
+      - NO_AUTOUPDATE=true
+    networks:
+      - relocatewise
+    secrets:
+      - cloudflared_credentials
+      - cloudflared_config
+    healthcheck:
+      test: ['CMD', 'cloudflared', 'tunnel', 'info']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      - caddy
+      - api
+
+networks:
+  relocatewise:
+    # The default `relocatewise` network is created by the base
+    # docker-compose.yml; this overlay inherits it.
+    external: false
+    name: relocatewise_relocatewise
+
+secrets:
+  cloudflared_credentials:
+    external: true
+  cloudflared_config:
+    external: true

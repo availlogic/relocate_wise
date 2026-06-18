@@ -38,6 +38,8 @@ export function makeCity(overrides: Partial<City> & Pick<City, 'slug' | 'name' |
     lng: 0,
     description: 'Test city description.',
     last_updated: '2026-05-15',
+    flag_image_url: '/flags/xx.svg',
+    landmark_image_url: 'https://example.test/landmark.jpg',
     dimensions: {
       climate: { label: 'Temperate' },
       cost: 3,

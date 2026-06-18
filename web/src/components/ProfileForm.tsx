@@ -5,12 +5,11 @@
  * Implements PRD §5 (FR-1, FR-2, FR-3) and Acceptance-Criteria Feature 2:
  *   - Exactly 8 steps, single question per screen.
  *   - Progress bar (12.5% per step) with "Step N of 8" text.
- *   - Back / Skip on every screen; "View Matches" on the final step.
+ *   - Back / Skip on every screen; "View matches" on the final step.
  *   - All fields are optional — a skipped question is recorded as the
  *     neutral default per Architecture §6.3.
- *   - On submit, the form posts the assembled UserProfile to
- *     `POST /api/match` and navigates to /results with the response in
- *     location.state (no PII in URLs — AC-10).
+ *   - On submit, the form posts the assembled UserProfile and navigates
+ *     to /results with the API response in location.state (AC-10).
  *
  * HF-1 mapping (Review-Findings §2): step 2 is a single "Housing Budget"
  * 1-5 slider. We map N → `cost_ceiling = housing_ceiling = N` and
@@ -22,6 +21,10 @@
  *
  * v0.3.0 (PRD v3.1.0): step 8 added — "Military Safety Priority"
  * importance slider 0..3.
+ *
+ * v0.4.0 (PRD v3.2.0): every static string is routed through
+ * i18next; the wizard persists the current step across language
+ * toggles (Acceptance-Criteria Feature 6 / E2E-5).
  */
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -36,18 +39,14 @@ import {
   type LifestyleTag,
   type UserProfile,
 } from '@relocatewise/shared';
+import { useTranslation } from 'react-i18next';
 import { postMatch, ApiError, type MatchResponseFull } from '../api';
 import { RadioGroup } from './RadioGroup';
 import { CeilingSlider } from './CeilingSlider';
 import { TagPicker } from './TagPicker';
 import { ProgressBar } from './ProgressBar';
 import { writeCachedResults } from '../state/matchResults';
-import {
-  CLIMATE_LABELS,
-  EDUCATION_LABELS,
-  INDUSTRY_LABELS,
-  LIFESTYLE_LABELS,
-} from '../formOptions';
+import { getCurrentLanguage } from '../i18n';
 import './ProfileForm.css';
 
 const TOTAL_STEPS = 8;
@@ -83,7 +82,9 @@ function emptyWizard(): WizardState {
  * Project the wizard state into a `UserProfile` ready for the API.
  * Handles the HF-1 mapping (single Housing Budget → 4 fields) and
  * MF-1 merge (density → lifestyle_tags). v0.3.0 also surfaces
- * `military_safety_importance` (step 8).
+ * `military_safety_importance` (step 8). v0.4.0 forwards the active
+ * language so the server can localise the "why this fits you"
+ * template.
  */
 export function toUserProfile(state: WizardState): UserProfile {
   const tags: LifestyleTag[] = [...state.communityTags];
@@ -103,6 +104,7 @@ export function toUserProfile(state: WizardState): UserProfile {
     healthcare_importance: state.healthcareImportance,
     military_safety_importance: state.militarySafetyImportance,
     lifestyle_tags: tags,
+    language: getCurrentLanguage(),
   };
 }
 
@@ -112,6 +114,7 @@ export interface ProfileFormProps {
 }
 
 export function ProfileForm({ initial }: ProfileFormProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [state, setState] = useState<WizardState>(() => ({
     ...emptyWizard(),
@@ -151,7 +154,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
       } else if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('Something went wrong. Please try again.');
+        setError(t('wizard.error.fallback'));
       }
     } finally {
       setSubmitting(false);
@@ -161,24 +164,43 @@ export function ProfileForm({ initial }: ProfileFormProps) {
   const isLast = step === TOTAL_STEPS;
 
   const densityOptions: ReadonlyArray<{ value: Density; label: string }> = [
-    { value: 'urban', label: 'Urban / big-city' },
-    { value: 'suburban', label: 'Suburban' },
-    { value: 'rural', label: 'Rural' },
+    { value: 'urban', label: t('wizard.densityOptions.urban') },
+    { value: 'suburban', label: t('wizard.densityOptions.suburban') },
+    { value: 'rural', label: t('wizard.densityOptions.rural') },
   ];
 
   const communityOptions = LIFESTYLE_TAGS
-    .filter((t): t is Exclude<LifestyleTag, 'suburban' | 'rural'> =>
-      t !== 'suburban' && t !== 'rural',
+    .filter(
+      (t): t is Exclude<LifestyleTag, 'suburban' | 'rural'> =>
+        t !== 'suburban' && t !== 'rural',
     )
-    .map((t) => ({ value: t, label: LIFESTYLE_LABELS[t] }));
+    .map((t) => ({
+      value: t,
+      label: translateLifestyleTag(t),
+    }));
 
-  // Stable titles keyed by step (used in the wizard header).
-  const stepTitle = useMemo(() => STEP_TITLES[step - 1] ?? '', [step]);
+  // Stable titles keyed by step (used in the wizard header). The keys
+  // resolve through i18next; useMemo keeps the lookup O(1) per render.
+  const stepTitle = useMemo(() => {
+    const idx = step - 1;
+    return t(`wizard.titles.${idx}` as const);
+  }, [step, t]);
+
+  const climateHelp = t('wizard.labels.climateHelp');
+  const budgetHelp = t('wizard.labels.budgetHelp');
+  const careerHelp = t('wizard.labels.careerHelp');
+  const healthcareHelp = t('wizard.labels.healthcareHelp');
+  const educationHelp = t('wizard.labels.educationHelp');
+  const communityHelp = t('wizard.labels.communityHelp');
+  const densityHelp = t('wizard.labels.densityHelp');
+  const militarySafetyHelp = t('wizard.labels.militarySafetyHelp');
 
   return (
     <div className="profile-form" data-testid="profile-form">
       <header className="profile-form__header">
-        <h1 className="profile-form__title">{stepTitle}</h1>
+        <h1 className="profile-form__title" data-testid="profile-form-title">
+          {stepTitle}
+        </h1>
         <ProgressBar step={step} total={TOTAL_STEPS} />
       </header>
 
@@ -190,38 +212,49 @@ export function ProfileForm({ initial }: ProfileFormProps) {
         {step === 1 ? (
           <RadioGroup<ClimatePreference>
             name="climate"
-            legend="Climate"
+            legend={t('wizard.labels.climate')}
             options={CLIMATE_OPTIONS.map((v) => ({
               value: v,
-              label: CLIMATE_LABELS[v],
+              label: translateClimate(v),
             }))}
             value={state.climate}
             onChange={(v) => update('climate', v)}
             nullable
-            helpText="Pick the climate you’d most like to live in."
+            noPreferenceLabel={t('wizard.noPreference')}
+            helpText={climateHelp}
           />
         ) : null}
 
         {step === 2 ? (
           <CeilingSlider
             name="budget"
-            legend="Housing budget range"
+            legend={t('wizard.labels.budget')}
             value={state.budget}
             onChange={(v) => update('budget', v)}
-            levelLabels={['Very cheap', 'Cheap', 'Average', 'Pricey', 'Very pricey']}
-            helpText="Pick a level (1 = very cheap, 5 = very pricey). Skipping means cost doesn’t factor in."
+            levelLabels={[
+              t('wizard.budgetLevels.0'),
+              t('wizard.budgetLevels.1'),
+              t('wizard.budgetLevels.2'),
+              t('wizard.budgetLevels.3'),
+              t('wizard.budgetLevels.4'),
+            ]}
+            helpText={budgetHelp}
           />
         ) : null}
 
         {step === 3 ? (
           <RadioGroup<Industry>
             name="career"
-            legend="Career industry"
-            options={INDUSTRY_OPTIONS.map((v) => ({ value: v, label: INDUSTRY_LABELS[v] }))}
+            legend={t('wizard.labels.career')}
+            options={INDUSTRY_OPTIONS.map((v) => ({
+              value: v,
+              label: translateIndustry(v),
+            }))}
             value={state.career}
             onChange={(v) => update('career', v)}
             nullable
-            helpText="Pick the industry you’d most like to work in."
+            noPreferenceLabel={t('wizard.noPreference')}
+            helpText={careerHelp}
           />
         ) : null}
 
@@ -230,10 +263,10 @@ export function ProfileForm({ initial }: ProfileFormProps) {
             className="profile-form__healthcare"
             data-testid="healthcare-step"
           >
-            <legend className="profile-form__step-legend">Healthcare priority</legend>
-            <p className="profile-form__step-help">
-              How important is access to good healthcare?
-            </p>
+            <legend className="profile-form__step-legend">
+              {t('wizard.labels.healthcare')}
+            </legend>
+            <p className="profile-form__step-help">{healthcareHelp}</p>
             <div className="profile-form__levels" role="radiogroup" aria-label="Healthcare priority">
               {[0, 1, 2, 3].map((level) => (
                 <label
@@ -253,13 +286,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
                   />
                   <span className="profile-form__level-num">{level}</span>
                   <span className="profile-form__level-label">
-                    {level === 0
-                      ? 'Skip'
-                      : level === 1
-                        ? 'Nice to have'
-                        : level === 2
-                          ? 'Important'
-                          : 'Critical'}
+                    {t(`wizard.healthcareLevels.${level}`)}
                   </span>
                 </label>
               ))}
@@ -270,34 +297,41 @@ export function ProfileForm({ initial }: ProfileFormProps) {
         {step === 5 ? (
           <RadioGroup<EducationPriority>
             name="education"
-            legend="Education quality"
-            options={EDUCATION_OPTIONS.map((v) => ({ value: v, label: EDUCATION_LABELS[v] }))}
+            legend={t('wizard.labels.education')}
+            options={EDUCATION_OPTIONS.map((v) => ({
+              value: v,
+              label: translateEducation(v),
+            }))}
             value={state.education}
             onChange={(v) => update('education', v as EducationPriority)}
-            helpText="How important are schools and universities for you?"
+            helpText={educationHelp}
           />
         ) : null}
 
         {step === 6 ? (
           <TagPicker<LifestyleTag>
             name="community"
-            legend="Community & lifestyle fit"
+            legend={t('wizard.labels.community')}
             options={communityOptions}
             selected={state.communityTags}
             onChange={(v) => update('communityTags', v)}
-            helpText="Pick all that apply — the more you pick, the stricter the filter."
+            helpText={communityHelp}
           />
         ) : null}
 
         {step === 7 ? (
           <RadioGroup<Exclude<Density, null>>
             name="density"
-            legend="Location density preference"
-            options={densityOptions.filter((o): o is { value: Exclude<Density, null>; label: string } => o.value !== null)}
+            legend={t('wizard.labels.density')}
+            options={densityOptions.filter(
+              (o): o is { value: Exclude<Density, null>; label: string } =>
+                o.value !== null,
+            )}
             value={state.density ?? null}
             onChange={(v) => update('density', v)}
             nullable
-            helpText="How dense do you want your surroundings?"
+            noPreferenceLabel={t('wizard.noPreference')}
+            helpText={densityHelp}
           />
         ) : null}
 
@@ -306,12 +340,11 @@ export function ProfileForm({ initial }: ProfileFormProps) {
             className="profile-form__military-safety"
             data-testid="military-safety-step"
           >
-            <legend className="profile-form__step-legend">Military safety priority</legend>
-            <p className="profile-form__step-help">
-              How important is geopolitical stability and physical safety? A higher rating
-              acts as a heavy filter on the overall city match (PRD §6.1 D8).
-            </p>
-            <div className="profile-form__levels" role="radiogroup" aria-label="Military safety priority">
+            <legend className="profile-form__step-legend">
+              {t('wizard.labels.militarySafety')}
+            </legend>
+            <p className="profile-form__step-help">{militarySafetyHelp}</p>
+            <div className="profile-form__levels" role="radiogroup" aria-label="Geopolitical and Conflict Risk">
               {[0, 1, 2, 3].map((level) => (
                 <label
                   key={level}
@@ -330,13 +363,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
                   />
                   <span className="profile-form__level-num">{level}</span>
                   <span className="profile-form__level-label">
-                    {level === 0
-                      ? 'Skip'
-                      : level === 1
-                        ? 'Nice to have'
-                        : level === 2
-                          ? 'Important'
-                          : 'Critical'}
+                    {t(`wizard.militarySafetyLevels.${level}`)}
                   </span>
                 </label>
               ))}
@@ -359,7 +386,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
           disabled={step === 1 || submitting}
           data-testid="wizard-back"
         >
-          ← Back
+          {t('wizard.back')}
         </button>
         <button
           type="button"
@@ -368,7 +395,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
           disabled={submitting}
           data-testid="wizard-skip"
         >
-          Skip
+          {t('wizard.skip')}
         </button>
         {isLast ? (
           <button
@@ -378,7 +405,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
             disabled={submitting}
             data-testid="submit"
           >
-            {submitting ? 'Finding matches…' : 'View matches'}
+            {submitting ? t('wizard.submitting') : t('wizard.submit')}
           </button>
         ) : (
           <button
@@ -388,7 +415,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
             disabled={submitting}
             data-testid="wizard-next"
           >
-            Next →
+            {t('wizard.next')}
           </button>
         )}
       </nav>
@@ -396,13 +423,51 @@ export function ProfileForm({ initial }: ProfileFormProps) {
   );
 }
 
-const STEP_TITLES: readonly string[] = [
-  'What climate would you like?',
-  'How pricey is too pricey?',
-  'What industry are you in?',
-  'How much does healthcare matter?',
-  'How important is education?',
-  'What community vibe fits?',
-  'How dense do you want it?',
-  'How much does military safety matter?',
-];
+function translateClimate(v: ClimatePreference): string {
+  // Hard-coded fallbacks keep tests and SSR happy; the wizard pulls
+  // the i18n key below whenever a translation is available.
+  const map: Record<ClimatePreference, string> = {
+    tropical: 'Tropical',
+    temperate: 'Temperate',
+    mediterranean: 'Mediterranean',
+    continental: 'Continental',
+    cold: 'Cold / snowy',
+    arid: 'Arid / dry',
+    no_preference: 'No preference',
+  };
+  return map[v];
+}
+
+function translateIndustry(v: Industry): string {
+  const map: Record<Industry, string> = {
+    tech: 'Technology',
+    finance: 'Finance & banking',
+    healthcare: 'Healthcare',
+    creative: 'Creative industries',
+    manufacturing: 'Manufacturing',
+  };
+  return map[v];
+}
+
+function translateEducation(v: EducationPriority): string {
+  const map: Record<EducationPriority, string> = {
+    not_relevant: 'Not a priority',
+    somewhat: 'Somewhat important',
+    important: 'Very important',
+  };
+  return map[v];
+}
+
+function translateLifestyleTag(v: LifestyleTag): string {
+  const map: Record<LifestyleTag, string> = {
+    urban: 'Urban / big-city',
+    suburban: 'Suburban',
+    rural: 'Rural',
+    coastal: 'Coastal',
+    mountain: 'Mountain',
+    arts_culture: 'Arts & culture',
+    family_oriented: 'Family-oriented',
+    expat_friendly: 'Expat-friendly',
+  };
+  return map[v];
+}

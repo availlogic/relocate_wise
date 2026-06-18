@@ -157,22 +157,21 @@ The SPA still uses relative URLs and Vite still proxies — but the target is no
 │   ├── types.ts               UserProfile, City, MatchResult, ApiError
 │   └── climate.ts             Climate compatibility table (Architecture §15 OAD 1)
 │
-├── netlify/                   Edge function (proxies /api/* to the Ubuntu API)
-│   ├── functions/proxy.ts     Pass-through with 60s in-memory cache for /cities/:slug
-│   └── test/proxy.test.ts     6 tests for forward, CORS, cache, 502
-│
 ├── db/
 │   ├── migrations/001_init.sql  Schema with PostGIS extension
 │   └── seeds/cities.json        Versioned 40-city source of truth
 │
 ├── docs/                      Vision, Constraints, PRD, Architecture
 │
-├── docker-compose.yml         api + db + caddy (local + production)
-├── Caddyfile                  TLS reverse proxy
-├── netlify.toml               SPA build + /api/* redirect to the edge function
-├── .dockerignore              Keeps the API image build context small
-├── .github/workflows/ci.yml   CI: typecheck, test, build, smoke build
-├── .env.example               Local development env defaults
+├── docker-compose.yml             api + db + caddy (local + production)
+├── docker-compose.cloudflared.yml Production overlay: adds the cloudflared tunnel daemon
+├── cloudflared/                   Tunnel config sample (production deploy)
+├── Caddyfile                      TLS reverse proxy
+├── web/wrangler.toml              Cloudflare Pages project config
+├── .dockerignore                  Keeps the API image build context small
+├── .github/workflows/ci.yml       CI: typecheck, test, build, smoke build
+├── .github/workflows/deploy-pages.yml  Manual Cloudflare Pages deploy
+├── .env.example                   Local development env defaults
 └── README.md
 ```
 
@@ -200,10 +199,10 @@ All responses are `application/json`. All errors return `{ error: string, messag
 | `HOST`            | API               |                   | `0.0.0.0`                | API bind address                                   |
 | `GIT_SHA`         | API               |                   | auto via `git rev-parse` | Returned by `/api/health`                          |
 | `CORS_ORIGIN`     | API               | In production     | echo any (dev)           | Comma-separated allowed origins                    |
-| `VITE_API_BASE`   | SPA dev/build     |                   | unset → relative `/api/*` (uses Vite proxy or Netlify redirect) | Override the API base; set to a full URL to point at a remote API. |
+| `VITE_API_BASE`   | SPA dev/build     |                   | unset → relative `/api/*` (uses Vite proxy in dev, Cloudflare Pages routing in prod) | Override the API base; set to a full URL to point at a remote API. |
 | `API_PROXY_TARGET` | Vite dev only     |                   | `http://localhost:3000`  | Where Vite forwards `/api/*` in dev. Set to `http://localhost:8080` to use Caddy on host :8080 instead. |
-| `API_ORIGIN`      | Netlify function  | Yes, in prod      | —                        | Where the proxy forwards `/api/*`                  |
-| `API_SECRET`      | Netlify function  | Yes, in prod      | —                        | Shared header secret to the Ubuntu API             |
+| `CLOUDFLARE_API_TOKEN` | GitHub Actions  | For deploy workflow | unset                  | Cloudflare API token with `Pages: Edit` + `Account: Read` permissions. |
+| `CLOUDFLARE_ACCOUNT_ID` | GitHub Actions  | For deploy workflow | unset                  | Cloudflare account ID for the deploy-pages workflow. |
 
 The `docker-compose.yml` reads `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `CORS_ORIGIN`, and `GIT_SHA` from the host environment (or `.env` at the project root). See `.env.example` for local defaults.
 
@@ -212,7 +211,7 @@ The `docker-compose.yml` reads `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_D
 ## Tests
 
 ```bash
-npm test           # all workspaces (api + web + netlify)
+npm test           # all workspaces (api + web)
 ```
 
 The `api` workspace includes a testcontainers-based integration test that spins up a real `postgis/postgis:16-3.4-alpine` container per run. It is **skipped** when the Docker socket at `/var/run/docker.sock` is absent (CI runners without Docker, or contributors on hosts without Docker). On a developer machine with Docker installed the suite takes ~10 s longer; in CI on a GitHub-hosted runner it's already a normal step.
@@ -227,130 +226,122 @@ There are two deploy targets. Both must be live for the app to work end-to-end:
 
 | Target  | Where                                     | What it serves                                            |
 | ------- | ----------------------------------------- | --------------------------------------------------------- |
-| Frontend | Netlify (free tier)                        | The React/Vite SPA, served from a global CDN             |
-| Backend  | CEO's Ubuntu server, Docker Compose       | The Fastify + Postgres + PostGIS API, fronted by Caddy    |
+| Frontend | Cloudflare Pages (free tier)              | The React/Vite SPA, served from Cloudflare's global CDN |
+| Backend  | CEO's Ubuntu server, Docker Compose       | The Fastify + Postgres + PostGIS API, fronted by Caddy, exposed via Cloudflare Tunnel |
 
-The two are connected by a single HTTPS call: the browser talks to the Netlify-hosted SPA, which (for `/api/*`) hits a Netlify Function that forwards to the Ubuntu API.
+The two are connected by a single HTTPS call: the browser talks to the Cloudflare Pages deployment, which (for `/api/*`) routes calls through Cloudflare Tunnel to the Ubuntu API.
 
-### Frontend — Netlify
+### Frontend — Cloudflare Pages
 
 #### Prerequisites
 
 - A GitHub repository containing this code (the user has the local checkout; push it up first).
-- A Netlify account (<https://app.netlify.com>). The free tier is enough.
-- The backend **must already be deployed and reachable** at `https://api.<ceo-domain>` (see [Backend — Ubuntu server](#backend--ubuntu-server) below). Netlify won't be able to serve `/api/*` until the API is up.
+- A Cloudflare account (<https://dash.cloudflare.com>). The free tier is enough.
+- The backend **must already be deployed and reachable** via the Cloudflare Tunnel hostname (see [Backend — Ubuntu server](#backend--ubuntu-server) below). Cloudflare Pages won't be able to serve `/api/*` until the tunnel is up.
 
 #### 1. Connect the repo
 
-1. Sign in to <https://app.netlify.com>.
-2. Click **Add new site → Import an existing project**.
-3. Pick **GitHub** and authorize Netlify to read the repo.
+1. Sign in to <https://dash.cloudflare.com>.
+2. Go to **Workers & Pages → Create application → Pages → Connect to Git**.
+3. Pick the GitHub repo and authorize Cloudflare to read it.
 4. Select the RelocateWise repository.
 
 #### 2. Configure build settings
 
-The build is driven by the root `netlify.toml`, so most of the configuration is already in the repo. Verify (or set) the following on the **Site configuration → Build & deploy** page:
+`web/wrangler.toml` pins the project name (`relocatewise`). In the Pages project **Settings → Builds**:
 
 | Setting               | Value          | Notes                                       |
 | --------------------- | -------------- | ------------------------------------------- |
-| Base directory        | `web`          | Where the SPA's `package.json` lives         |
 | Build command         | `npm run build` | Runs `tsc -b && vite build` via the workspace `npm run build` |
-| Publish directory     | `dist`         | Vite's default output                       |
-| Functions directory   | `netlify/functions` | Auto-detected; explicit for clarity     |
-| Node version          | `20`           | Set in `[build.environment] NODE_VERSION`   |
+| Build output directory| `dist`         | Vite's default output                       |
+| Root directory        | `web`          | Where the SPA's `package.json` lives         |
+| Environment variables | `NODE_VERSION=20` | Forces Node 20 in the build env          |
 
-If you don't see Node 20 as the default, add `NODE_VERSION=20` in **Environment variables** (see step 3) — it overrides Netlify's default. Alternatively set it in the build image settings.
+#### 3. Configure `/api/*` routing
 
-#### 3. Set environment variables
+In the Pages project → **Settings → Functions → Routes**, add:
+- Route: `/api/*`
+- Worker / Function: `relocatewise-api-proxy` (a Cloudflare Worker that
+  forwards `/api/*` requests to `https://api.<ceo-domain>`).
 
-Go to **Site configuration → Environment variables** and add the following. **Do not** put them in source or in the public repo.
+The Worker source is trivial (see `artifacts/Deployment_Report.md` for the
+exact code). Cloudflare then maps the Worker to the `/api/*` route on
+your Pages project.
 
-| Key            | Value (example)                          | Where it lands                              |
-| -------------- | ---------------------------------------- | ------------------------------------------- |
-| `API_ORIGIN`   | `https://api.example.com`                | Netlify function — where to forward `/api/*` |
-| `API_SECRET`   | (a long random string, 32+ chars)        | Sent in the `x-relocatewise-secret` header  |
-| `NODE_VERSION` | `20`                                     | Forces Node 20 in the build env             |
+#### 4. (Optional) Custom domain
 
-Use **Generate a value** for `API_SECRET`, or paste a random string from `openssl rand -hex 32`. The same value must be set on the Ubuntu server (see step 4 below).
+In Cloudflare DNS, add a CNAME for `<ceo-domain>` pointing at
+`<project>.pages.dev`. Cloudflare provisions a Let's Encrypt cert
+automatically.
 
-You can set values per-deploy-context (Production, Deploy Previews, Branch deploys). For an MVP, scoping to **Production** is fine.
+#### 5. (Optional) Manual deploy from the CEO's machine
 
-#### 4. Deploy
+```bash
+cd web
+npm ci
+npm run build
+npx wrangler pages deploy ./dist --project-name=relocatewise --branch=main
+```
 
-Click **Deploy site**. Netlify will:
-
-1. Clone the repo.
-2. Run `npm ci` in `web/` (the base directory).
-3. Run `npm run build` (which runs `tsc -b && vite build`).
-4. Publish `web/dist/` to the CDN.
-5. Discover `netlify/functions/proxy.ts` and bundle it as a Netlify Function.
-
-The first build takes 2–4 minutes. Watch the deploy log; if it fails, the log is the first place to look. Common failures:
-
-- **"Cannot find module '@relocatewise/shared'"** — the base directory is wrong. Fix it to `web` in step 2.
-- **"Functions bundler error"** — usually a TypeScript error in `netlify/functions/proxy.ts`. Run `npm -w @relocatewise/netlify run typecheck` locally to reproduce.
-- **"Build script returned non-zero exit code"** — usually a missing env var. Set `NODE_VERSION=20` explicitly.
-
-#### 5. Add a custom domain (optional but recommended)
-
-1. Buy the domain (Cloudflare Registrar, Namecheap, or your registrar of choice).
-2. In Netlify: **Domain settings → Add a domain alias** → enter `<ceo-domain>`.
-3. Netlify will show the DNS records to add. For an apex domain (`example.com`), add the A record it shows. For a subdomain (`www.example.com`), add the CNAME.
-4. Wait for DNS to propagate (a few minutes to 48 hours). Netlify provisions a Let's Encrypt cert automatically.
-
-> The Netlify free tier provisions a `*.netlify.app` URL for you on first deploy. You can demo the app on that URL even before the custom domain is wired up.
+The deploy requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`
+in the environment.
 
 #### 6. (Recommended) Enable Deploy Previews
 
-Under **Site configuration → Deploy contexts**, enable **Branch deploys** and **Deploy Previews**. Every PR will get its own preview URL (`https://deploy-preview-42--<site>.netlify.app`) that runs against the **production** `API_ORIGIN`. This is the cheapest way to test changes before merging.
+Under **Settings → Build configurations**, enable **Preview deployments**
+for non-`main` branches. Every PR gets its own preview URL that runs
+against the production tunnel.
 
 #### 7. Smoke-test the deployment
 
-Once the first deploy is green, run through this checklist (everything should take under 60 seconds):
+Once the first deploy is green, run through this checklist (everything
+should take under 60 seconds):
 
 ```bash
-# Replace <site> with your Netlify subdomain and <ceo-domain> with the real one.
+# Replace <project> with your Cloudflare Pages subdomain (or your
+# custom <ceo-domain>).
 
 # 1. SPA loads.
-curl -sI https://<site>.netlify.app/ | head -1
+curl -sI https://<project>.pages.dev/ | head -1
 # → HTTP/2 200
 
-# 2. Health endpoint (proxied through the Netlify function).
-curl -s https://<site>.netlify.app/api/health
+# 2. Health endpoint (proxied through the tunnel).
+curl -s https://<project>.pages.dev/api/health
 # → {"ok":true,"version":"<git-sha>","timestamp":"..."}
 
 # 3. City list (proxied).
-curl -s https://<site>.netlify.app/api/cities | python3 -c "import sys, json; print(len(json.load(sys.stdin)['cities']))"
+curl -s https://<project>.pages.dev/api/cities | python3 -c "import sys, json; print(len(json.load(sys.stdin)['cities']))"
 # → 40
 
 # 4. Single city (proxied + cached for 60s on the second call).
-curl -s https://<site>.netlify.app/api/cities/lisbon-pt | python3 -c "import sys, json; print(json.load(sys.stdin)['slug'])"
+curl -s https://<project>.pages.dev/api/cities/lisbon-pt | python3 -c "import sys, json; print(json.load(sys.stdin)['slug'])"
 # → lisbon-pt
 
-# 5. Match endpoint (proxied).
+# 5. Match endpoint (proxied + bilingual).
 curl -s -X POST -H 'Content-Type: application/json' \
-  -d '{"climate":"mediterranean","career_industry":"tech","lifestyle_tags":["urban","coastal"]}' \
-  https://<site>.netlify.app/api/match | python3 -c "import sys, json; print(len(json.load(sys.stdin)['results']))"
-# → 10
+  -d '{"climate":"mediterranean","language":"zh","lifestyle_tags":["urban","coastal"]}' \
+  https://<project>.pages.dev/api/match | python3 -c "import sys, json; r=json.load(sys.stdin); print(r['results'][0]['why_key'])"
+# → community
 ```
 
 If any of these fail, the problem is almost always one of:
 
-- **CORS** — the Ubuntu API's `CORS_ORIGIN` env var doesn't include the Netlify domain. Fix: update `CORS_ORIGIN` on the server and `docker compose up -d` to pick it up.
-- **DNS / TLS** — the Netlify function can't reach `API_ORIGIN`. Check with `curl -v https://<ceo-domain>/api/health` from any machine.
-- **Wrong secret** — the API returns 401. The header `x-relocatewise-secret` sent by the function must match the value the Ubuntu API expects.
+- **CORS** — the Ubuntu API's `CORS_ORIGIN` env var doesn't include the Pages domain. Fix: update `CORS_ORIGIN` on the server and `docker compose up -d` to pick it up.
+- **Tunnel unreachable** — `cloudflared` isn't running. Check `docker logs relocatewise-cloudflared`.
+- **Wrong tunnel hostname** — the Pages `/api/*` → tunnel hostname mapping isn't set up. Fix: configure it in the Pages Functions routing dashboard.
 
-#### 8. Continuous deployment
+### Backend — Ubuntu server (Cloudflare Pages + Tunnel topology)
 
-Netlify watches `main` by default. After the first deploy, every push to `main` triggers a new production deploy, and every PR gets a preview URL. No further action is needed.
-
-### Backend — Ubuntu server
+The MVP backend is exposed to the internet through a Cloudflare Tunnel
+(see `Architecture v1.3.0` §2). No inbound ports need to be opened on
+the host firewall — the `cloudflared` daemon initiates the tunnel
+outbound-only.
 
 #### Prerequisites
 
 - An Ubuntu 22.04+ server reachable from the public internet (any VPS — Hetzner, DigitalOcean, Vultr, OVH; the cheapest tier is enough).
-- A DNS A record for `api.<ceo-domain>` pointing at the server's public IP.
 - A `CEO_DOMAIN` placeholder (replace with the real domain throughout this section).
+- A Cloudflare account + tunnel credentials (see step 2 below).
 
 #### 1. Install Docker
 
@@ -367,113 +358,114 @@ apt update && apt -y install docker-ce docker-ce-cli containerd.io docker-compos
 
 Verify with `docker --version` and `docker compose version`.
 
-#### 2. Clone the repo
+#### 2. One-time: create the Cloudflare Tunnel
+
+```bash
+# On the CEO's machine (or any client with cloudflared installed)
+cloudflared tunnel login    # interactive; opens the browser
+cloudflared tunnel create relocatewise-prod
+# Writes ~/.cloudflared/<UUID>.json with the tunnel credentials.
+```
+
+Then copy `cloudflared/CONFIG.example.yml` from this repo to
+`~/.cloudflared/config.yml` and substitute `<TUNNEL-UUID>` and
+`<DOMAIN>` with the values from step 2.
+
+#### 3. Store the tunnel credentials as Docker secrets
+
+```bash
+docker swarm init    # one-time
+cat ~/.cloudflared/<UUID>.json \
+  | docker secret create cloudflared_credentials -
+docker secret create cloudflared_config - < ~/.cloudflared/config.yml
+```
+
+#### 4. Clone the repo and create `.env`
 
 ```bash
 mkdir -p /srv/relocatewise
 cd /srv/relocatewise
 git clone <your-github-repo-url> .
-```
 
-#### 3. Configure the production `.env`
-
-Create `/srv/relocatewise/.env` (the same path `docker-compose.yml` reads from):
-
-```bash
 cat > /srv/relocatewise/.env <<EOF
-# Postgres
 POSTGRES_USER=relocatewise
 POSTGRES_PASSWORD=$(openssl rand -hex 24)
 POSTGRES_DB=relocatewise
 
-# CORS — comma-separated. The Netlify domain must be in here.
-CORS_ORIGIN=https://<ceo-domain>,https://<site>.netlify.app
+# CORS — comma-separated. The Cloudflare Pages domain must be in here.
+CORS_ORIGIN=https://relocatewise.pages.dev,https://<ceo-domain>
 
 # Git SHA returned by /api/health. The deploy script updates this.
 GIT_SHA=$(git -C /srv/relocatewise rev-parse --short HEAD)
+
+# Ingestion cadence (default monthly at 03:00 UTC on the 1st).
+INGESTION_CRON=0 3 1 * * *
 EOF
 chmod 600 /srv/relocatewise/.env
 ```
-
-The CEO's domain goes here too — set `CEO_DOMAIN` as a host env var so Caddy can pick it up:
-
-```bash
-echo 'export CEO_DOMAIN=api.example.com' > /etc/profile.d/relocatewise.sh
-. /etc/profile.d/relocatewise.sh
-```
-
-#### 4. Set the Caddy domain
-
-Edit `Caddyfile` so the `{$API_DOMAIN}` placeholder resolves correctly. The default in the file is `{$API_DOMAIN:api.example.com}` — for production, set the env var on the host so the placeholder expands to the real domain:
-
-```bash
-echo 'export API_DOMAIN=api.example.com' >> /etc/profile.d/relocatewise.sh
-. /etc/profile.d/relocatewise.sh
-```
-
-The first non-`#` line of the `Caddyfile` is `{$API_DOMAIN:api.example.com} {`. The `{$API_DOMAIN:default}` syntax means "use `API_DOMAIN` if set, else fall back to `default`". Caddy will provision a Let's Encrypt cert automatically once DNS resolves.
 
 #### 5. Bring the stack up
 
 ```bash
 cd /srv/relocatewise
-docker compose up -d
+docker compose \
+  -f docker-compose.yml \
+  -f docker-compose.cloudflared.yml \
+  up -d
 ```
 
-The first boot pulls three images:
+This starts `db` (PostGIS), `api` (Fastify), `caddy` (internal Docker
+network only — no host port mappings), and `cloudflared` (outbound
+tunnel to Cloudflare's edge).
 
+The first boot pulls four images:
 - `postgis/postgis:16-3.4-alpine` (~80 MB)
-- `node:20-alpine` (build stage, ~50 MB; the runtime image is built locally, not pulled)
+- `node:20-alpine` (build stage, ~50 MB; the runtime image is built locally)
 - `caddy:2-alpine` (~40 MB)
+- `cloudflare/cloudflared:2026.6.1` (~50 MB)
 
-Then the API container runs migrations (`db/migrations/001_init.sql`) and seeds the 40-city dataset. **This is idempotent** — re-running on a database that already has data is a no-op.
+The API container then runs migrations (`db/migrations/001_init.sql`)
+and seeds the 40-city dataset. **This is idempotent** — re-running on
+a database that already has data is a no-op.
 
-#### 6. Open the firewall
-
-```bash
-ufw allow 22/tcp
-ufw allow 80/tcp
-ufw allow 443/tcp
-ufw enable
-```
-
-Caddy listens on 80/443 and provisions the cert via the ACME HTTP-01 challenge on port 80. If port 80 is blocked, certificate issuance fails.
-
-#### 7. Smoke-test the API
+#### 6. Smoke-test the API
 
 ```bash
-# Health
+# Direct (local) — should work without the tunnel.
+curl -s http://localhost:3000/api/health
+
+# Via the tunnel — should also work and be encrypted.
 curl -s https://api.<ceo-domain>/api/health
-# → {"ok":true,"version":"<git-sha>","timestamp":"..."}
-
-# Match
-curl -s -X POST -H 'Content-Type: application/json' \
-  -d '{"climate":"mediterranean","career_industry":"tech","lifestyle_tags":["urban","coastal"]}' \
-  https://api.<ceo-domain>/api/match | python3 -c "import sys, json; print(len(json.load(sys.stdin)['results']))"
-# → 10
-
-# Direct (non-proxied) connection works
-curl -s https://api.<ceo-domain>/api/cities/lisbon-pt | python3 -c "import sys, json; print(json.load(sys.stdin)['slug'])"
-# → lisbon-pt
 ```
 
-If Caddy is up but cert issuance is failing, check `docker compose logs caddy`. The most common cause is DNS not yet pointing at the server.
+If the tunnel is up but the Cloudflare proxy returns 502, check
+`docker logs relocatewise-cloudflared`. The most common cause is
+incorrect tunnel credentials or hostname misconfiguration.
 
-#### 8. Subsequent deploys
+#### 7. Subsequent deploys
 
 The CEO (or whoever has SSH access) runs one command on the server:
 
 ```bash
-ssh root@<server-ip> 'cd /srv/relocatewise && git pull && docker compose pull && docker compose up -d'
+ssh root@<server-ip> 'cd /srv/relocatewise && git pull && \
+  docker compose -f docker-compose.yml -f docker-compose.cloudflared.yml pull && \
+  docker compose -f docker-compose.yml -f docker-compose.cloudflared.yml up -d'
 ```
 
-This rebuilds the API image with the latest code, runs any new migrations, and restarts the containers. Postgres data is preserved on the named volume `pgdata`.
+This rebuilds the API image with the latest code, runs any new
+migrations, and restarts the containers. Postgres data is preserved on
+the named volume `pgdata`.
 
-For zero-downtime deploys, the architecture doc leaves room for `docker compose up -d --no-deps --scale api=2` followed by a rolling restart; that's a Day-2 optimization and not in the MVP.
+For zero-downtime deploys, the architecture doc leaves room for
+`docker compose up -d --no-deps --scale api=2` followed by a rolling
+restart; that's a Day-2 optimization and not in the MVP.
 
-#### 9. Backups
+#### 8. Backups
 
-None required. The dataset is in git (`db/seeds/cities.json`); the database is a build artifact. RPO = 0, RTO = re-run `docker compose up -d` on a fresh box (~15 minutes).
+None required. The dataset is in git (`db/seeds/cities.json`); the
+database is a build artifact. RPO = 0, RTO = re-run
+`docker compose -f docker-compose.yml -f docker-compose.cloudflared.yml up -d`
+on a fresh box (~15 minutes).
 
 ### Wiring the two halves together
 
@@ -484,7 +476,7 @@ After both halves are deployed, verify the end-to-end loop:
 curl -sI https://<ceo-domain>/ | head -1
 # → HTTP/2 200
 
-# 2. /api/* is proxied through Netlify to the Ubuntu API
+# 2. /api/* is proxied through Cloudflare Pages + Tunnel to the Ubuntu API
 curl -s https://<ceo-domain>/api/health
 # → {"ok":true,"version":"<git-sha>","timestamp":"..."}
 
@@ -493,7 +485,7 @@ docker logs --tail 20 relocatewise-api 2>&1 | grep -i "401\|unauthorized" || ech
 # → "no auth errors"
 ```
 
-If step 1 returns 200 but step 2 doesn't, the issue is on the Netlify side (function env, routing). If step 2 returns 200 but the SPA shows network errors in the browser, the issue is CORS (the SPA's origin isn't in `CORS_ORIGIN` on the server).
+If step 1 returns 200 but step 2 doesn't, the issue is on the Cloudflare Pages side (Pages routing rule, or the tunnel isn't connected). If step 2 returns 200 but the SPA shows network errors in the browser, the issue is CORS (the SPA's origin isn't in `CORS_ORIGIN` on the server).
 
 ---
 
@@ -514,7 +506,7 @@ If step 1 returns 200 but step 2 doesn't, the issue is on the Netlify side (func
 | 11  | Consent banner on first visit, no cookies before consent                               | `web/src/components/ConsentBanner.tsx`                              |
 | 12  | Privacy page linked from footer and banner                                             | `web/src/App.tsx`, `ConsentBanner.tsx`                              |
 | 13  | Single-command Docker Compose startup, documented                                       | `docker compose up` + this README                                   |
-| 14  | Public URL on free tier with HTTPS                                                      | Netlify + Caddy/Let's Encrypt (deploy steps above)                  |
+| 14  | Public URL on free tier with HTTPS                                                      | Cloudflare Pages + Tunnel (deploy steps above)                       |
 | 15  | CI runs typecheck + tests + smoke build on every push to `main`                        | `.github/workflows/ci.yml`                                          |
 
 ---
@@ -525,7 +517,7 @@ If step 1 returns 200 but step 2 doesn't, the issue is on the Netlify side (func
 - **`/api/health` returns `version: dev`** — the API process couldn't find a `.git` directory. Set `GIT_SHA` explicitly in the env, or ensure the repo is cloned (not downloaded as a tarball).
 - **`docker compose up` fails on the API with `connect ECONNREFUSED 127.0.0.1:5432`** — the `db` service isn't healthy yet. Wait 10 seconds and retry, or run `docker compose up -d db` first, then `docker compose up -d api caddy`.
 - **Caddy says `msg="no certificate available"`** — the DNS A record isn't pointing at this server, or the port-80 ACME challenge is blocked. Verify with `dig api.<ceo-domain> +short` and `curl -v http://api.<ceo-domain>/.well-known/acme-challenge/test`.
-- **Netlify function returns 502 `upstream_unreachable`** — `API_ORIGIN` is wrong, the API is down, or the Caddy certificate hasn't been issued yet. Check `curl -v https://api.<ceo-domain>/api/health` from any machine.
+- **Cloudflare Pages returns 502 for `/api/*`** — the `/api/*` → tunnel routing rule isn't set up in the Pages Functions routing dashboard. Verify the Worker is bound to `/api/*` and that it forwards to `https://api.<ceo-domain>`.
 - **CORS error in the browser console** — the SPA's origin is missing from the API's `CORS_ORIGIN`. Update `.env` and `docker compose up -d` to reload.
 
 ---
