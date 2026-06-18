@@ -238,6 +238,18 @@ describe('<ComparePage />', () => {
     expect(screen.queryByTestId('compare-page')).not.toBeInTheDocument();
   });
 
+  it('renders the localised "Dimension" column header (v0.4.x)', () => {
+    const a = makeCity('lisbon', 'Lisbon', 'PT');
+    const b = makeCity('berlin', 'Berlin', 'DE');
+    renderPage([a, b]);
+    const table = screen.getByTestId('compare-table');
+    // The first <th> in the table head is the frozen-column header
+    // for the row labels. It must use t('compare.dimension').
+    const firstTh = table.querySelector('thead th');
+    expect(firstTh).not.toBeNull();
+    expect(firstTh!.textContent).toBe('Dimension');
+  });
+
   it('clears the shortlist when "Clear all" is clicked', async () => {
     const user = userEvent.setup();
     const a = makeCity('lisbon', 'Lisbon', 'PT');

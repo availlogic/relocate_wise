@@ -166,7 +166,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 2, suburban: 1, rural: 0, coastal: 3, mountain: 2, arts_culture: 2, family_oriented: 1, expat_friendly: 3 },
     5,
     'Pacific coast city framed by mountains and ocean, with strong Asian-Canadian cultural ties and a mild (rainy) climate.',
-    'https://commons.wikimedia.org/wiki/Special:FilePath/Vancouver_skyline_at_night.jpg'
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Vancouver-Skyline-Night_(44931772).jpg'
   ),
   c(
     'san-francisco-us',
@@ -828,7 +828,7 @@ export const SEED_CITIES: readonly City[] = [
     { urban: 3, suburban: 0, rural: 0, coastal: 3, mountain: 0, arts_culture: 2, family_oriented: 1, expat_friendly: 2 },
     2,
     'Mediterranean tech hub, second only to Silicon Valley in startup density per capita. Beach-and-business lifestyle.',
-    'https://commons.wikimedia.org/wiki/Special:FilePath/Tel_Aviv_skyline_at_dusk.jpg'
+    'https://commons.wikimedia.org/wiki/Special:FilePath/Tel Aviv Skyline 01.jpg'
   ),
   c(
     'istanbul-tr',

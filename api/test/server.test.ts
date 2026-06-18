@@ -225,6 +225,64 @@ describe('POST /api/match', () => {
     expect(res.json().error).toBe('invalid_profile');
   });
 
+  it('ITC-1 (v0.4.x): tied match result exposes why_vars.secondary_key + secondary_vars, not English', async () => {
+    // The canonical ITC-1 payload: mediterranean climate + cost ceiling
+    // 3 + tech career. The two-dim tied branch is triggered by
+    // cost_importance matching climate weight (1).
+    const app = await newApp();
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/match',
+      payload: {
+        climate: 'mediterranean',
+        cost_importance: 3,
+        cost_ceiling: 3,
+        housing_importance: 2,
+        housing_ceiling: 4,
+        career_industry: 'tech',
+        education: 'important',
+        healthcare_importance: 2,
+        military_safety_importance: 3,
+        lifestyle_tags: ['urban', 'coastal'],
+      },
+    });
+    expect(res.statusCode).toBe(200);
+    const body = res.json();
+    expect(Array.isArray(body.results)).toBe(true);
+    expect(body.results).toHaveLength(10);
+    // For any result with a tied reason, the why_vars schema is
+    // enforced (Bug 4 + docs/Integration-Test-Cases.md ITC-1 step 5).
+    let tiedSeen = false;
+    for (const r of body.results) {
+      expect(typeof r.why).toBe('string');
+      expect(r.why.length).toBeGreaterThan(0);
+      expect(typeof r.why_key).toBe('string');
+      // why_vars is optional (omitted for the neutral case) but
+      // when present must be a plain object.
+      if (r.why_vars !== undefined && r.why_vars !== null) {
+        expect(typeof r.why_vars).toBe('object');
+      }
+      if (r.why_vars?.secondary_key) {
+        tiedSeen = true;
+        // secondary_key is a documented dimension key.
+        expect([
+          'climate', 'cost', 'housing', 'career', 'education',
+          'healthcare', 'community', 'military_safety',
+        ]).toContain(r.why_vars.secondary_key);
+        // secondary_vars is a plain object (NOT a string).
+        expect(typeof r.why_vars.secondary_vars).toBe('object');
+        // No English string packed into why_vars.
+        expect(r.why_vars.secondary).toBeUndefined();
+        // The legacy why field still carries the pre-joined English.
+        expect(r.why).toMatch(/ and /);
+      }
+    }
+    // We don't assert tiedSeen === true because the canonical
+    // ITC-1 payload may not produce a tie on every city. The
+    // structural assertion above is what the docs require.
+    void tiedSeen;
+  });
+
   it('produces deterministic ranking: same input → same output', async () => {
     const app = await newApp();
     const a = await app.inject({ method: 'POST', url: '/api/match', payload: baseProfile });

@@ -217,4 +217,42 @@ describe('<CityPage />', () => {
     expect(img.getAttribute('decoding')).toBe('async');
     expect(img.getAttribute('alt')).toMatch(/lisbon skyline/i);
   });
+
+  it('renders the corrected Vancouver landmark URL (Bug 6 / v0.4.x)', async () => {
+    const vancouver = makeCity({
+      slug: 'vancouver-ca',
+      name: 'Vancouver',
+      landmark_image_url:
+        'https://commons.wikimedia.org/wiki/Special:FilePath/Vancouver-Skyline-Night_(44931772).jpg',
+    });
+    getCityMock.mockImplementation(() => Promise.resolve(vancouver));
+    renderCityPage('vancouver-ca');
+    await screen.findByTestId('city-page');
+    const figure = screen.getByTestId('city-page-landmark');
+    const img = figure.querySelector('img') as HTMLImageElement;
+    expect(img).not.toBeNull();
+    expect(img.getAttribute('src')).toBe(
+      'https://commons.wikimedia.org/wiki/Special:FilePath/Vancouver-Skyline-Night_(44931772).jpg',
+    );
+    expect(img.getAttribute('alt')).toMatch(/vancouver skyline/i);
+  });
+
+  it('renders the corrected Tel Aviv landmark URL (Bug 6 / v0.4.x)', async () => {
+    const telAviv = makeCity({
+      slug: 'tel-aviv-il',
+      name: 'Tel Aviv',
+      landmark_image_url:
+        'https://commons.wikimedia.org/wiki/Special:FilePath/Tel%20Aviv%20Skyline%2001.jpg',
+    });
+    getCityMock.mockImplementation(() => Promise.resolve(telAviv));
+    renderCityPage('tel-aviv-il');
+    await screen.findByTestId('city-page');
+    const figure = screen.getByTestId('city-page-landmark');
+    const img = figure.querySelector('img') as HTMLImageElement;
+    expect(img).not.toBeNull();
+    expect(img.getAttribute('src')).toBe(
+      'https://commons.wikimedia.org/wiki/Special:FilePath/Tel%20Aviv%20Skyline%2001.jpg',
+    );
+    expect(img.getAttribute('alt')).toMatch(/tel aviv skyline/i);
+  });
 });

@@ -28,7 +28,7 @@ const LANDMARKS = {
   'new-york-us': 'New_York_City_at_night_HDR.jpg',
   'austin-us': 'Congress_Avenue_Bridge_Bats.jpg',
   'toronto-ca': 'Toronto_-_ON_-_CN_Tower.jpg',
-  'vancouver-ca': 'Vancouver_skyline_at_night.jpg',
+  'vancouver-ca': 'Vancouver-Skyline-Night_(44931772).jpg',
   'san-francisco-us': 'Golden_Gate_Bridge_from_Battery_Spencer.jpg',
   'seattle-us': 'Seattle_Skyline_(49875804988).jpg',
   'boston-us': 'Boston_Skyline_at_Twilight.jpg',
@@ -66,7 +66,7 @@ const LANDMARKS = {
   // Other
   'cape-town-za': 'Cape_Town_and_Table_Mountain.jpg',
   'dubai-ae': 'Dubai_Skyline_at_Night_(Pexels_4393660).jpg',
-  'tel-aviv-il': 'Tel_Aviv_skyline_at_dusk.jpg',
+  'tel-aviv-il': 'Tel Aviv Skyline 01.jpg',
   'istanbul-tr': 'Istanbul_skyline_at_dusk.jpg',
   'casablanca-ma': 'Hassan_II_Mosque_at_Casablanca.jpg',
 };

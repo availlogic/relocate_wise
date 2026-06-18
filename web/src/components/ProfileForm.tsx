@@ -316,6 +316,7 @@ export function ProfileForm({ initial }: ProfileFormProps) {
             selected={state.communityTags}
             onChange={(v) => update('communityTags', v)}
             helpText={communityHelp}
+            noPreferenceLabel={t('wizard.labels.noPreference')}
           />
         ) : null}
 

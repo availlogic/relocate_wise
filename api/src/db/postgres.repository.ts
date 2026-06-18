@@ -151,7 +151,7 @@ const LANDMARK_BY_SLUG = new Map<string, string>([
   ['new-york-us', 'https://commons.wikimedia.org/wiki/Special:FilePath/New_York_City_at_night_HDR.jpg'],
   ['austin-us', 'https://commons.wikimedia.org/wiki/Special:FilePath/Congress_Avenue_Bridge_Bats.jpg'],
   ['toronto-ca', 'https://commons.wikimedia.org/wiki/Special:FilePath/Toronto_-_ON_-_CN_Tower.jpg'],
-  ['vancouver-ca', 'https://commons.wikimedia.org/wiki/Special:FilePath/Vancouver_skyline_at_night.jpg'],
+  ['vancouver-ca', 'https://commons.wikimedia.org/wiki/Special:FilePath/Vancouver-Skyline-Night_(44931772).jpg'],
   ['san-francisco-us', 'https://commons.wikimedia.org/wiki/Special:FilePath/Golden_Gate_Bridge_from_Battery_Spencer.jpg'],
   ['seattle-us', 'https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Skyline_(49875804988).jpg'],
   ['boston-us', 'https://commons.wikimedia.org/wiki/Special:FilePath/Boston_Skyline_at_Twilight.jpg'],
@@ -185,7 +185,7 @@ const LANDMARK_BY_SLUG = new Map<string, string>([
   ['medellin-co', 'https://commons.wikimedia.org/wiki/Special:FilePath/Medell%C3%ADn_skyline_at_dusk.jpg'],
   ['cape-town-za', 'https://commons.wikimedia.org/wiki/Special:FilePath/Cape_Town_and_Table_Mountain.jpg'],
   ['dubai-ae', 'https://commons.wikimedia.org/wiki/Special:FilePath/Dubai_Skyline_at_Night_(Pexels_4393660).jpg'],
-  ['tel-aviv-il', 'https://commons.wikimedia.org/wiki/Special:FilePath/Tel_Aviv_skyline_at_dusk.jpg'],
+  ['tel-aviv-il', 'https://commons.wikimedia.org/wiki/Special:FilePath/Tel%20Aviv%20Skyline%2001.jpg'],
   ['istanbul-tr', 'https://commons.wikimedia.org/wiki/Special:FilePath/Istanbul_skyline_at_dusk.jpg'],
   ['casablanca-ma', 'https://commons.wikimedia.org/wiki/Special:FilePath/Hassan_II_Mosque_at_Casablanca.jpg'],
 ]);

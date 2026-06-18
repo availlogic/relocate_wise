@@ -85,7 +85,7 @@
       "density": "Location density preference",
       "densityHelp": "How dense do you want your surroundings?",
       "militarySafety": "Geopolitical & Conflict Risk",
-      "militarySafetyHelp": "How important is geopolitical stability and physical safety? A higher rating acts as a heavy filter on the overall city match (PRD §6.1 D8)."
+      "militarySafetyHelp": "How important is geopolitical stability and physical safety? A higher rating acts as a heavy filter on the overall city match."
     },
     "healthcareLevels": ["Skip", "Nice to have", "Important", "Critical"],
     "militarySafetyLevels": ["Skip", "Nice to have", "Important", "Critical"],
@@ -200,6 +200,7 @@
     "clearAll": "Clear all",
     "backToResults": "Back to results",
     "remove": "Remove",
+    "dimension": "Dimension",
     "insufficient": "Please select at least 2 cities to compare.",
     "dropped": "You now have fewer than 2 cities in your comparison.",
     "scoreLabel": "{{score}}/100",
@@ -222,7 +223,7 @@
     "education": "Strong schools and education options",
     "healthcare": "Strong healthcare access",
     "community": "Matches your {{tags}} lifestyle",
-    "militarySafety": "High geopolitical stability and physical safety",
+    "military_safety": "High geopolitical stability and physical safety",
     "neutral": "A balanced match across all your priorities"
   }
 }

@@ -121,6 +121,16 @@ describe('<ProfileForm /> (8-step wizard)', () => {
     expect(screen.getByTestId('military-safety-3')).toBeInTheDocument();
   });
 
+  it('does not leak development doc references in the military-safety help text (v0.4.x)', async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await advanceToStep(user, 8);
+    const step = screen.getByTestId('military-safety-step');
+    // The help paragraph must not contain internal PRD-section references
+    // (per bug 1: scrub `(PRD §6.1 D8)` from the user-facing copy).
+    expect(step.textContent).not.toMatch(/PRD\s*§/);
+  });
+
   it('renders "View matches" only on step 8', async () => {
     const user = userEvent.setup();
     renderForm();
@@ -294,5 +304,88 @@ describe('<ProfileForm /> (8-step wizard)', () => {
     await user.click(screen.getByTestId('submit'));
     const err = await screen.findByTestId('api-error');
     expect(err.textContent).toMatch(/something went wrong/i);
+  });
+});
+
+/**
+ * Bug 5 / FTC-5b: "No Preference" option on Step 6 (Community & Lifestyle
+ * Fit). The chip is the first entry in the option list, has the same
+ * `.tag-chip` style as the other tags, is selected by default, and is
+ * mutually exclusive with the other tags (clicking a tag clears "No
+ * Preference"; clicking "No Preference" clears any other tags).
+ *
+ * Submission with "No Preference" active sends `lifestyle_tags: []`
+ * (the matching engine already treats `[]` as "no preference" so no
+ * backend change is needed).
+ */
+describe('FTC-5b: "No Preference" in Community & Lifestyle Fit', () => {
+  async function advanceToStep6(user: ReturnType<typeof userEvent.setup>) {
+    for (let i = 0; i < 5; i++) {
+      await user.click(screen.getByTestId('wizard-next'));
+    }
+  }
+
+  it('renders the No Preference chip on step 6 alongside the lifestyle tags', async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await advanceToStep6(user);
+    // Per decision 5b: "No Preference" is selected by default.
+    const noPref = screen.getByTestId('community-no-preference');
+    expect(noPref).toBeInTheDocument();
+    expect(noPref.getAttribute('aria-pressed')).toBe('true');
+    // Other tag chips are present and NOT active.
+    expect(screen.getByTestId('community-urban').getAttribute('aria-pressed')).toBe('false');
+    expect(screen.getByTestId('community-coastal').getAttribute('aria-pressed')).toBe('false');
+  });
+
+  it('clicking a tag while No Preference is active deselects No Preference', async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await advanceToStep6(user);
+    // No Preference is on by default.
+    expect(screen.getByTestId('community-no-preference').getAttribute('aria-pressed')).toBe('true');
+    // Click an actual tag.
+    await user.click(screen.getByTestId('community-urban'));
+    // No Preference deactivates; the tag activates.
+    expect(screen.getByTestId('community-no-preference').getAttribute('aria-pressed')).toBe('false');
+    expect(screen.getByTestId('community-urban').getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('clicking No Preference clears any previously selected tag', async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await advanceToStep6(user);
+    // Click an actual tag (this will also deselect "No Preference").
+    await user.click(screen.getByTestId('community-urban'));
+    await user.click(screen.getByTestId('community-coastal'));
+    expect(screen.getByTestId('community-urban').getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByTestId('community-coastal').getAttribute('aria-pressed')).toBe('true');
+    // Now click "No Preference" — both tags should clear.
+    await user.click(screen.getByTestId('community-no-preference'));
+    expect(screen.getByTestId('community-urban').getAttribute('aria-pressed')).toBe('false');
+    expect(screen.getByTestId('community-coastal').getAttribute('aria-pressed')).toBe('false');
+    expect(screen.getByTestId('community-no-preference').getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('submitting with No Preference active sends lifestyle_tags: []', async () => {
+    const user = userEvent.setup();
+    let captured: UserProfile | undefined;
+    postMatchMock.mockImplementation((p: UserProfile) => {
+      captured = p;
+      return Promise.resolve({ results: [], generated_at: '2026-06-02T00:00:00Z' });
+    });
+    renderForm();
+    // No Preference is selected by default on step 6; no further
+    // action needed. Advance to step 8 and submit.
+    await advanceToStep6(user);
+    for (let i = 0; i < 2; i++) {
+      await user.click(screen.getByTestId('wizard-next'));
+    }
+    await user.click(screen.getByTestId('submit'));
+    await waitFor(() => {
+      expect(screen.getByTestId('results-path').textContent).toBe('/results');
+    });
+    expect(captured).toBeDefined();
+    expect(captured!.lifestyle_tags).toEqual([]);
   });
 });

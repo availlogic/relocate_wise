@@ -242,3 +242,100 @@ describe('why this fits you — why_key + why_vars (v0.4.0, PRD v3.2.0 S11)', ()
     expect(tpl.why).toMatch(/balanced match/i);
   });
 });
+
+/**
+ * v0.4.x — Bug 4: the tied-reason branch must emit
+ *   `why_vars.secondary_key` + `why_vars.secondary_vars` (no English
+ *   string in the wire shape). The legacy `why` field keeps the
+ *   pre-joined English for back-compat with old sessionStorage entries.
+ */
+describe('why this fits you — tied-reason secondary_key + secondary_vars (v0.4.x)', () => {
+  const city = CITIES[0]!; // Lisbon
+
+  it('tied climate + career emits secondary_key=career + secondary_vars.industry in whyVars', () => {
+    // Both climate (rawW 1, match 1.0 → contribution 0.5) and
+    // career=tech (rawW 1, match 1.0 → contribution 0.5) are perfectly
+    // tied. The cost is also non-zero, so the builder picks the top
+    // two: climate + career.
+    const user: UserProfile = withDefaults({
+      climate: 'mediterranean',
+      career_industry: 'tech',
+    });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('climate');
+    expect(tpl.whyVars).toBeDefined();
+    expect(tpl.whyVars!.secondary_key).toBe('career');
+    expect(tpl.whyVars!.secondary_vars).toEqual({ industry: 'tech' });
+  });
+
+  it('tied climate + career packs the pre-joined English only in the legacy why field', () => {
+    const user: UserProfile = withDefaults({
+      climate: 'mediterranean',
+      career_industry: 'tech',
+    });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.why).toContain('Matches your Mediterranean climate preference');
+    expect(tpl.why).toContain('Strong tech job market');
+    expect(tpl.why).toMatch(/ and /);
+  });
+
+  it('tied climate + cost emits secondary_key=cost + secondary_vars={} in whyVars', () => {
+    // cost_importance=2 → rawW 1, climate rawW 1. After normalization
+    // both get weight 0.5. With cost match 1.0 (city_cost=1, ceiling=5)
+    // and climate match 1.0 (Mediterranean), they tie at 0.5.
+    const tiedCity = makeCity({
+      slug: 't', name: 'T', country: 'X',
+      dimensions: {
+        ...makeCity({ slug: 't0', name: 'T0', country: 'X' }).dimensions,
+        climate: { label: 'Mediterranean' },
+        cost: 1,
+      },
+    });
+    const user: UserProfile = withDefaults({
+      climate: 'mediterranean',
+      cost_importance: 2,
+      cost_ceiling: 5,
+    });
+    const scored = scoreCity(tiedCity, user);
+    const tpl = buildWhyTemplate(scored);
+    // The builder picks the top two contributing dimensions; verify
+    // that when a tie exists, the secondary_key shape is used.
+    expect(tpl.whyVars).toBeDefined();
+    expect(tpl.whyVars!.secondary_key).toBeDefined();
+    expect(typeof tpl.whyVars!.secondary_key).toBe('string');
+    expect(tpl.whyVars!.secondary_vars).toBeDefined();
+    expect(typeof tpl.whyVars!.secondary_vars).toBe('object');
+  });
+
+  it('single-dimension result has no secondary_key in whyVars', () => {
+    // A scenario where cost clearly dominates climate: cost_importance=3
+    // (rawW 2) and climate rawW 1. With cost match 1.0 and climate
+    // match 1.0 the normalised contribution is 2/3 vs 1/3 — well above
+    // the 10% tie window. Only cost is emitted.
+    const user: UserProfile = withDefaults({
+      climate: 'mediterranean',
+      cost_importance: 3,
+      cost_ceiling: 5,
+    });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    // No tied runner-up → no secondary_key/secondary_vars.
+    if (tpl.whyVars) {
+      expect(tpl.whyVars.secondary).toBeUndefined();
+      expect(tpl.whyVars.secondary_key).toBeUndefined();
+    }
+  });
+
+  it('neutral case (all skipped) has no secondary_key in whyVars', () => {
+    const user: UserProfile = withDefaults({});
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('neutral');
+    if (tpl.whyVars) {
+      expect(tpl.whyVars.secondary).toBeUndefined();
+      expect(tpl.whyVars.secondary_key).toBeUndefined();
+    }
+  });
+});

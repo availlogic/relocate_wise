@@ -85,7 +85,7 @@
       "density": "城市密度偏好",
       "densityHelp": "您希望周边环境有多密集?",
       "militarySafety": "地缘政治与冲突风险",
-      "militarySafetyHelp": "地缘稳定性与公共安全对您有多重要? 优先级越高, 对匹配结果的过滤越强 (PRD §6.1 D8)。"
+      "militarySafetyHelp": "地缘稳定性与公共安全对您有多重要? 优先级越高, 对匹配结果的过滤越强。"
     },
     "healthcareLevels": ["跳过", "锦上添花", "重要", "关键"],
     "militarySafetyLevels": ["跳过", "锦上添花", "重要", "关键"],
@@ -200,6 +200,7 @@
     "clearAll": "清空",
     "backToResults": "返回结果",
     "remove": "移除",
+    "dimension": "维度",
     "insufficient": "请至少选择 2 个城市进行对比。",
     "dropped": "您的对比项少于 2 个城市。",
     "scoreLabel": "{{score}} / 100",
@@ -222,7 +223,7 @@
     "education": "优质的教育资源",
     "healthcare": "出色的医疗条件",
     "community": "契合您 {{tags}} 的生活方式",
-    "militarySafety": "高水平的政治稳定与人身安全",
+    "military_safety": "高水平的政治稳定与人身安全",
     "neutral": "在您的各项优先项上整体均衡"
   }
 }

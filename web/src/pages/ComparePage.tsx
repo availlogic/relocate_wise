@@ -238,7 +238,7 @@ function DimensionTable({
     <table className="compare-page__table" data-testid="compare-table">
       <thead>
         <tr>
-          <th scope="col">Dimension</th>
+          <th scope="col">{t('compare.dimension')}</th>
           {items.map((i) => (
             <th key={i.city.slug} scope="col">{i.city.name}</th>
           ))}

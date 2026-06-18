@@ -67,7 +67,12 @@ const TAG_PRETTY: Record<LifestyleTag, string> = {
 export interface WhyTemplate {
   why: string;
   whyKey: string;
-  whyVars?: Record<string, string>;
+  // `whyVars` is a flat string-indexed record for the primary
+  // dimension, but in the tied-reason case (v0.4.x — Bug 4) it also
+  // carries `secondary_key: string` and `secondary_vars: Record<...>`.
+  // The `unknown` value type lets `secondary_vars` nest a record
+  // without breaking the i18next interpolation contract.
+  whyVars?: Record<string, unknown>;
 }
 
 export function buildWhyTemplate(scored: ScoredCity): WhyTemplate {
@@ -105,19 +110,31 @@ export function buildWhyTemplate(scored: ScoredCity): WhyTemplate {
     return tpl;
   }
 
-  // Two-dimension case — join both with " and " in the active locale.
+  // Two-dimension case (v0.4.x — Bug 4).
+  //
+  // Wire shape (no English string is ever packed into `whyVars`):
+  //   why:      "<pre-joined English>"         — legacy back-compat
+  //   whyKey:   "<primary dimension key>"      — e.g. "climate"
+  //   whyVars:  {
+  //     ...primaryVars,
+  //     secondary_key:  "<secondary dimension key>",   // e.g. "career"
+  //     secondary_vars: { ...secondaryVars },          // e.g. { industry: "tech" }
+  //   }
+  //
+  // The frontend `renderWhyTemplate()` (web/src/i18n/why.ts) translates
+  // both halves via i18next and joins them with " and " (English) or
+  // " 且 " (Chinese) based on the active language.
   const a = templateFor(topReasons[0]!);
   const b = templateFor(topReasons[1]!);
   const joined = `${a.why} and ${b.why}`;
-  // When two dimensions are emitted, we expose the primary key as
-  // `why_key` and pack the secondary's rendered English into
-  // `why_vars.secondary`. The frontend joins the two halves; for the
-  // English fallback we ship the pre-joined string. Localised clients
-  // can opt to render `why_key` and `why_vars.secondary` separately.
   return {
     why: joined,
     whyKey: a.whyKey,
-    whyVars: { ...(a.whyVars ?? {}), secondary: b.why },
+    whyVars: {
+      ...(a.whyVars ?? {}),
+      secondary_key: b.whyKey,
+      secondary_vars: b.whyVars ?? {},
+    },
   };
 }
 

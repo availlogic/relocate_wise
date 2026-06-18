@@ -39,7 +39,10 @@ export interface MatchResult {
   score: number;
   why: string;
   why_key: string;
-  why_vars?: Record<string, string>;
+  // v0.4.x — Bug 4: `why_vars.secondary_vars` is a nested record
+  // for the tied-reason case. Use `unknown` so the type doesn't
+  // pretend the value is always a string.
+  why_vars?: Record<string, unknown>;
 }
 
 export interface MatchResponse {

@@ -32,16 +32,49 @@ const KNOWN_WHY_KEYS = new Set([
  * @param t  i18next `t` function (typed as `TFunction` for testability).
  * @param why  legacy English fallback string (kept in the wire shape).
  * @param whyKey  dimension key, one of `KNOWN_WHY_KEYS`.
- * @param whyVars  variables for the template (e.g. `{ climate: 'mediterranean' }`).
+ * @param whyVars  variables to interpolate into the template
+ *                (e.g. `{ climate: 'mediterranean' }`). For tied
+ *                reasons, this also carries `secondary_key` and
+ *                `secondary_vars` (v0.4.x — Bug 4).
  */
 export function renderWhyTemplate(
   t: TFunction,
   why: string,
   whyKey?: string,
-  whyVars?: Record<string, string>,
+  // Variables are typed as `unknown` because `secondary_vars` is a
+  // nested record (the tied-reason case in v0.4.x — Bug 4) and
+  // i18next interpolates them with its own semantics. The shape is
+  // validated at runtime by the matching engine / API tests.
+  whyVars?: Record<string, unknown>,
 ): string {
   if (whyKey && KNOWN_WHY_KEYS.has(whyKey)) {
-    return t(`why.${whyKey}`, whyVars ?? {});
+    // The bound `t` is a function with no enumerable properties, so
+    // we can't read the active language off it directly. Use the
+    // shared i18n singleton's `language` field, which i18next updates
+    // synchronously when `setLanguage()` resolves (v0.4.x — Bug 4).
+    const lang = (currentI18n.language ?? 'en').toLowerCase();
+    // i18next's TFunction expects a `$Dictionary` (string-indexed
+    // record). Cast here since we accept a wider `Record<string,
+    // unknown>` for the secondary_vars nesting case.
+    const primary = t(
+      `why.${whyKey}`,
+      whyVars as Record<string, string>,
+    );
+    const secondaryKey = whyVars?.secondary_key as string | undefined;
+    if (secondaryKey && KNOWN_WHY_KEYS.has(secondaryKey)) {
+      const secondary = t(
+        `why.${secondaryKey}`,
+        ((whyVars?.secondary_vars ?? {}) as Record<string, string>),
+      );
+      const joiner = lang.startsWith('zh') ? ' 且 ' : ' and ';
+      return `${primary}${joiner}${secondary}`;
+    }
+    return primary;
   }
   return why;
 }
+
+// Import the i18n singleton at module scope. `i18n/index.ts` does not
+// import from `./why.ts`, so there is no circular dependency. The
+// `language` field is read-only here; mutations go through `setLanguage`.
+import { default as currentI18n } from './index.js';
