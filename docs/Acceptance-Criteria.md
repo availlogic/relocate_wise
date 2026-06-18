@@ -60,7 +60,7 @@ This document provides the final acceptance criteria for each major feature area
 ### Feature 6: Bilingual Localization (i18n)
 *   **Acceptance Conditions**:
     *   The header must feature a dynamic language toggle for English and Simplified Chinese.
-    *   Toggling the language immediately translates all static page headers, questionnaires, results cards, "why this fits" summaries, and city profile dimensions.
+    *   Toggling the language immediately translates all static page headers, questionnaires, results cards, "why this fits" summaries (including secondary dimensions for dual-dimension ties), city/country/region names, city descriptions, and city profile dimensions.
     *   Toggling the language must preserve the user's current session state (e.g. current questionnaire screen, selected shortlist).
 
 ### Feature 7: Responsive Mobile Layouts

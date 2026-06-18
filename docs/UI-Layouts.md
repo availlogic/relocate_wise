@@ -127,7 +127,7 @@ Shows the top 10 matched cities along with a floating shortlist.
 
 ## 5. City Profile Layout
 
-Detailed layout featuring a split layout on large viewports.
+Detailed layout featuring a top split section and a full-width metrics grid at the bottom on large viewports.
 
 ```
 +-------------------------------------------------------------+
@@ -137,25 +137,38 @@ Detailed layout featuring a split layout on large viewports.
 |  [Flag SVG] Amsterdam, Netherlands                          |
 |  [ Add to Comparison ]                                      |
 |                                                             |
-|  +-----------------------------+ +------------------------+  |
-|  | Landmark Image              | | Metrics                |  |
-|  | +-------------------------+ | | Climate: Continental    |  |
-|  | |      [Landmark Photo]   | | | Cost of Living: =====  |  |
-|  | +-------------------------+ | | Housing:       =====  |  |
-|  |                             | | Career Fit:    ====   |  |
-|  | Summary                     | | Healthcare:    =====  |  |
-|  | Amsterdam is the capital of | | Education:     =====  |  |
-|  | the Netherlands, known for  | | Lifestyle:     =====  |  |
-|  | its artistic heritage.      | | Geop. Risk:    =====  |  |
-|  +-----------------------------+ +------------------------+  |
+|  +--------------------------------+ +---------------------+  |
+|  | Details (Left Column)          | | Landmark Photo      |  |
+|  |                                | | (Right Column, 50%  |  |
+|  | Coordinates: 52.3676, 4.9041   | |  size container)    |  |
+|  | Data last updated: 2026-06-17  | | +-----------------+ |  |
+|  |                                | | |  [Photo 16:9]   | |  |
+|  | Summary:                       | | +-----------------+ |  |
+|  | Amsterdam is the capital of... | |                     |  |
+|  +--------------------------------+ +---------------------+  |
 |                                                             |
-|  Data last updated: 2026-06-17                              |
+|  +--------------------------------------------------------+  |
+|  | Dimension Scores (Metrics)                              |  |
+|  |                                                        |  |
+|  | Climate: Continental                                   |  |
+|  | Cost of Living: =====                                  |  |
+|  | Housing:       =====                                   |  |
+|  | Career Fit:    ====                                    |  |
+|  | Healthcare:    =====                                   |  |
+|  | Education:     =====                                   |  |
+|  | Lifestyle:     =====                                   |  |
+|  | Geop. Risk:    =====                                   |  |
+|  +--------------------------------------------------------+  |
+|                                                             |
 +-------------------------------------------------------------+
 ```
 
 ### Grid Layout Settings
-*   **Profile Grid**: `display: grid; grid-template-columns: 1.2fr 1.8fr; gap: var(--space-xl)`.
-    *   *Mobile Adaptation*: Drops to `grid-template-columns: 1fr` (Flag, Title, and Action button on top; Landmark Image container next, followed by Summary, and Metrics at the bottom).
+*   **Profile Top Split Section**: `display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-xl); margin-bottom: var(--space-lg)`.
+    *   *Left Column*: Text details (Coordinates, Last Updated, City Summary description).
+    *   *Right Column*: Representative landmark image container (halved in width and height, e.g. using maximum dimensions `max-width: 300px` or scaling class).
+    *   *Mobile Adaptation*: Drops to `grid-template-columns: 1fr` (Text details first, followed by the scaled Landmark Image container).
+*   **Profile Bottom Section (Metrics Grid)**: Full width block placed below the top section.
 *   **Metrics Row**: `display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: var(--space-md); margin-bottom: var(--space-sm)`.
 
 ---

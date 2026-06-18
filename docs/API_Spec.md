@@ -156,7 +156,7 @@ Submit the user's questionnaire choices to run the deterministic matching engine
   ```
 - **Success Response Code**: `200 OK`
 - **Success Response Body**:
-  Returns the top 10 cities matching the criteria, sorted in descending order of overall match score (0–100).
+  Returns the top 10 cities matching the criteria, sorted in descending order of overall match score (0–100). Each result includes localization keys (`why_key` and `why_vars`) to translate matches client-side.
   ```json
   {
     "results": [
@@ -173,7 +173,15 @@ Submit the user's questionnaire choices to run the deterministic matching engine
           "dimensions": { ... }
         },
         "score": 87,
-        "why": "Matches your Mediterranean climate and strong tech job market"
+        "why": "Matches your Mediterranean climate preference and strong tech job market",
+        "why_key": "climate",
+        "why_vars": {
+          "climate": "mediterranean",
+          "secondary_key": "career",
+          "secondary_vars": {
+            "industry": "tech"
+          }
+        }
       }
     ],
     "generated_at": "2026-06-10T06:47:34Z"

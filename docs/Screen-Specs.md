@@ -88,7 +88,7 @@ These elements are rendered globally across all views to maintain structural and
     3.  **Career & Industry Focus**: Selected sector filters career fit metrics.
     4.  **Healthcare Quality**: Importance rating (1–5 scale).
     5.  **Education Quality**: Importance rating (1–5 scale, with "Not Applicable" option).
-    6.  **Community & Lifestyle Fit**: Selects preferred lifestyle tags.
+    6.  **Community & Lifestyle Fit**: Selects preferred lifestyle tags (including a "No Preference" option card).
     7.  **Location Density**: Urban, Suburban, or Rural preference.
     8.  **Geopolitical and Conflict Risk**: Importance rating (1–5 scale) for political stability.
 

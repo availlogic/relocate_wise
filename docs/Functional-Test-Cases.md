@@ -142,6 +142,17 @@ To ensure test repeatability and TDD reproducibility, the following mock dataset
 *   **Expected Result**: The questionnaire advances to Step 6. In `SessionState`, the `education` field value is recorded as `"not_relevant"`.
 *   **Priority**: High
 
+#### FTC-5b: "No Preference" in Community & Lifestyle Fit
+*   **Feature Name**: Multi-Step Questionnaire
+*   **Preconditions**: User is on Step 6 of the questionnaire ("Community & Lifestyle Fit").
+*   **Steps**:
+    1. Click one or more tag cards (e.g. "Urban", "Coastal").
+    2. Click the option card labeled "No Preference" (or "无偏好").
+    3. Verify that all other tag cards are deselected and only the "No Preference" card is active.
+    4. Click "Next".
+*   **Expected Result**: The questionnaire advances to Step 7. In `SessionState`, the selected lifestyle tags array is empty (`[]`).
+*   **Priority**: High
+
 ---
 
 ### 2.3 Ranked Results Screen
@@ -244,8 +255,9 @@ To ensure test repeatability and TDD reproducibility, the following mock dataset
     2. Click the language toggle button (e.g., "中文").
     3. Verify heading and all UI controls immediately switch to Simplified Chinese (e.g. "开始问卷").
     4. Start the questionnaire and verify question titles (e.g. Climate, Cost) render in Chinese.
-    5. Click the language toggle button (e.g., "English").
-*   **Expected Result**: All UI labels, static copy, and question cards update immediately without reloading the page or losing current session state.
+    5. Complete the quiz to view results, and verify that the results page, results cards (city names, countries, regions, and "why" reasons), and comparison page are translated to Chinese.
+    6. Click the language toggle button (e.g., "English").
+*   **Expected Result**: All UI labels, static copy, question cards, matching results (including city details and descriptions), and comparison data update immediately without reloading the page or losing current session state.
 *   **Priority**: High
 
 #### FTC-15: Mobile Viewport Responsiveness

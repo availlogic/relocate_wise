@@ -40,8 +40,9 @@ This document describes the backend and system integration test cases for the Re
     1. Send request over HTTP to the backend server.
     2. Assert HTTP Status is `200 OK`.
     3. Assert the response body contains a JSON object with `results` array of length exactly 10, and a `generated_at` timestamp.
-    4. Assert `results[0]` has `city.slug`, `city.name`, `city.country`, `score` (integer between 0 and 100), and `why` (non-empty string).
-    5. Assert the array is sorted in descending order of `score`.
+    4. Assert `results[0]` has `city.slug`, `city.name`, `city.country`, `score` (integer between 0 and 100), `why` (non-empty string), `why_key` (valid dimension name string), and `why_vars` (JSON object).
+    5. Assert that if multiple dimensions tie (within 10%), `why_vars` contains `secondary_key` and `secondary_vars`.
+    6. Assert the array is sorted in descending order of `score`.
 
 #### ITC-2: Invalid Match Profile Validation (POST /api/match)
 *   **Purpose**: Verify that Zod validation rejects invalid field types or out-of-bounds enums.
