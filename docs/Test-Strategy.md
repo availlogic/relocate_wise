@@ -1,10 +1,10 @@
 ---
 title: "Test Strategy"
-version: "1.1.0"
+version: "1.2.0"
 status: draft
 author: "QA Agent / Antigravity"
 created: "2026-06-10"
-updated: "2026-06-17"
+updated: "2026-06-19"
 related_docs:
   - "docs/PRD.md"
   - "docs/Architecture.md"
@@ -12,18 +12,19 @@ related_docs:
 
 # RelocateWise — Test Strategy
 
-This document outlines the testing methodology, tools, environments, test levels, risk-based priorities, and Test-Driven Development (TDD) protocols for the RelocateWise MVP.
+This document outlines the testing methodology, tools, environments, test levels, risk-based priorities, and Test-Driven Development (TDD) protocols for the RelocateWise GA v1.0 release.
 
 ---
 
 ## 1. Testing Scope
 
-The scope of testing encompasses all frontend and backend components of the RelocateWise application:
-*   **Frontend SPA**: Questionnaire flow, results presentation, profile views, side-by-side comparison matrix, state persistence in `sessionStorage`, and cookie consent tracking.
+The scope of testing encompasses all frontend and backend modular components of the RelocateWise application:
+*   **Modular Frontend SPA**: Container app orchestrator and individual Micro-Frontends (Quiz MFE, Dashboard MFE, Compare MFE) communicating via Custom Events and utilizing client-side lazy loading.
 *   **Cloudflare Edge Layer**: Cloudflare WAF rate-limiting, CORS configuration, edge caching rules, and Cloudflare Tunnel routing.
-*   **Backend Node.js API**: Zod request schema validation, token-bucket rate-limiting, Caddy internal routing, and health liveness probes.
-*   **Matching Engine**: The deterministic weighted matching algorithm and templated "why this fits you" copy generator.
-*   **Database Tier**: Schema migration integrity and automatic seeding execution from version-controlled JSON data.
+*   **API Gateway Router**: Dynamic routing of public endpoints (`/api/match`, `/api/cities/*`) to backend services and blocking external access to internal endpoints.
+*   **Matching Service**: Zod request schema validation, deterministic weighted matching algorithm, templated "why this fits you" copy generator, and the `matching` schema database tables.
+*   **Data Ingestion Service**: Automated ingestion cron harvesters, metrics parsing/normalization, pipeline run logging, and internal API sync updates.
+*   **Database Tier**: PostgreSQL schema segregation (separate `matching` and `ingestion` schemas) and strict role-based access controls.
 
 ---
 
@@ -34,27 +35,35 @@ We employ a multi-layered testing pyramid to verify functional correctness and p
 | Testing Level | Scope / Objective | Tooling | Coverage Target |
 |---|---|---|---|
 | **Unit Testing** | Verify isolated utility functions, React hooks, Zod validation schemas, matching calculations, and templated text generation. | **Vitest** (both sides) + **React Testing Library** | 90% Statement Coverage on business logic (matching engine & reducer state) |
-| **Integration Testing** | Verify database migrations, seed loading, Repository-to-DB queries, and API-to-database contracts. | **Vitest** + **Supertest** (Node.js API container) | 80% Endpoint Coverage |
-| **End-to-End (E2E)** | Simulate complete browser sessions (cookie acceptance, questionnaire completion, results shortlisting, comparison views, and session clearing). | **Playwright** | 100% Critical User Flows |
-| **System/Operations** | Verify Caddy local proxy, cloudflared tunnel connection, and Cloudflare Pages redirection rules. | Manual Verification CLI / scripts | Verify zero downtime deployment path |
+| **Integration Testing** | Verify database migrations, seed loading, MFE orchestrator load, service-to-service contracts, and database role constraints. | **Vitest** + **Supertest** | 80% Endpoint Coverage |
+| **End-to-End (E2E)** | Simulate complete browser sessions (cookie acceptance, questionnaire completion, results shortlisting, comparison views, dynamic bilingual switch, and responsive layout scaling). | **Playwright** | 100% Critical User Flows |
+| **System/Operations** | Verify local proxy, API gateway limits, cloudflared tunnel connection, and Cloudflare Pages redirection rules. | Manual Verification CLI / scripts | Verify zero downtime deployment path |
 
 ---
 
 ## 3. Risk-Based Testing Priorities
 
-Due to the 3-day MVP delivery timeframe, testing resources are prioritized based on functional risk and compliance impact:
+Testing resources are prioritized based on functional risk and compliance impact:
 
 ### Priority 1 (P1): Core Matching & Determinism (High Risk)
 *   **Risk**: Minor errors in the matching logic will result in incorrect city rankings, destroying user trust.
-*   **Verification focus**: Exhaustive unit testing of the `scoreMatching()` function using diverse questionnaire inputs, verifying exact sorting order and deterministic outputs.
+*   **Verification focus**: Exhaustive unit testing of the matching function using diverse questionnaire inputs, verifying exact sorting order and deterministic outputs.
 
 ### Priority 2 (P2): GDPR & State Leakage (High Compliance Risk)
-*   **Risk**: Persisting user inputs or shortlists on the server or letting session state leak across users violates the GDPR-compliant state requirements.
-*   **Verification focus**: Integration tests proving no write operations exist on the server, and E2E tests verifying that session state is completely purged when the browser tab closes.
+*   **Risk**: Persisting user inputs or shortlists on the server or letting session state leak across users violates GDPR requirements.
+*   **Verification focus**: Integration tests proving no write operations exist on the server from public endpoints, and E2E tests verifying that session state is completely purged when the browser tab closes.
 
-### Priority 3 (P3): User Session Shortlist & Comparison Matrix (Medium Risk)
+### Priority 3 (P3): Microservice Integration & Schema Segregation (High Risk)
+*   **Risk**: Cross-contamination between database schemas or API gateway misrouting.
+*   **Verification focus**: Database integration tests verifying that service roles are blocked from writing to other schemas (e.g. Ingestion role cannot directly modify Matching tables), and gateway integration tests proving that internal sync endpoints cannot be accessed from public client routes.
+
+### Priority 4 (P4): UI Session Shortlist & Comparison Matrix (Medium Risk)
 *   **Risk**: UI bugs in the comparison matrix could lead to incorrect columns showing up, layout overflow on mobile, or incorrect winner cell highlights.
 *   **Verification focus**: Playwright UI tests validating shortlist boundaries (maximum of 3), redirection triggers, and horizontal scroll preservation on mobile viewports.
+
+### Priority 5 (P5): i18n & Context-Optimization Documentation (Medium Risk)
+*   **Risk**: Documentation drift in module `README.md` files leading to coding agent errors.
+*   **Verification focus**: Verification script asserting that module README files exist, follow standard structures, and match API/database changes.
 
 ---
 
@@ -63,14 +72,14 @@ Due to the 3-day MVP delivery timeframe, testing resources are prioritized based
 Downstream Coding Agents must adhere to strict Test-Driven Development (TDD) practices:
 
 ### The TDD Cycle
-1.  **RED**: Write a failing unit or integration test defining the expected behavior. For example, before implementing `matching/score.ts`, write a test that passes a mock questionnaire profile and asserts the correct ranking sequence.
+1.  **RED**: Write a failing unit or integration test defining the expected behavior.
 2.  **GREEN**: Write the minimal implementation code required to make the test pass.
 3.  **REFACTOR**: Clean up the code structure, ensure proper typing, and eliminate redundancy while keeping the test suite green.
 
 ### Mocking Guidelines
 *   **Database Mocking**: Avoid mocking PostgreSQL during database integration tests; integration tests must run against a local test database container spun up in the Docker Compose testing environment.
 *   **External Service Mocking**: In E2E tests, mock the Cloudflare Edge layer or proxy endpoint results if testing the frontend in isolation, but ensure that at least one E2E suite verifies the live, unmocked network flow between the React client and the backend server.
-*   **Time and Randomness**: Since matching is 100% deterministic, tests must assert exact output matches. Avoid random seed generators in test cases.
+*   **Service Boundaries**: Integration tests for matching or ingestion must mock external APIs, but service-to-service calls (e.g., Ingestion-to-Matching score update API) must be verified against actual Fastify/Express listeners.
 
 ---
 
@@ -89,3 +98,4 @@ The following discrepancies were identified and resolved during the cross-domain
 | QA-ISS-7 | `web/src/i18n` | Development doc reference `(PRD §6.1 D8)` leaked into user-facing translation strings. | **LOW** | Removed references from translation JSON help strings. |
 | QA-ISS-8 | `docs/Screen-Specs.md` | Step 6 questionnaire lacked a visual "No Preference" option card, displaying warning subtext instead. | **MEDIUM** | Added a "No Preference" card choice to Screen Specs and updated functional test cases. |
 | QA-ISS-9 | `docs/UI-Layouts.md` | Detail page layout photo size too large and clashing with future details columns. | **MEDIUM** | Restructured Section 5 to use a split layout with the image on the right (halved in size) and metrics below. |
+| QA-ISS-10 | `docs/PRD.md` | PRD v3.3.0 introduced modular microservices and database schema segregation, but legacy test strategy and integration suites assumed a monolithic backend and single-schema database. | **MEDIUM** | Restructured all QA specifications to verify API gateway routing, service contracts, schema isolation, and module-level README files. |

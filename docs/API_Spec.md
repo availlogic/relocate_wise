@@ -1,15 +1,15 @@
 # RelocateWise — API Specification
 
-This document describes the REST API surface for the RelocateWise Minimum Viable Product (MVP). 
+This document describes the REST API surface for the RelocateWise General Availability (GA) v1.0 release. 
 
-The base URL is `/api` in production (served via Cloudflare Pages edge proxy rules) and matches `http://localhost:3000` in development.
+The base URL is `/api` in production (served via Cloudflare Pages edge proxy rules and Caddy/API Gateway) and matches `http://localhost:3000` in development.
 
 ---
 
 ## 1. Global API Standards
 
 - **Content Type**: All request and response bodies must use `application/json`.
-- **Authentication**: None. The MVP API is entirely public.
+- **Authentication**: Public endpoints require no authentication. Internal endpoints require a pre-shared secret key or local-network access boundaries.
 - **Error Response Shape**: All API errors return a standard JSON envelope:
   ```json
   {
@@ -38,7 +38,7 @@ Verify the service is running and query the version info.
 ---
 
 ### 2.2 List Cities
-Retrieve a lightweight summary list of all available cities in the dataset (for rendering cards).
+Retrieve a lightweight summary list of all available cities in the dataset.
 
 - **URL**: `GET /api/cities`
 - **Response Code**: `200 OK`
@@ -63,7 +63,7 @@ Retrieve a lightweight summary list of all available cities in the dataset (for 
 ---
 
 ### 2.3 Get City Profile
-Retrieve the complete profile for a single city by its unique slug identifier, including all 8 dimension scores and sub-scores.
+Retrieve the complete profile for a single city by its unique slug identifier, including all 8 dimension scores.
 
 - **URL**: `GET /api/cities/:slug`
 - **URL Parameter**: `slug` (string, e.g., `lisbon-pt`)
@@ -104,7 +104,7 @@ Retrieve the complete profile for a single city by its unique slug identifier, i
         "family_oriented": 1,
         "expat_friendly": 3
       },
-      "military_safety": 5 // Represents Geopolitical and Conflict Risk dimension
+      "military_safety": 5
     }
   }
   ```
@@ -136,7 +136,7 @@ Submit the user's questionnaire choices to run the deterministic matching engine
 | `career_industry` | string/null | `tech`, `finance`, `healthcare`, `creative`, `manufacturing`, `null` | User's industry cluster |
 | `education` | string | `important`, `somewhat`, `not_relevant` | Priority for education quality |
 | `healthcare_importance`| integer | `0`, `1`, `2`, `3` | Importance of healthcare index |
-| `military_safety_importance`| integer | `0`, `1`, `2`, `3` | Importance of Geopolitical and Conflict Risk (internal key: `military_safety_importance`) |
+| `military_safety_importance`| integer | `0`, `1`, `2`, `3` | Importance of Geopolitical and Conflict Risk |
 | `lifestyle_tags` | array of strings | `urban`, `suburban`, `coastal`, `mountain`, `arts_culture`, `family_oriented`, `expat_friendly` | Preferred community vibe tags |
 
 - **Request Body Example**:
@@ -188,33 +188,68 @@ Submit the user's questionnaire choices to run the deterministic matching engine
   }
   ```
 - **Error Response Code**: `400 Bad Request` (if request body validation fails against Zod schema)
-- **Error Response Body**:
+
+---
+
+### 2.5 Update City Scores (Internal API)
+Allows the Data Ingestion Service to push newly compiled scores into the Matching Service.
+
+- **URL**: `PUT /api/internal/cities/:slug/scores`
+- **URL Parameter**: `slug` (string, e.g., `lisbon-pt`)
+- **Headers**: `Authorization: Bearer <secret_key>`
+- **Request Body**:
   ```json
   {
-    "error": "invalid_profile",
-    "message": "The request body is not a valid UserProfile.",
-    "details": [
-      {
-        "code": "invalid_enum_value",
-        "expected": "tech",
-        "path": ["career_industry"],
-        "message": "..."
-      }
-    ]
+    "dimensions": {
+      "climate": {
+        "label": "Mediterranean"
+      },
+      "cost": 4,
+      "housing": 4,
+      "career": {
+        "tech": 2,
+        "finance": 1,
+        "healthcare": 1,
+        "creative": 2,
+        "manufacturing": 1
+      },
+      "education": 4,
+      "healthcare": 4,
+      "community": {
+        "urban": 2,
+        "suburban": 1,
+        "coastal": 3,
+        "mountain": 0,
+        "arts_culture": 2,
+        "family_oriented": 1,
+        "expat_friendly": 3
+      },
+      "military_safety": 5
+    }
   }
   ```
+- **Success Response Code**: `200 OK`
+- **Success Response Body**:
+  ```json
+  {
+    "success": true,
+    "message": "Scores updated for city lisbon-pt"
+  }
+  ```
+- **Error Response Code**: `401 Unauthorized` (if API key is missing or invalid) or `404 Not Found` (if city slug is invalid)
 
 ---
 
 ## 3. Operational Policies
 
 ### 3.1 Caching (Cloudflare Edge Tier)
-To protect the backend Ubuntu server from traffic spikes, the Cloudflare edge proxy tier applies caching:
+To protect the backend server from traffic spikes, Cloudflare edge proxy tier caching is applied:
 - **`GET /api/cities/:slug`**: Cached at the edge for **60 seconds** (TTL).
 - **`GET /api/cities`**: Cached at the edge for **60 seconds** (TTL).
 - **`POST /api/match`**: Dynamic questionnaire matching requests are **never** cached.
+- **`PUT /api/internal/*`**: Internal management requests bypass edge caching.
 
 ### 3.2 Rate Limiting
 Rate limiting is applied at two independent tiers:
-1. **Edge Tier (Cloudflare WAF)**: Requests are rate limited to **60 requests per 10 minutes** per client IP address. Exceeding this rate returns a standard `429 Too Many Requests` status code.
-2. **Backend Server Tier (Node.js API)**: Utilizes a token-bucket algorithm configured to allow up to **100 requests per minute** per IP address to safeguard database resources. Since Cloudflare Tunnel routes traffic directly to the local Caddy container, edge-to-backend requests do not require token/secret header verification.
+1. **Edge Tier (Cloudflare WAF)**: Public requests are rate limited to **60 requests per 10 minutes** per client IP address. Exceeding this rate returns a standard `429 Too Many Requests` status code.
+2. **Backend Server Tier (API Gateway)**: Utilizes a token-bucket algorithm configured to allow up to **100 requests per minute** per IP address. Internal requests from trusted services bypass gateway limits.

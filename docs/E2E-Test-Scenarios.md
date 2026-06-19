@@ -1,10 +1,10 @@
 ---
 title: "End-to-End Test Scenarios"
-version: "1.1.0"
+version: "1.2.0"
 status: draft
 author: "QA Agent / Antigravity"
 created: "2026-06-10"
-updated: "2026-06-17"
+updated: "2026-06-19"
 related_docs:
   - "docs/PRD.md"
   - "docs/User-Flows.md"
@@ -94,7 +94,7 @@ This document specifies the end-to-end (E2E) test scenarios for RelocateWise. Th
 *   **Execution Steps**:
     1.  Navigate through the quiz, view results, and shortlist "Lisbon".
     2.  Verify `sessionStorage` contains `rw:shortlist` with `["lisbon-pt"]`.
-    3.  Simulate closing the tab/session (or call page reload in a fresh context).
+    3.  Simulate closing the tab/session.
 *   **Expected Behavior**:
     *   The `sessionStorage` is empty.
     *   Navigating back to `/results` shows an empty shortlist.
@@ -112,15 +112,15 @@ This document specifies the end-to-end (E2E) test scenarios for RelocateWise. Th
         *   Locate the language toggle in the header. Click "中文".
         *   Verify that page headings, description, and the main CTA button translate to Simplified Chinese.
     2.  **Start Questionnaire**:
-        *   Click "开始问卷" (Start Questionnaire).
-        *   Advance through Step 1 (Climate) and Step 2 (Cost) in Chinese.
+        *   Click "开始问卷".
+        *   Advance through Step 1 and Step 2 in Chinese.
     3.  **Toggle Mid-Quiz**:
         *   On Step 3, click "English" in the header.
         *   Verify that the current question title and options immediately translate to English.
         *   Verify progress remains on Step 3 of 8.
     4.  **Submit and View Results**:
-        *   Complete the remaining steps. Submit to view results.
-        *   Verify that the results page, result cards, and "Why this fits you" templates render in English.
+        *   Complete remaining steps. Submit to view results.
+        *   Verify that the results page, result cards, and templates render in English.
         *   Click "中文" in the header.
         *   Verify that the result cards, match percentages, and the "why" explanation templates translate to Chinese (Simplified) dynamically.
 *   **Pass Criteria**: Language switches dynamically at any point with zero latency and zero state loss.
@@ -130,11 +130,26 @@ This document specifies the end-to-end (E2E) test scenarios for RelocateWise. Th
 *   **Description**: Verify the complete end-to-end relocation decision-support loop functions seamlessly on simulated mobile viewports.
 *   **Actor**: Mobile Browser User
 *   **Execution Steps**:
-    1.  Initialize the test runner with viewport dimensions matching standard mobile screens (e.g. 375x812 viewport).
+    1.  Initialize the test runner with viewport dimensions matching standard mobile screens (375x812 viewport).
     2.  Load `/`. Verify the layout stacks vertically, and no horizontal scrollbars are present.
-    3.  Complete the questionnaire. Verify option card buttons are easy to tap and fit within screen boundaries.
-    4.  Verify results load. Scroll to verify that result cards stack vertically, and the floating shortlist bar remains pinned to the bottom of the viewport.
+    3.  Complete the questionnaire. Verify option card buttons fit within screen boundaries.
+    4.  Verify results load. Scroll to verify that cards stack vertically, and the floating shortlist bar remains pinned to the bottom of the viewport.
     5.  Add 2 cities to comparison and navigate to `/compare`.
     6.  Verify the comparison table is readable and supports horizontal scrolling for columns without visual clipping or overlap.
-*   **Pass Criteria**: Complete flow compiles with no visual layout failures or overlapping text components on mobile viewports.
+*   **Pass Criteria**: Complete flow compiles with no visual layout failures on mobile viewports.
+*   **Priority**: High
+
+---
+
+## 4. Modular Micro-Frontend (MFE) Loading
+
+### Scenario E2E-7: Micro-Frontend Decoupled Lazy Loading
+*   **Description**: Verify that the Container App successfully lazy loads the child MFEs when navigating routes, conserving initial bundle load size.
+*   **Actor**: Unauthenticated User
+*   **Execution Steps**:
+    1.  Load homepage `/`. Inspect the network assets. Verify only container assets are loaded (no quiz or compare bundle assets).
+    2.  Click "Start Questionnaire". Route changes to `/q`. Verify that the browser dynamically fetches the `quiz-mfe` chunk asset.
+    3.  Complete the quiz and navigate to `/results`. Verify that `dashboard-mfe` chunk is fetched.
+    4.  Navigate to `/compare`. Verify that `compare-mfe` chunk is fetched.
+*   **Pass Criteria**: MFE assets are loaded dynamically and lazily on demand based on routing.
 *   **Priority**: High

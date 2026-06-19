@@ -1,19 +1,21 @@
 # RelocateWise — Screen Specifications
 
-This document outlines the detailed specifications for each screen in the RelocateWise MVP, establishing clear requirements for frontend component architecture, user interactions, validation logic, loading states, and navigation actions.
+This document outlines the detailed specifications for each screen in the RelocateWise GA v1.0 release, establishing clear requirements for frontend component architecture, user interactions, validation logic, loading states, and navigation actions.
 
 ---
- 
+
 ## 0. Global Page Shell & Shared Components
- 
+
 These elements are rendered globally across all views to maintain structural and interactive consistency.
- 
+
+*   **MFE Module Owner**: Container App
+
 ### Components & User Interactions
 *   **Global Header**:
     *   *Brand Logo / Name*: Clicking navigates to the Landing Screen, resetting all state except language.
     *   *Bilingual Language Toggle*: A manual button group (EN / 中文) allowing users to switch the interface language dynamically at any point.
         *   *Default*: English (EN active).
-        *   *Behavior*: Clicking 中文 instantly translates all copy (questions, labels, metrics, descriptions) to Chinese (Simplified) without refreshing the page or losing wizard/shortlist progress. Clicking EN restores the English copy.
+        *   *Behavior*: Clicking 中文 instantly translates all copy to Chinese (Simplified) without refreshing the page or losing wizard/shortlist progress. Clicking EN restores the English copy.
     *   *Compare Shortcut Button*: Displays current shortlist count (e.g. Compare (0)). Dynamic check/highlight behavior.
 *   **Global Footer**:
     *   Links to "Privacy Policy", "Terms of Service". Displays copyright details.
@@ -33,6 +35,7 @@ These elements are rendered globally across all views to maintain structural and
 ### Purpose & User Goals
 *   **Purpose**: Introduce RelocateWise and its value proposition.
 *   **User Goals**: Understand the product's value and start the questionnaire without friction.
+*   **MFE Module Owner**: Container App
 
 ### Components & User Interactions
 *   **Hero Section**:
@@ -63,6 +66,7 @@ These elements are rendered globally across all views to maintain structural and
 ### Purpose & User Goals
 *   **Purpose**: Dynamically guide the user through 8 preference questions.
 *   **User Goals**: Input preferences quickly and skip dimensions that are not important.
+*   **MFE Module Owner**: Quiz MFE
 
 ### Components & User Interactions
 *   **Progress Header**:
@@ -70,17 +74,17 @@ These elements are rendered globally across all views to maintain structural and
     *   *Step Indicator*: Text "Step X of 8".
 *   **Question Area**:
     *   *Question Title*: Clear, bold question.
-    *   *Instruction Subtext*: Optional helper text.
+    *   *Instruction Subtext*: Helper text.
 *   **Selection Grid**:
     *   Grid of clickable visual cards representing choices.
-    *   Cards highlight with an active border and background color when selected.
+    *   Cards highlight with active border and background color when selected.
 *   **Action Controls**:
     *   *Back Button*: (Disabled on Step 1) Returns to previous step.
     *   *Skip Button*: Moves to next step without selecting.
     *   *Next Button*: Moves to next step. Replaced by **"View Matches"** (Primary CTA styling) on Step 8.
 
 ### Validation Rules & Data Requirements
-*   No strict validation. Skipping a question is allowed (a default neutral value is recorded for that parameter).
+*   No strict validation. Skipping a question is allowed (a default neutral value is recorded).
 *   State is managed in client-side memory during the quiz.
 *   **Questionnaire Dimensions (8 Steps)**:
     1.  **Climate Preference**: categorical profile match (e.g. Mediterranean, Continental, Tropical).
@@ -88,13 +92,13 @@ These elements are rendered globally across all views to maintain structural and
     3.  **Career & Industry Focus**: Selected sector filters career fit metrics.
     4.  **Healthcare Quality**: Importance rating (1–5 scale).
     5.  **Education Quality**: Importance rating (1–5 scale, with "Not Applicable" option).
-    6.  **Community & Lifestyle Fit**: Selects preferred lifestyle tags (including a "No Preference" option card).
+    6.  **Community & Lifestyle Fit**: Selects preferred lifestyle tags.
     7.  **Location Density**: Urban, Suburban, or Rural preference.
     8.  **Geopolitical and Conflict Risk**: Importance rating (1–5 scale) for political stability.
 
 ### States
 *   **Success (Default)**: Question and options render immediately.
-*   **Transition State**: Soft CSS fade transition when clicking "Next" or "Back" to reduce cognitive jump.
+*   **Transition State**: Soft CSS fade transition when clicking "Next" or "Back".
 
 ### Navigation Actions
 *   "Back" -> Loads previous step.
@@ -108,6 +112,7 @@ These elements are rendered globally across all views to maintain structural and
 ### Purpose & User Goals
 *   **Purpose**: Present the top 10 recommended cities.
 *   **User Goals**: Compare recommendation scores, review matching rationales, and select cities to compare.
+*   **MFE Module Owner**: Dashboard MFE (city results list cards) and Compare MFE (floating shortlist bar)
 
 ### Components & User Interactions
 *   **Results Header**:
@@ -130,7 +135,7 @@ These elements are rendered globally across all views to maintain structural and
 ### Validation Rules & Data Requirements
 *   **Shortlist Limit**: Shortlist array is limited to exactly 3 items.
     *   *Rule*: If shortlist count === 3 and user checks a 4th city:
-        *   The checkbox remains unchecked.
+        *   Checkbox remains unchecked.
         *   Display a toast notification: *"You can compare up to 3 cities. Please remove one first."*
 *   **Matching Results**: Expects exactly 10 city records from the backend API.
 
@@ -139,7 +144,7 @@ These elements are rendered globally across all views to maintain structural and
 *   **Empty / Error State**:
     *   If API fails or database is empty, display: *"We couldn't generate matches right now."*
     *   Provide a "Retry" or "Start Over" button.
-*   **Success**: Clean rendering of the 10 matched cards and the shortlist bar (if cities are selected).
+*   **Success**: Clean rendering of the 10 matched cards and the shortlist bar.
 
 ### Navigation Actions
 *   Clicking "View Profile" -> Navigates to **City Profile Screen** for that city.
@@ -153,10 +158,11 @@ These elements are rendered globally across all views to maintain structural and
 ### Purpose & User Goals
 *   **Purpose**: Provide comprehensive data detail for a specific city.
 *   **User Goals**: Deep-dive into city scores, read summary narrative, and shortlist/remove the city.
+*   **MFE Module Owner**: Dashboard MFE
 
 ### Components & User Interactions
 *   **Profile Header**:
-    *   *Title*: City Name, Country, accompanied by a high-quality country flag image (SVG/PNG graphic, bypassing standard text emoji).
+    *   *Title*: City Name, Country, accompanied by a high-quality country flag image.
     *   *Back Button*: "Back to Results" (Returns user to Results).
     *   *Action Button*: "Add to Comparison" / "Remove from Comparison" (Updates shortlist state).
 *   **Visual Assets**:
@@ -186,6 +192,7 @@ These elements are rendered globally across all views to maintain structural and
 ### Purpose & User Goals
 *   **Purpose**: Direct side-by-side comparison of 2 or 3 selected cities.
 *   **User Goals**: Review trade-offs row-by-row and finalize relocation candidate selections.
+*   **MFE Module Owner**: Compare MFE
 
 ### Components & User Interactions
 *   **Comparison Header**:
@@ -194,11 +201,11 @@ These elements are rendered globally across all views to maintain structural and
 *   **Comparison Matrix (Table)**:
     *   *Columns*: Header contains City Name, Country, and a "Remove" icon button.
     *   *Rows*: Aligns the 8 dimensions.
-    *   *Highlight Cell*: For each row, the cell containing the highest-ranking score is styled with a distinct border and accent color (e.g., bright teal background/border) to signify the "winner" of that dimension.
+    *   *Highlight Cell*: For each row, the cell containing the highest-ranking score is styled with a distinct border and accent color.
 
 ### Validation Rules & Data Requirements
 *   Requires a minimum of 2 cities.
-    *   *Rule*: If shortlist count falls below 2 (e.g., user clicks "Remove" on a column, leaving 1 city), the UI automatically redirects the user to the **Ranked Results Screen** with that remaining city still checked in the shortlist.
+    *   *Rule*: If shortlist count falls below 2 (e.g., user clicks "Remove" leaving 1 city), the UI automatically redirects the user to the **Ranked Results Screen** with that remaining city still checked in the shortlist.
 
 ### States
 *   **Loading**: Shows empty column grids with loading animations.

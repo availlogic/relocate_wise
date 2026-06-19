@@ -55,7 +55,7 @@ Typography must use premium, modern fonts loaded from Google Fonts.
 
 *   **Headings Font**: `'Outfit', sans-serif` (Provides a geometric, clean, modern feel).
 *   **Body & UI Font**: `'Inter', sans-serif` (Provides extreme readability at small font sizes).
-*   **Bilingual Chinese Font Stack**: `system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif` (Ensures optimal legibility and matches line heights when toggled to Chinese Simplified).
+*   **Bilingual Chinese Font Stack**: `system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif` (Ensures legibility and matches line heights in Chinese Simplified).
 
 | Token Name | Font Family | Size | Weight | Line Height | Use Case |
 |---|---|---|---|---|---|
@@ -97,13 +97,13 @@ We enforce an **8px grid system** for consistent rhythm and alignment.
 *   **Blur**: `backdrop-filter: var(--blur-glass)`
 *   **Shadow**: `box-shadow: var(--shadow-premium)`
 *   **Hover Interaction**:
-    *   Add a subtle border color shift: `border-color: rgba(255, 255, 255, 0.15)`
+    *   Add border color shift: `border-color: rgba(255, 255, 255, 0.15)`
     *   Translate upwards: `transform: translateY(-4px)`
     *   Transition duration: `transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)`
 
 ### 2. Primary Buttons
 *   **Background**: `var(--color-accent-primary)`
-*   **Text Color**: `hsl(224, 25%, 10%)` (dark charcoal for maximum contrast)
+*   **Text Color**: `hsl(224, 25%, 10%)` (dark charcoal for contrast)
 *   **Border Radius**: `8px` (`0.5rem`)
 *   **Typography**: `--font-ui`, Bold (700)
 *   **Hover State**:
@@ -125,12 +125,12 @@ We enforce an **8px grid system** for consistent rhythm and alignment.
 *   **Scale**: Color indicator shifting (1-2 fill is red/danger, 3 is yellow/warning, 4-5 is teal/success).
 
 ### 5. Country Flag Graphic
-*   **Format**: Rendered via SVG or high-resolution PNG image (bypassing raw text emoji for cross-device styling consistency).
-*   **Dimensions**: Width `24px` (aspect ratio 3:2), rendered inline with text, featuring a subtle `border-radius: 2px` and a border wrapper `1px solid var(--color-border-glass)` to prevent blending into the dark charcoal background.
+*   **Format**: Rendered via SVG or high-resolution PNG image (bypassing raw text emoji for cross-device consistency).
+*   **Dimensions**: Width `24px` (aspect ratio 3:2), inline with text, featuring a `border-radius: 2px` and a border wrapper `1px solid var(--color-border-glass)` to prevent blending into the dark charcoal background.
 
 ### 6. Landmark Image Box
 *   **Layout**: 16:9 aspect ratio container (`aspect-ratio: 16 / 9`).
-*   **Styling**: Border radius `8px` (`0.5rem`), `object-fit: cover`, and lazy loaded (`loading="lazy"`) to optimize bandwidth on mobile connections.
+*   **Styling**: Border radius `8px` (`0.5rem`), `object-fit: cover`, and lazy loaded (`loading="lazy"`).
 
 ---
 
@@ -138,7 +138,7 @@ We enforce an **8px grid system** for consistent rhythm and alignment.
 
 ### Accessibility (WCAG 2.1 AA Compliance)
 *   **Contrast Ratio**: All body copy and interactive labels must maintain a contrast ratio of >= 4.5:1 against their backgrounds. Text using `--color-text-secondary` must only be rendered over `--color-bg-primary` or `--color-surface-glass`.
-*   **Keyboard Accessibility**: All buttons, cards, and checkboxes must have a visible, custom focus ring when navigated via `tab`.
+*   **Keyboard Accessibility**: All buttons, cards, and checkboxes must have a visible focus ring when navigated via `tab`.
     *   `focus-visible` outline: `2px solid var(--color-accent-indigo)`.
 *   **Interactive Targets**: Touch targets must be at least `44px x 44px`.
 
@@ -150,7 +150,7 @@ We design mobile-first to ensure optimal responsiveness:
     *   Padding shrinks (grid gaps use `--space-md` or 16px).
     *   Shortlist bar floats as a fixed full-width bottom sheet.
 2.  **Tablet**: `768px - 1023px`
-    *   Columns expand to 2-column grids (e.g., results list or comparison view).
+    *   Columns expand to 2-column grids (results list or comparison view).
     *   Headers adjust to `--font-h2` scale.
 3.  **Desktop**: `>= 1024px`
     *   Standard grid layout (3-column comparison view, full results layout).

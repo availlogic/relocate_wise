@@ -1,6 +1,6 @@
 # RelocateWise — User Flows Specification
 
-This document maps out the user journeys, entry points, navigation paths, decision points, success outcomes, and alternative/error flows for the RelocateWise MVP.
+This document maps out the user journeys, entry points, navigation paths, decision points, success outcomes, and alternative/error flows for the RelocateWise GA v1.0 release.
 
 ---
 
@@ -50,8 +50,8 @@ graph TD
 #### Step 1: Landing & Privacy Consent
 *   **Action**: User arrives at the homepage.
 *   **Decision Point**: A cookie consent banner is presented.
-    *   *Path A (Consent)*: User clicks "Accept". Non-essential cookies/analytics are initialized. Banner disappears.
-    *   *Path B (Decline)*: User clicks "Decline" or closes the banner. No non-essential cookies are set.
+*   **Path A (Consent)**: User clicks "Accept". Non-essential cookies/analytics are initialized. Banner disappears.
+*   **Path B (Decline)**: User clicks "Decline" or closes the banner. No non-essential cookies are set.
 *   **Language Selection**: User can toggle the manual language selector (`EN` / `ZH`) in the global header to switch between English and Chinese (Simplified) dynamically.
 *   **Navigation**: User clicks the primary Call to Action (CTA) "Start Questionnaire" to move to Step 2.
 
@@ -67,9 +67,9 @@ graph TD
     8.  **Geopolitical & Conflict Risk Priority** (Importance rating 1–5).
 *   **Controls on Each Screen**:
     *   *Next / Select Option*: Progresses to the next step.
-    *   *Back*: Returns to the previous step (retaining the selected option).
+    *   *Back*: Returns to the previous step (retaining selected option).
     *   *Skip*: Progresses to the next step using a documented default weight for that dimension.
-*   **Completion**: At the final question, the user clicks "View Matches". This triggers the deterministic matching engine on the local PostgreSQL backend.
+*   **Completion**: At the final question, the user clicks "View Matches". This triggers the deterministic matching engine.
 
 #### Step 3: Ranked Results View
 *   **Action**: User views the top 10 matching cities.
@@ -127,7 +127,7 @@ graph TD
 *   **Outcome**: Layout integrity is maintained.
 
 ### D. Zero-Result State (Database Connectivity or Empty Match Fallback)
-*   **Scenario**: The backend returns an error or an empty list (highly unlikely since matching is deterministic over a static seed dataset, but possible under network/database failure).
+*   **Scenario**: The backend returns an error or an empty list.
 *   **UI Behavior**:
     1.  The results page displays a clean error/empty state illustration.
     2.  A friendly message is displayed: *"We couldn't generate matches right now. Please try again or reset the quiz."*

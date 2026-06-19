@@ -22,15 +22,17 @@ Every screen inherits a global container shell to maintain UI consistency.
 +-------------------------------------------------------------+
 ```
 
-*   **Header**: Sticky at the top (`position: sticky; top: 0; z-index: 100`). Contains the brand logo (left), the bilingual dynamic language selector `[EN/ZH]` toggle (middle), and the "Compare Shortlist" shortcut button (right).
-*   **Footer**: Placed at bottom. Standard horizontal link items.
-*   **Cookie Consent Banner**: Positioned at bottom (`position: fixed; bottom: 0; left: 0; width: 100%; z-index: 150`). Dismissed elements update the CSS grid layout.
+*   **Header**: Sticky at the top (`position: sticky; top: 0; z-index: 100`). Contains the brand logo (left), the bilingual dynamic language selector `[EN/ZH]` toggle (middle), and the "Compare Shortlist" shortcut button (right). Owned by the **Container App**.
+*   **Footer**: Placed at bottom. Standard horizontal link items. Owned by the **Container App**.
+*   **Cookie Consent Banner**: Positioned at bottom (`position: fixed; bottom: 0; left: 0; width: 100%; z-index: 150`). Owned by the **Container App**.
 
 ---
 
 ## 2. Landing Screen Layout
 
 A clean, single-column promotional and CTA grid.
+
+*   **MFE Module Owner**: Container App
 
 ```
 +-------------------------------------------------------------+
@@ -61,6 +63,8 @@ A clean, single-column promotional and CTA grid.
 ## 3. Questionnaire Layout
 
 Designed to focus the user's attention on a single preference dimension at a time.
+
+*   **MFE Module Owner**: Quiz MFE
 
 ```
 +-------------------------------------------------------------+
@@ -95,6 +99,8 @@ Designed to focus the user's attention on a single preference dimension at a tim
 
 Shows the top 10 matched cities along with a floating shortlist.
 
+*   **MFE Module Owner**: Dashboard MFE (city card stack) & Compare MFE (shortlist bar)
+
 ```
 +-------------------------------------------------------------+
 |  Your Top 10 Matches                      [ Start Over ]    |
@@ -118,7 +124,7 @@ Shows the top 10 matched cities along with a floating shortlist.
 ```
 
 ### Grid Layout Settings
-*   **Main Wrapper**: `display: grid; grid-template-columns: 1fr; gap: var(--space-md); padding-bottom: 100px;` (padding prevents floating shortlist bar from overlaying content).
+*   **Main Wrapper**: `display: grid; grid-template-columns: 1fr; gap: var(--space-md); padding-bottom: 100px;` (prevents floating shortlist bar from overlaying content).
 *   **Result Card**: `display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-md)`.
     *   *Mobile Adaptation*: Stack vertically: Rank and Header, Body, then Action Row (View Profile next to Compare checkbox).
 *   **Shortlist Bar Layout**: `position: fixed; bottom: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: var(--space-md) var(--space-lg); background: var(--color-surface-glass); backdrop-filter: var(--blur-glass)`.
@@ -128,6 +134,8 @@ Shows the top 10 matched cities along with a floating shortlist.
 ## 5. City Profile Layout
 
 Detailed layout featuring a top split section and a full-width metrics grid at the bottom on large viewports.
+
+*   **MFE Module Owner**: Dashboard MFE
 
 ```
 +-------------------------------------------------------------+
@@ -166,7 +174,7 @@ Detailed layout featuring a top split section and a full-width metrics grid at t
 ### Grid Layout Settings
 *   **Profile Top Split Section**: `display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-xl); margin-bottom: var(--space-lg)`.
     *   *Left Column*: Text details (Coordinates, Last Updated, City Summary description).
-    *   *Right Column*: Representative landmark image container (halved in width and height, e.g. using maximum dimensions `max-width: 300px` or scaling class).
+    *   *Right Column*: Representative landmark image container (maximum dimension `max-width: 300px`).
     *   *Mobile Adaptation*: Drops to `grid-template-columns: 1fr` (Text details first, followed by the scaled Landmark Image container).
 *   **Profile Bottom Section (Metrics Grid)**: Full width block placed below the top section.
 *   **Metrics Row**: `display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: var(--space-md); margin-bottom: var(--space-sm)`.
@@ -176,6 +184,8 @@ Detailed layout featuring a top split section and a full-width metrics grid at t
 ## 6. Side-by-Side Comparison Layout
 
 Responsive matrix layout matching columns to shortlisted cities.
+
+*   **MFE Module Owner**: Compare MFE
 
 ```
 +-------------------------------------------------------------+
@@ -211,3 +221,4 @@ Responsive matrix layout matching columns to shortlisted cities.
     *   *Tablet Adaptation*: Set column widths to scale proportionally.
     *   *Mobile Adaptation*: If width < 600px, matrix converts to horizontal scroll (`overflow-x: auto`) for city columns, preserving the frozen left "Dimension" column (`position: sticky; left: 0`).
 *   **Winner Highlight Cells**: Box-shadow overlay `inset 0 0 0 2px var(--color-accent-primary)` and background color `hsla(171, 100%, 41%, 0.1)`.
+```

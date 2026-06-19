@@ -1,10 +1,10 @@
 ---
 title: "Functional Test Cases"
-version: "1.1.0"
+version: "1.2.0"
 status: draft
 author: "QA Agent / Antigravity"
 created: "2026-06-10"
-updated: "2026-06-17"
+updated: "2026-06-19"
 related_docs:
   - "docs/PRD.md"
   - "docs/Screen-Specs.md"
@@ -18,9 +18,6 @@ This document describes the functional test cases for the RelocateWise frontend 
 
 ## 1. Mock Reference Dataset
 
-To ensure test repeatability and TDD reproducibility, the following mock dataset representing a subset of cities is used across these test cases:
-
-```json
 [
   {
     "slug": "lisbon-pt",
@@ -83,7 +80,6 @@ To ensure test repeatability and TDD reproducibility, the following mock dataset
     }
   }
 ]
-```
 
 ---
 
@@ -161,8 +157,8 @@ To ensure test repeatability and TDD reproducibility, the following mock dataset
 *   **Feature Name**: Ranked Results Screen
 *   **Preconditions**: Network throttling is set to slow broadband (adding mock network latency to API responses).
 *   **Steps**:
-    1. Submit Step 7 of the questionnaire to route to `/results`.
-*   **Expected Result**: The UI renders a skeleton results layout consisting of 10 card blocks with a pulsing gradient background. No text content is visible during this phase.
+    1. Submit Step 8 of the questionnaire to route to `/results`.
+*   **Expected Result**: The UI renders a skeleton results layout consisting of 10 card blocks with pulsing gradient background. No text content is visible during this phase.
 *   **Priority**: Medium
 
 #### FTC-7: Display of Match Results
@@ -206,7 +202,7 @@ To ensure test repeatability and TDD reproducibility, the following mock dataset
     1. Verify the profile page shows the city name "Lisbon" and country "Portugal".
     2. Verify 8 horizontal progress bars are rendered (Climate, Cost, Housing, Career, Healthcare, Education, Community, Geopolitical and Conflict Risk).
     3. Verify Climate shows label "Mediterranean".
-    4. Verify Cost, Housing, Career, Healthcare, Education, Community, and Geopolitical and Conflict Risk display ratings matching the mock dataset (e.g. Cost: 2/5, Housing: 2/5, Geopolitical and Conflict Risk: 5/5).
+    4. Verify Cost, Housing, Career, Healthcare, Education, Community, and Geopolitical and Conflict Risk display ratings matching the mock dataset.
 *   **Expected Result**: Ratings align with database/JSON scores (internal key: `military_safety`).
 *   **Priority**: High
 
@@ -235,7 +231,7 @@ To ensure test repeatability and TDD reproducibility, the following mock dataset
 
 #### FTC-13: Winner Cell Highlight Validation
 *   **Feature Name**: Side-by-Side Comparison Screen
-*   **Preconditions**: Shortlist contains Lisbon (Cost: 2/5, Career: tech 5) and NYC (Cost: 5/5, Career: tech 4). Note: A lower index for Cost represents cheaper, which is the "winner" condition.
+*   **Preconditions**: Shortlist contains Lisbon (Cost: 2/5, Career: tech 5) and NYC (Cost: 5/5, Career: tech 4).
 *   **Steps**:
     1. Navigate to `/compare`.
     2. Verify the Cost row highlights the Lisbon cell (index 2/5) as the winner.
@@ -251,13 +247,13 @@ To ensure test repeatability and TDD reproducibility, the following mock dataset
 *   **Feature Name**: Bilingual i18n Support
 *   **Preconditions**: User is on landing page `/`, default browser language or current app language is English.
 *   **Steps**:
-    1. Verify heading, CTA button, and footer links render in English (default).
-    2. Click the language toggle button (e.g., "中文").
-    3. Verify heading and all UI controls immediately switch to Simplified Chinese (e.g. "开始问卷").
-    4. Start the questionnaire and verify question titles (e.g. Climate, Cost) render in Chinese.
+    1. Verify heading, CTA button, and footer links render in English.
+    2. Click the language toggle button "中文".
+    3. Verify heading and all UI controls immediately switch to Simplified Chinese.
+    4. Start the questionnaire and verify question titles render in Chinese.
     5. Complete the quiz to view results, and verify that the results page, results cards (city names, countries, regions, and "why" reasons), and comparison page are translated to Chinese.
-    6. Click the language toggle button (e.g., "English").
-*   **Expected Result**: All UI labels, static copy, question cards, matching results (including city details and descriptions), and comparison data update immediately without reloading the page or losing current session state.
+    6. Click the language toggle button "English".
+*   **Expected Result**: All UI labels, static copy, question cards, matching results, and comparison data update immediately without reloading the page or losing current session state.
 *   **Priority**: High
 
 #### FTC-15: Mobile Viewport Responsiveness
@@ -275,7 +271,30 @@ To ensure test repeatability and TDD reproducibility, the following mock dataset
 *   **Preconditions**: User is on the city profile page `/city/lisbon-pt`.
 *   **Steps**:
     1. Verify the city profile header shows the country name "Portugal".
-    2. Verify a graphical flag image (SVG/PNG) for Portugal is displayed adjacent to the country name (no raw text emojis).
+    2. Verify a graphical flag image (SVG/PNG) for Portugal is displayed adjacent to the country name.
     3. Verify the city landmark image displays correctly, has a `loading="lazy"` attribute, and fits within a 16:9 aspect ratio container.
 *   **Expected Result**: Graphics files load successfully, flags are graphical, and landmark images are lazy loaded.
 *   **Priority**: High
+
+---
+
+### 2.7 Modular MFE Integration
+
+#### FTC-17: Micro-Frontend Custom Event Communication
+*   **Feature Name**: Micro-Frontend Integration
+*   **Preconditions**: Quiz MFE finishes questionnaire steps.
+*   **Steps**:
+    1. Complete questionnaire Step 8 and click "View Matches".
+    2. Assert that Quiz MFE dispatches a Custom Event `rw:quiz_completed` with the `UserProfile` data payload.
+    3. Verify that the Container App catches this event and passes the payload to the Dashboard MFE.
+*   **Expected Result**: Custom Event is dispatched and caught correctly with intact JSON payload.
+*   **Priority**: High
+
+#### FTC-18: Module README Presence & Completeness
+*   **Feature Name**: Agent-Optimized Documentation
+*   **Preconditions**: Repository workspace is scanned.
+*   **Steps**:
+    1. Verify that `web/container/README.md`, `web/quiz-mfe/README.md`, `web/compare-mfe/README.md`, `web/dashboard-mfe/README.md`, `api/gateway/README.md`, `api/matching-service/README.md`, and `api/ingestion-service/README.md` exist.
+    2. Verify that each README lists inputs, outputs, API routes, and directory layouts.
+*   **Expected Result**: All files exist and contain non-empty specifications.
+*   **Priority**: Medium

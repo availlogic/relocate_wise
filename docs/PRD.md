@@ -1,10 +1,10 @@
 ---
 title: "Product Requirements"
-version: "3.2.0"
+version: "3.3.0"
 status: draft
 author: "Product Agent / Antigravity"
 created: "2026-06-01"
-updated: "2026-06-17"
+updated: "2026-06-19"
 related_docs:
   - "docs/Vision.md"
   - "docs/Constraints.md"
@@ -12,7 +12,7 @@ related_docs:
 
 # RelocateWise — Product Requirements
 
-This document defines the requirements for the **Minimum Viable Product (MVP)** of RelocateWise. The delivery constraints and $0 tooling budget defined in `Constraints.md` are the dominant constraints; everything below is judged against them. Future-state features are mentioned only to clarify what is *not* being built.
+This document defines the requirements for the **General Availability (GA) v1.0** release of RelocateWise. The delivery constraints and $0 tooling budget defined in `Constraints.md` are the dominant constraints; everything below is judged against them. Future-state features are mentioned only to clarify what is *not* being built.
 
 For product vision, target audience, and principles see `Vision.md`. For technology, infrastructure, and budget constraints see `Constraints.md`. For detailed market and technology research see `Research_Report.md`.
 
@@ -62,7 +62,7 @@ These users are digitally literate, research-driven, and value objective, eviden
 
 ## 4. Goals
 
-The MVP must validate one hypothesis: **adults planning a relocation will use a structured, questionnaire-driven tool to discover and compare candidate destinations more effectively than with general-purpose search.**
+The GA v1.0 release must deliver a production-ready, modular, and high-performance product that validates the core hypothesis: **adults planning a relocation will use a structured, questionnaire-driven tool to discover and compare candidate destinations more effectively than with general-purpose search.**
 
 A first-time visitor should be able to:
 
@@ -72,11 +72,11 @@ A first-time visitor should be able to:
 4. Compare 2–3 cities side-by-side across the same set of dimensions (8 dimensions total) in either English or Chinese.
 5. Do all of the above in a single uninterrupted session on a desktop or mobile device, on a deployed public URL, without hitting a paywall or being forced to create an account.
 
-If the MVP does not deliver this single end-to-end loop, it has not shipped.
+If the GA v1.0 release does not deliver this single end-to-end loop with modular, production-ready quality, it has not shipped.
 
 ## 5. Success Metrics
 
-The MVP's success and hypothesis validation will be evaluated using the following session-based metrics:
+The GA v1.0 success and hypothesis validation will be evaluated using the following session-based metrics:
 1. **Questionnaire Completion Rate**: >= 60% of users who land on the page should complete the questionnaire and view results.
 2. **Shortlist Engagement**: >= 40% of users who view the ranked results should select at least one city to shortlist.
 3. **Comparison Rate**: >= 25% of users who view results should navigate to the side-by-side comparison screen.
@@ -85,7 +85,7 @@ The MVP's success and hypothesis validation will be evaluated using the followin
 
 ## 6. Scope
 
-### 6.1 In Scope (MVP)
+### 6.1 In Scope (GA v1.0)
 
 | # | Capability | Notes |
 |---|------------|-------|
@@ -101,14 +101,15 @@ The MVP's success and hypothesis validation will be evaluated using the followin
 | S10 | **Automated ingestion pipeline** | Background script/worker running on a weekly or monthly schedule to fetch raw, authoritative data directly from primary sources (UN, OECD, government open data, Wikipedia, Numbeo) and feed it into the PostgreSQL database. |
 | S11 | **Bilingual Localization** | Manual language selector on the UI enabling real-time toggling between English (default) and Chinese (Simplified). |
 | S12 | **Responsive Web UI** | Fully responsive CSS/HTML layouts ensuring complete mobile and desktop accessibility. |
+| S13 | **Modular Architecture** | Implementation of a "Micro-Frontend" (React) container and decoupled microservices (Node.js) communicating via standard APIs. PostgreSQL database is partitioned by schemas or tables per service. |
+| S14 | **Module Documentation** | Maintenance of module-level `README.md` files describing features/APIs to allow AI coding agents to lazy load contexts and optimize search. |
 
-### 6.2 Explicitly Out of Scope (MVP)
+### 6.2 Explicitly Out of Scope (GA v1.0)
 
-The following are **not** built in the MVP and will not be retrofitted to the MVP codebase. They are listed here so any future request can be redirected to the post-MVP backlog:
-
+The following are **not** built in the GA v1.0 release and will not be retrofitted to the codebase. They are listed here so any future request can be redirected to the backlog:
 - User accounts, registration, login, password reset, email verification
 - Persistent cross-session history, saved comparisons on the server, shareable comparison links
-- Neighborhood-level data; the MVP is city-level only
+- Neighborhood-level data; the GA v1.0 release is city-level only
 - Comparison of more than 3 cities
 - Premium tier, payments, subscriptions, paywalls, entitlement enforcement
 - Multiple user profiles per account, family decision mode
@@ -122,19 +123,19 @@ The following are **not** built in the MVP and will not be retrofitted to the MV
 
 ## 7. Core User Journey
 
-The MVP is a single linear loop. There are no alternate paths, no dashboards, no settings pages.
+The GA v1.0 release is a single linear loop. There are no alternate paths, no dashboards, no settings pages.
 
 ```
 Landing → Questionnaire (≈10 questions) → Ranked Results (top 10)
-                                               │
-                           ┌───────────────────┼───────────────────┐
-                           ▼                   ▼                   ▼
-                      City Profile        City Profile        City Profile
-                           │                   │                   │
-                           └─────────► Comparison (2–3 cities) ◄──┘
-                                             │
-                                             ▼
-                                        Back to Results
+                                                │
+                            ┌───────────────────┼───────────────────┐
+                            ▼                   ▼                   ▼
+                       City Profile        City Profile        City Profile
+                            │                   │                   │
+                            └─────────► Comparison (2–3 cities) ◄──┘
+                                              │
+                                              ▼
+                                         Back to Results
 ```
 
 - **Landing page**: One sentence value proposition and a single primary CTA ("Start the questionnaire"). Includes a manual language selector (English / Chinese). No account creation, no marketing content.
@@ -143,7 +144,7 @@ Landing → Questionnaire (≈10 questions) → Ranked Results (top 10)
 - **City profile**: Static-style page summarizing the 8 dimensions. Shows a city landmark photo and country flag graphic. Includes "Add to comparison" and a "Back to results" link.
 - **Comparison**: Available whenever the user has 2 or 3 cities selected. A persistent "Compare" button is visible from the results and profile pages. Comparison view shows one row per dimension with the best-matching city highlighted. "Remove" on each card; "Clear all" to reset.
 
-The questionnaire is the only input that can change the ranking. To re-rank, the user clicks "Start over" from the results page and re-answers the questionnaire. There is no "refine my answers" UI in the MVP.
+The questionnaire is the only input that can change the ranking. To re-rank, the user clicks "Start over" from the results page and re-answers the questionnaire. There is no "refine my answers" UI in the GA v1.0 release.
 
 ## 8. Functional Requirements
 
@@ -167,6 +168,9 @@ Numbered for easy reference. Each requirement is testable in a single user actio
 - **FR-16**: The system shall run an automated background data ingestion job on a weekly or monthly schedule to fetch raw indicators directly from UN, OECD, Wikipedia, Numbeo, and government open data portals, clean and normalize the values, and update the PostgreSQL database.
 - **FR-17**: The system shall support both English and Chinese (Simplified), defaulting to English, with a user-accessible manual toggle on the UI to switch between languages dynamically.
 - **FR-18**: The frontend application shall be fully responsive, supporting all user actions (questionnaire, shortlist, comparison, and profile viewing) on mobile viewports (iOS and Android simulated dimensions) as well as desktop screens.
+- **FR-19**: The frontend application shall be partitioned into composable Micro-Frontend modules (React) orchestrated by a main container, communicating via APIs or browser Custom Events rather than direct dependencies.
+- **FR-20**: The backend application shall be built as a set of decoupled Microservices (Node.js) that communicate with each other via REST or gRPC API boundaries.
+- **FR-21**: Every microservice and micro-frontend directory shall contain a standard-structured `README.md` file describing its inputs, outputs, API routes, and code structure to support context lazy loading for AI coding agents.
 
 ## 9. Data Requirements
 
@@ -175,7 +179,7 @@ Numbered for easy reference. Each requirement is testable in a single user actio
 | # | Dimension | Value Type | Notes |
 |---|-----------|------------|-------|
 | D1 | Climate | Categorical label (e.g., Mediterranean, Continental, Tropical) + numeric average high/low | Used to match climate preference and lifestyle fit |
-| D2 | Cost of living | 1–5 index (1 = low, 5 = high) | Single composite, no line-item breakdown in MVP |
+| D2 | Cost of living | 1–5 index (1 = low, 5 = high) | Single composite, no line-item breakdown in GA v1.0 |
 | D3 | Housing affordability | 1–5 index | Anchored to cost-of-living; users see them as one factor in the questionnaire |
 | D4 | Career / industry fit | 1–5 index per major industry cluster (Tech, Finance, Healthcare, Creative, Manufacturing) | Scoring uses the industry the user selects |
 | D5 | Education | 1–5 index | Single composite; explicit "not relevant" option in the questionnaire |
@@ -193,22 +197,22 @@ All indices are normalized to a 1–5 scale. Each city record also carries: name
 
 ### 9.3 Storage
 
-- PostgreSQL with PostGIS extensions. Schema is `cities` (one row per city) and `city_scores` (one row per city per dimension), joined at query time.
+- PostgreSQL with PostGIS extensions. Schema isolation per microservice (dedicated schemas or tables per service).
 - Seeded via a versioned JSON file in the repository on first installation; updated thereafter by the scheduled ingestion pipeline.
 
 ## 10. Non-Functional Requirements
 
 - **Performance**: Ranking results shall be returned in under 1 second (p95) after questionnaire submission on a standard broadband connection. Pages shall become interactive in under 2 seconds. Landmark images shall support lazy loading to minimize bandwidth on mobile. Ingestion pipeline tasks run asynchronously in the background and must not affect API latency.
-- **Availability**: Best-effort, no formal SLA. The MVP is deployed on free-tier infrastructure; downtime is acceptable during the validation phase.
-- **Security**: HTTPS enforced everywhere. No personal data is stored server-side in the MVP. The only data persisted across requests is the user's selected city IDs, held in the browser session. Cloudflare Tunnel is used to securely expose the application, shielding the origin server.
-- **Compliance**: GDPR-aligned minimum. A privacy notice and a cookie consent banner are present on first visit. The MVP collects no personal data; questionnaire answers are processed in-browser session state and are not stored server-side.
-- **Stack**: Node.js backend (API server and scheduled ingestion worker), React frontend, PostgreSQL with PostGIS. Local dev runs via Docker Compose; deployment targets Cloudflare with traffic routed securely via Cloudflare Tunnel.
+- **Availability**: Best-effort, no formal SLA. The GA v1.0 release is deployed on free-tier infrastructure; downtime is acceptable.
+- **Security**: HTTPS enforced everywhere. No personal data is stored server-side in the GA v1.0 release. The only data persisted across requests is the user's selected city IDs, held in the browser session. Cloudflare Tunnel is used to securely expose the application, shielding the origin server.
+- **Compliance**: GDPR-aligned minimum. A privacy notice and a cookie consent banner are present on first visit. The GA v1.0 release collects no personal data; questionnaire answers are processed in-browser session state and are not stored server-side.
+- **Stack**: Node.js microservices (API server and scheduled ingestion worker), React micro-frontends, PostgreSQL with PostGIS. Local dev runs via Docker Compose; deployment targets Cloudflare with traffic routed securely via Cloudflare Tunnel.
 - **Cost**: $0. No paid third-party services, no paid data feeds, no paid monitoring.
-- **CI/CD**: GitHub Actions runs lint, unit tests, and a smoke build on every push to `main`. Manual deploy to the chosen free-tier host is acceptable for the MVP.
+- **CI/CD**: GitHub Actions runs lint, unit tests, and a smoke build on every push to `main`. Manual deploy to the chosen free-tier host is acceptable.
 
 ## 11. Acceptance Criteria
 
-The MVP is shippable when **all** of the following are true. Each criterion is verifiable in a single manual or automated test.
+The GA v1.0 release is shippable when **all** of the following are true. Each criterion is verifiable in a single manual or automated test.
 
 - **AC-1**: A first-time visitor can complete the questionnaire, view the ranked results, open at least one city profile, and view a 2- or 3-city comparison in a single uninterrupted session, in under 10 minutes, on either desktop or mobile browsers, in English or Chinese.
 - **AC-2**: The questionnaire contains between 8 and 12 questions and can be completed in under 5 minutes.
@@ -222,16 +226,16 @@ The MVP is shippable when **all** of the following are true. Each criterion is v
 - **AC-10**: No personal data is sent to or stored on the server. The server logs no questionnaire answers, IP addresses, or user identifiers in a way that could identify an individual.
 - **AC-11**: A cookie consent banner is shown on the first visit; no analytics or non-essential cookies are set before consent is granted.
 - **AC-12**: A Privacy Policy page is reachable from the site footer and from the consent banner.
-- **AC-13**: The app builds and runs locally via a documented single-command Docker Compose startup.
+- **AC-13**: The app builds and runs locally via a documented single-command Docker Compose startup, spinning up the micro-frontend container, microservice containers, and PostgreSQL instance.
 - **AC-14**: The app is deployed to a public URL on Cloudflare, with HTTPS enforced, and traffic routed exclusively through Cloudflare Tunnel in production.
 - **AC-15**: Lint, unit tests, and a smoke build pass in CI on the latest commit to `main`.
 - **AC-16**: The background data ingestion job successfully executes, pulling raw indicator data from at least one primary source and populating the database scores without errors.
 - **AC-17**: The user can manually toggle between English and Chinese on any page, and all UI text, labels, questions, and matching results update accordingly.
 - **AC-18**: The user interface is fully responsive, passing mobile layout verification (no broken overlaps, horizontal scroll issues, or unclickable elements) on simulated iOS/Android mobile screens.
+- **AC-19**: The codebase consists of decoupled, composable Micro-Frontend modules (React) and distinct Microservice containers (Node.js) with segregated schemas in PostgreSQL.
+- **AC-20**: Every microservice and micro-frontend module directory contains a non-empty, standardized `README.md` file documenting its functions, interfaces, and code structure.
 
 ## 12. Open Questions
-
-These are the only questions that must be resolved before or during the 3-day build. Everything else is deferred.
 
 1. **Hosting target**: Cloudflare + Docker Compose + Cloudflare Tunnel. (Resolved in Version 3.2.0: Netlify host has been replaced with Cloudflare to match security constraints, utilizing Cloudflare Tunnel to expose Docker containers).
 2. **Geographic coverage anchor**: Should the initial 30–50 cities be global (e.g., 15 US, 10 EU, 5 Asia-Pacific, 5 Latin America, 5 other) or concentrated in a single region to maximize data quality? Default to global coverage; revisit if data quality for the 5 "other" cities cannot be sourced in time.
@@ -240,6 +244,8 @@ These are the only questions that must be resolved before or during the 3-day bu
    *CEO decision: Yes, templated for MVP.*
 4. **Translation asset localization**: Should we use localized JSON translation files packaged in the frontend bundle or fetch them dynamically from an external source? (Default: local JSON i18n bundle to ensure 0ms network latency).
 5. **Landmark photo licensing & storage**: How should city landmark photos be hosted without incurring hosting charges? (Default: public domain SVG/PNG files hosted locally or via free CDNs).
+6. **API Gateway selection**: Should we deploy a dedicated lightweight API Gateway (e.g., Express Gateway, Caddy routing) to coordinate client calls to backend microservices, or let the micro-frontends communicate directly with individual microservice endpoints via Cloudflare Tunnel subdomains?
+7. **Schema Migration Tooling**: Which tool should be used to manage migrations independently across different microservice schemas (e.g., Knex.js, Prisma, or custom SQL scripts)?
 
 ## 13. Future Scope
 
@@ -257,12 +263,13 @@ A single list. Items are sequenced roughly by expected priority but no dates are
 - Real estate, job, or moving-service integrations
 - B2B / partner API
 
-## Change Log
+# Change Log
 
 | Timestamp | Type | Summary | Sections |
 |---|---|---|---|
-| 2026-06-01 | Add | Initial version. | All |
-| 2026-06-02 | Replace | Rewritten to be MVP-only. Removed personas, premium features, payments, and out-of-scope items. Length reduced from 1,829 to 210 lines. | All |
-| 2026-06-10 | Add | Updated to Stage 3. Added explicit Problem Statement, Target Users, User Stories, and Success Metrics. | 1, 2, 3, 5 |
+| 2026-06-01T10:00:00Z | Add | Initial version. | All |
+| 2026-06-02T15:00:00Z | Replace | Rewritten to be MVP-only. Removed personas, premium features, payments, and out-of-scope items. Length reduced from 1,829 to 210 lines. | All |
+| 2026-06-10T09:30:00Z | Add | Updated to Stage 3. Added explicit Problem Statement, Target Users, User Stories, and Success Metrics. | 1, 2, 3, 5 |
 | 2026-06-17T13:34:00Z | Add | Added Military Safety dimension, automated ingestion pipeline requirements, updated out-of-scope, and updated acceptance criteria. | 1, 2, 3, 5, 6, 8, 9, 11 |
 | 2026-06-17T14:38:00Z | Replace | Added bilingual (EN/ZH) support, mobile responsiveness, rich city profiles (landmark images, SVG flags), Cloudflare Tunnel deployment, and renamed Military Safety to Geopolitical and Conflict Risk. | All |
+| 2026-06-19T05:30:00Z | Replace | Shifted to GA v1.0 scope, removing the 2-week limit, and added microservices and micro-frontend modular architecture requirements, PostgreSQL schema segregation, and module-level README constraints. | All |
