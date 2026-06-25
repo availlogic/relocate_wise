@@ -1,0 +1,78 @@
+/**
+ * Claymorphic Privacy page (Visual-Guidelines §4.1).
+ */
+.privacy {
+  max-width: var(--max-width-narrow);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+.privacy {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xxl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+}
+
+.privacy h1 {
+  margin: 0;
+  font-family: var(--font-headings);
+}
+
+.privacy h2 {
+  margin: 0 0 var(--space-sm) 0;
+  font-family: var(--font-headings);
+  font-size: var(--font-h3-size);
+  color: var(--color-text-primary);
+}
+
+.privacy__lead {
+  font-size: 1.125rem;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.privacy section {
+  border-top: 1px solid var(--color-border-soft);
+  padding-top: var(--space-md);
+}
+
+.privacy ul {
+  margin: 0;
+  padding-left: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  color: var(--color-text-primary);
+}
+
+.privacy p {
+  margin: 0;
+  line-height: var(--font-body-line);
+  color: var(--color-text-primary);
+}
+
+.privacy__footer {
+  border-top: 1px solid var(--color-border-soft);
+  padding-top: var(--space-md);
+  font-size: var(--font-ui-size);
+}
+
+.privacy a {
+  color: var(--color-accent-lavender);
+}
+
+@media (max-width: 600px) {
+  .privacy {
+    padding: var(--space-xl) var(--space-lg);
+  }
+}

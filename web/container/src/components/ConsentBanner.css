@@ -1,0 +1,63 @@
+/**
+ * Claymorphic Consent Banner (PRD FR-13, AC-11, AC-12,
+ * Visual-Guidelines §4.6).
+ */
+.consent-banner {
+  position: fixed;
+  bottom: var(--space-md);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(960px, calc(100vw - var(--space-xl)));
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-lg) var(--space-xl);
+  background: var(--color-bg-card);
+  border: none;
+  border-radius: var(--radius-xl);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-ui-size);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+}
+
+@media (max-width: 720px) {
+  .consent-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-md);
+    bottom: var(--space-sm);
+    padding: var(--space-lg);
+  }
+}
+
+.consent-banner__text {
+  flex: 1 1 auto;
+  margin: 0;
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+.consent-banner__link {
+  font-weight: 600;
+  text-decoration: underline;
+  color: var(--color-accent-lavender);
+}
+
+.consent-banner__link:hover,
+.consent-banner__link:focus-visible {
+  color: var(--color-text-primary);
+}
+
+.consent-banner__actions {
+  display: flex;
+  gap: var(--space-md);
+  flex-shrink: 0;
+}
+
+.consent-banner__btn {
+  font-size: var(--font-ui-size);
+}

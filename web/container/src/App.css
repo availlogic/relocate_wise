@@ -1,0 +1,105 @@
+.app-shell {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: var(--color-text-primary);
+  background: var(--color-bg-canvas);
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-bg-overlay);
+  border-bottom: 1px solid var(--color-border-soft);
+  padding: var(--space-md) var(--space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  box-shadow: 0 4px 12px rgba(135, 120, 200, 0.08);
+}
+
+.app-header__brand {
+  font-family: var(--font-headings);
+  font-weight: 700;
+  font-size: var(--text-xl);
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.app-header__brand:hover,
+.app-header__brand:focus {
+  text-decoration: none;
+  color: var(--color-accent-lavender);
+}
+
+.app-header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  font-family: var(--font-body);
+  font-size: var(--font-ui-size);
+}
+
+.app-header__nav a {
+  color: var(--color-text-primary);
+  text-decoration: none;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-pill);
+  transition: var(--transition-fast);
+}
+
+.app-header__nav a:hover,
+.app-header__nav a:focus-visible {
+  color: var(--color-accent-lavender);
+  background: var(--color-bg-card);
+  text-decoration: none;
+}
+
+.app-header__shortlist {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--color-text-primary);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-pill);
+}
+
+.app-header__shortlist-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-lavender);
+  color: var(--color-text-primary);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  box-shadow: var(--shadow-clay-pill);
+}
+
+.app-header__shortlist-count--full {
+  background: var(--color-accent-yellow);
+}
+
+.app-main {
+  flex: 1;
+  padding: var(--space-xl) 0;
+}
+
+.app-footer {
+  border-top: 1px solid var(--color-border-soft);
+  padding: var(--space-lg);
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  font-size: var(--font-caption-size);
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: 0 -4px 16px rgba(135, 120, 200, 0.08);
+}

@@ -1,0 +1,66 @@
+/**
+ * Claymorphic Toast stack (PRD AC Feature 4, Visual-Guidelines §4.1).
+ */
+.toast-stack {
+  position: fixed;
+  bottom: 7rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  z-index: 200;
+  pointer-events: none;
+  max-width: min(560px, calc(100vw - var(--space-xl)));
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-card);
+  border: none;
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-ui-size);
+  line-height: 1.5;
+  animation: toast-in 220ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.toast__message {
+  flex: 1;
+}
+
+.toast__close {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: var(--space-xs);
+  border-radius: var(--radius-pill);
+  transition: var(--transition-fast);
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast__close:hover,
+.toast__close:focus-visible {
+  color: var(--color-text-primary);
+  background: var(--color-bg-card-alt);
+}
+
+@keyframes toast-in {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

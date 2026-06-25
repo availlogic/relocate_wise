@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": false,
+    "verbatimModuleSyntax": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom", "@testing-library/react"],
+    "baseUrl": ".",
+    "paths": {
+      "@relocatewise/shared": ["../../../shared/src/index.ts"],
+      "@relocatewise/shared/*": ["../../../shared/src/*"],
+      "@relocatewise/web-quiz-mfe": ["../quiz-mfe/src/index.ts"],
+      "@relocatewise/web-compare-mfe": ["../compare-mfe/src/index.ts"],
+      "@relocatewise/web-dashboard-mfe": ["../dashboard-mfe/src/index.ts"],
+      "@relocatewise/web-container/api": ["src/api.ts"],
+      "@relocatewise/web-container/state/shortlist": ["src/state/shortlist.tsx"],
+      "@relocatewise/web-container/state/matchResults": ["src/state/matchResults.ts"],
+      "@relocatewise/web-container/i18n/why": ["src/i18n/why.ts"],
+      "@relocatewise/web-container/components/ShortlistBar": ["src/components/ShortlistBar.tsx"],
+      "@relocatewise/web-container/components/Toast": ["src/components/Toast.tsx"]
+    }
+  },
+  "include": ["src", "test"]
+}

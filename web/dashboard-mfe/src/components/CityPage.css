@@ -1,0 +1,182 @@
+/**
+ * Claymorphic CityPage (PRD S5, FR-8, Visual-Guidelines §4.1 + §4.5/§4.6).
+ */
+.city-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg) 9rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+.city-page__back {
+  display: inline-block;
+  margin-bottom: 0;
+  font-size: var(--font-ui-size);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-pill);
+  transition: var(--transition-fast);
+  width: max-content;
+}
+
+.city-page__back:hover,
+.city-page__back:focus-visible {
+  color: var(--color-text-primary);
+  background: var(--color-bg-card);
+  text-decoration: none;
+}
+
+.city-page__header {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.city-page__header h1 {
+  margin: 0;
+  font-family: var(--font-headings);
+  color: var(--color-text-primary);
+  font-size: var(--font-h1-size);
+  font-weight: 700;
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.city-page__country {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.city-page__region {
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-size: var(--font-ui-size);
+  font-weight: 500;
+}
+
+.city-page__desc {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+}
+
+.city-page__actions {
+  display: flex;
+  gap: var(--space-md);
+  margin: 0;
+}
+
+.city-page__meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-lg);
+  margin: 0;
+  padding: var(--space-lg);
+  background: var(--color-bg-card-alt);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+}
+
+.city-page__meta dt {
+  font-size: var(--font-caption-size);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-body);
+  font-weight: 700;
+}
+
+.city-page__meta dd {
+  margin: var(--space-xs) 0 0 0;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-family: var(--font-headings);
+  font-size: var(--font-ui-size);
+}
+
+.city-page--error {
+  text-align: center;
+  padding-top: var(--space-xxxl);
+  align-items: center;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xxxl) var(--space-xl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+}
+
+/* Country flag graphic (Visual-Guidelines §4.5). 24x16, 3:2 aspect,
+   12px border-radius (squircle), light outer drop shadow. */
+.city-page__flag {
+  display: inline-block;
+  width: 28px;
+  height: 18px;
+  margin-left: 0;
+  vertical-align: middle;
+  border-radius: 12px;
+  border: 1px solid var(--color-border-medium);
+  background: var(--color-bg-card);
+  box-shadow: var(--shadow-clay-pill);
+}
+
+/* Representative landmark photo (Visual-Guidelines §4.6, PRD v3.2.0 S5).
+   16:9 aspect ratio container, 24px corner radius (clay card), lazy loaded. */
+.city-page__landmark {
+  margin: 0;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: none;
+  background: var(--color-bg-card-alt);
+  box-shadow: var(--shadow-clay-outer);
+}
+
+.city-page__landmark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.city-page__dimensions {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+}
+
+.city-page__updated {
+  text-align: center;
+  font-size: var(--font-caption-size);
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+@media (max-width: 720px) {
+  .city-page__header {
+    padding: var(--space-lg);
+  }
+  .city-page__dimensions {
+    padding: var(--space-lg);
+  }
+}

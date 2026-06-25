@@ -1,0 +1,47 @@
+/**
+ * Claymorphic EN / 中文 language toggle (Visual-Guidelines §4.1 + §4.6).
+ * Pill container; the active option uses the lavender accent + the
+ * "pressed" inverted-shadow (FR-24, AC-23).
+ */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-card);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+}
+
+.lang-toggle__btn {
+  font-family: var(--font-body);
+  font-size: var(--font-ui-size);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--transition-bounce);
+  min-height: 36px;
+  line-height: 1;
+}
+
+.lang-toggle__btn:hover:not(.is-active) {
+  color: var(--color-text-primary);
+}
+
+.lang-toggle__btn.is-active {
+  background: var(--color-accent-lavender);
+  color: var(--color-text-primary);
+  cursor: default;
+  box-shadow: var(--shadow-pressed);
+}
+
+.lang-toggle__btn:focus-visible {
+  outline: 3px solid var(--color-accent-lavender);
+  outline-offset: 2px;
+}

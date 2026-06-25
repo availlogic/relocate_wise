@@ -1,0 +1,135 @@
+/**
+ * Claymorphic RankCard (PRD S4, FR-5, FR-23…FR-25, Visual-Guidelines §4.5).
+ */
+.rank-card {
+  background: var(--color-bg-card);
+  border: none;
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-xl);
+  transition: var(--transition-bounce);
+}
+
+.rank-card:hover {
+  transform: translateY(-4px) scale(1.01);
+}
+
+.rank-card--high {
+  background: var(--color-bg-card);
+}
+.rank-card--medium {
+  background: var(--color-bg-card);
+}
+.rank-card--low {
+  background: var(--color-bg-card);
+}
+
+@media (max-width: 720px) {
+  .rank-card {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+}
+
+.rank-card__rank {
+  font-family: var(--font-headings);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  min-width: 3rem;
+  text-align: center;
+}
+
+.rank-card__title h2 {
+  margin: 0;
+  font-family: var(--font-headings);
+  font-size: var(--font-h3-size);
+  color: var(--color-text-primary);
+}
+
+.rank-card__country {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.rank-card__region {
+  margin: var(--space-xs) 0 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-ui-size);
+}
+
+.rank-card__score {
+  font-family: var(--font-headings);
+  font-size: 2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  min-width: 80px;
+  text-align: center;
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+}
+
+.rank-card__score--high {
+  color: var(--color-text-primary);
+  background: var(--color-accent-green);
+}
+
+.rank-card__score--medium {
+  color: var(--color-text-primary);
+  background: var(--color-accent-lavender);
+}
+
+.rank-card__score--low {
+  color: var(--color-text-primary);
+  background: var(--color-accent-peach);
+}
+
+.rank-card__why {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--font-body-size);
+  line-height: var(--font-body-line);
+  color: var(--color-text-primary);
+}
+
+.rank-card__footer {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.rank-card__compare {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-ui-size);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.rank-card__compare input[type='checkbox'] {
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-accent-lavender);
+  cursor: inherit;
+}
+
+.rank-card__compare input[type='checkbox']:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

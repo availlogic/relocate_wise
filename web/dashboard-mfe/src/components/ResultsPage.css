@@ -1,0 +1,93 @@
+/**
+ * Claymorphic ResultsPage (PRD S4, FR-5, Visual-Guidelines §4.1).
+ */
+.results-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg) 9rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+.results-page__header {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.results-page__header h1 {
+  margin: 0;
+  font-family: var(--font-headings);
+  color: var(--color-text-primary);
+  font-size: var(--font-h1-size);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.results-page__sub {
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-size: var(--font-ui-size);
+  line-height: 1.5;
+}
+
+.results-page__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.results-page--empty {
+  text-align: center;
+  padding-top: var(--space-xxxl);
+  align-items: center;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xxxl) var(--space-xl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+}
+
+.results-page__actions {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: var(--space-sm);
+}
+
+.results-page__start-over {
+  color: var(--color-text-primary);
+}
+
+.results-page__hint {
+  font-size: var(--font-ui-size);
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.results-page__shortlist-summary {
+  font-size: var(--font-ui-size);
+  color: var(--color-text-primary);
+  margin: 0;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  font-weight: 600;
+}

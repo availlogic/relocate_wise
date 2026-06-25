@@ -1,0 +1,190 @@
+/**
+ * Claymorphic ComparePage — vertical pillowy columns + pressed winner
+ * cell (PRD S6, FR-10…FR-11, Visual-Guidelines §4.1/§5).
+ */
+.compare-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+.compare-page__header {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.compare-page__header h1 {
+  margin: 0;
+  font-family: var(--font-headings);
+  color: var(--color-text-primary);
+  font-size: var(--font-h1-size);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.compare-page__sub {
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-size: var(--font-ui-size);
+  line-height: 1.5;
+}
+
+.compare-page__actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.compare-page__grid {
+  display: grid;
+  gap: var(--space-xl);
+}
+
+.compare-card {
+  background: var(--color-bg-card);
+  border: none;
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: var(--transition-bounce);
+}
+
+.compare-card:hover {
+  transform: translateY(-4px) scale(1.01);
+}
+
+.compare-card__header h2 {
+  margin: 0 0 var(--space-xs) 0;
+  font-family: var(--font-headings);
+  font-size: var(--font-h3-size);
+  color: var(--color-text-primary);
+}
+
+.compare-card__country {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-ui-size);
+  font-weight: 500;
+}
+
+.compare-card__score {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+  font-family: var(--font-headings);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  background: var(--color-accent-lavender);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  width: max-content;
+  font-variant-numeric: tabular-nums;
+}
+
+.compare-card__score span {
+  font-size: var(--font-ui-size);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.compare-card__why {
+  margin: 0;
+  font-size: var(--font-ui-size);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.compare-page__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: var(--space-sm);
+  background: var(--color-bg-card);
+  border: none;
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  font-family: var(--font-body);
+}
+
+.compare-page__table th,
+.compare-page__table td {
+  text-align: left;
+  padding: var(--space-md) var(--space-lg);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+  background: var(--color-bg-card-alt);
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+}
+
+.compare-page__table thead th {
+  background: var(--color-bg-card);
+  font-family: var(--font-headings);
+  font-weight: 700;
+  font-size: var(--font-h3-size);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-clay-outer);
+}
+
+.compare-page__table tbody th {
+  font-weight: 600;
+  font-size: var(--font-ui-size);
+  color: var(--color-text-primary);
+}
+
+.compare-page__cell--best {
+  background: var(--color-accent-lavender);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-pressed);
+  border: 1px solid rgba(135, 120, 200, 0.3);
+}
+
+.compare-page--empty {
+  text-align: center;
+  align-items: center;
+  padding-top: var(--space-xxxl);
+  gap: var(--space-md);
+}
+
+@media (max-width: 720px) {
+  .compare-page__table {
+    display: block;
+    overflow-x: auto;
+    padding: var(--space-lg);
+  }
+  .compare-page__table th:first-child,
+  .compare-page__table td:first-child {
+    position: sticky;
+    left: 0;
+    background: var(--color-bg-card);
+    z-index: 1;
+  }
+}

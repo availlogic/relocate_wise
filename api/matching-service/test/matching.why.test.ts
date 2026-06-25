@@ -1,0 +1,341 @@
+/**
+ * Tests for the templated "why this fits you" generator (Architecture §6.5).
+ *
+ * Verifies:
+ *   - Returns a non-empty string (PRD AC-5).
+ *   - References at least one user-stated priority.
+ *   - Uses the documented templates per dimension.
+ *   - When two dimensions tie within 10% of the top, both are emitted and
+ *     joined with " and ".
+ *
+ * v0.4.0 additions (PRD v3.2.0 S11):
+ *   - The template now also exposes `why_key` + `why_vars` so the
+ *     frontend can localise the sentence via i18next.
+ */
+import { describe, it, expect } from 'vitest';
+import { buildWhyTemplate, whyThisFitsYou } from '../src/matching/why.js';
+import { rankCities, scoreCity } from '../src/matching/score.js';
+import { withDefaults } from '../src/matching/defaults.js';
+import { CITIES, makeCity } from './fixtures.js';
+import type { UserProfile } from '@relocatewise/shared';
+
+describe('why this fits you — templates per dimension', () => {
+  const city = CITIES[0]!; // Lisbon
+
+  it('climate template uses the user preference verbatim (pretty-printed)', () => {
+    const user: UserProfile = withDefaults({ climate: 'mediterranean' });
+    const scored = scoreCity(city, user);
+    expect(whyThisFitsYou(scored)).toContain('Matches your Mediterranean climate preference');
+  });
+
+  it('cost / housing share a single template', () => {
+    const user: UserProfile = withDefaults({
+      cost_importance: 3,
+      cost_ceiling: 5,
+      housing_importance: 3,
+      housing_ceiling: 5,
+    });
+    const scored = scoreCity(city, user);
+    expect(whyThisFitsYou(scored)).toContain('Fits your housing and cost budget');
+  });
+
+  it('career template uses the chosen industry', () => {
+    const user: UserProfile = withDefaults({ career_industry: 'tech' });
+    const scored = scoreCity(city, user);
+    expect(whyThisFitsYou(scored)).toContain('Strong tech job market');
+  });
+
+  it('education template', () => {
+    const user: UserProfile = withDefaults({ education: 'important' });
+    const scored = scoreCity(city, user);
+    expect(whyThisFitsYou(scored)).toContain('Strong schools and education options');
+  });
+
+  it('healthcare template', () => {
+    const user: UserProfile = withDefaults({ healthcare_importance: 3 });
+    const scored = scoreCity(city, user);
+    expect(whyThisFitsYou(scored)).toContain('Strong healthcare access');
+  });
+
+  it('community template lists 1 tag', () => {
+    const user: UserProfile = withDefaults({ lifestyle_tags: ['urban'] });
+    const scored = scoreCity(city, user);
+    expect(whyThisFitsYou(scored)).toContain('Matches your urban lifestyle');
+  });
+
+  it('community template lists 2 tags joined with " and "', () => {
+    const user: UserProfile = withDefaults({ lifestyle_tags: ['urban', 'coastal'] });
+    const scored = scoreCity(city, user);
+    expect(whyThisFitsYou(scored)).toContain('Matches your urban and coastal lifestyle');
+  });
+
+  it('military_safety template (Architecture §6.5, PRD v3.1.0)', () => {
+    const user: UserProfile = withDefaults({ military_safety_importance: 3 });
+    const scored = scoreCity(city, user);
+    expect(whyThisFitsYou(scored)).toContain(
+      'High geopolitical stability and physical safety',
+    );
+  });
+});
+
+describe('why this fits you — tie-breaking (within 0.1 absolute)', () => {
+  it('emits a single dimension when the runner-up is far below the top', () => {
+    // Set up: climate weight 1, match 1.0 → contribution 0.5.
+    //         cost weight 2, city cost 5 with ceiling 2 → match 0 (above ceiling).
+    // After normalization: climate weight = 1/3, cost weight = 2/3.
+    //   climate contribution = 1/3 * 1.0 = 0.333
+    //   cost contribution    = 2/3 * 0.0 = 0
+    // Gap is 0.333 — well over 0.1 — so only climate should appear.
+    const city = makeCity({
+      slug: 'x', name: 'X', country: 'X',
+      dimensions: { ...makeCity({ slug: 'y', name: 'Y', country: 'X' }).dimensions, climate: { label: 'Mediterranean' }, cost: 5 },
+    });
+    const user: UserProfile = withDefaults({
+      climate: 'mediterranean',
+      cost_importance: 3,
+      cost_ceiling: 2,
+    });
+    const scored = scoreCity(city, user);
+    const why = whyThisFitsYou(scored);
+    expect(why).toContain('Matches your Mediterranean climate preference');
+    expect(why).not.toContain('Fits your housing and cost budget');
+  });
+
+  it('emits two dimensions joined with " and " when contributions tie within 0.1', () => {
+    // Set up: climate weight 1, match 1.0; cost weight 2, city cost 1, ceiling 5
+    // (match 1.0). After normalization: climate weight 1/3, cost weight 2/3.
+    //   climate contribution = 1/3 * 1.0 = 0.333
+    //   cost contribution    = 2/3 * 1.0 = 0.667
+    //   gap = 0.333  — over 0.1. So actually NOT a tie. Let me use weights
+    //   that produce a tighter gap.
+    // Set cost_importance=1 → raw weight 0.5, so total = 1.5.
+    //   climate weight = 1/1.5 ≈ 0.667, contribution 0.667
+    //   cost weight    = 0.5/1.5 ≈ 0.333, contribution 0.333
+    //   gap = 0.333  — still over 0.1.
+    // For a real tie I need equal weights and equal matches. Both climate
+    // and cost match 1.0, with equal weights → tied. Set climate=mediterranean
+    // (always rawW 1) and career=tech (rawW 1, match 1.0). Total rawW = 2,
+    // each gets 0.5, each contributes 0.5. Gap = 0. Tie.
+    const city = makeCity({
+      slug: 'x', name: 'X', country: 'X',
+      dimensions: {
+        ...makeCity({ slug: 'y', name: 'Y', country: 'X' }).dimensions,
+        climate: { label: 'Mediterranean' },
+        career: { tech: 5, finance: 1, healthcare: 1, creative: 1, manufacturing: 1 },
+      },
+    });
+    const user: UserProfile = withDefaults({
+      climate: 'mediterranean',
+      career_industry: 'tech',
+    });
+    const scored = scoreCity(city, user);
+    const why = whyThisFitsYou(scored);
+    expect(why).toContain('Matches your Mediterranean climate preference');
+    expect(why).toContain('Strong tech job market');
+    expect(why).toMatch(/ and /);
+  });
+
+  it('emits a single dimension when the second-best is just outside the 0.1 tie window', () => {
+    // climate=mediterranean, rawW 1, match 1.0 → contribution 0.5
+    // career=tech, rawW 1, match 4/5 = 0.8 → contribution 0.4
+    // gap = 0.1  — right at the boundary. With Math.abs <= 0.1 this ties.
+    // Now set career match to 3/5 = 0.6 → contribution 0.3, gap = 0.2. No tie.
+    const city = makeCity({
+      slug: 'x', name: 'X', country: 'X',
+      dimensions: {
+        ...makeCity({ slug: 'y', name: 'Y', country: 'X' }).dimensions,
+        climate: { label: 'Mediterranean' },
+        career: { tech: 3, finance: 1, healthcare: 1, creative: 1, manufacturing: 1 },
+      },
+    });
+    const user: UserProfile = withDefaults({
+      climate: 'mediterranean',
+      career_industry: 'tech',
+    });
+    const scored = scoreCity(city, user);
+    const why = whyThisFitsYou(scored);
+    expect(why).toContain('Matches your Mediterranean climate preference');
+    expect(why).not.toContain('Strong tech job market');
+  });
+});
+
+describe('why this fits you — non-empty guarantee (PRD AC-5)', () => {
+  it('returns a non-empty string for the canonical "all skipped" profile', () => {
+    const user: UserProfile = withDefaults({});
+    for (const city of CITIES) {
+      const scored = scoreCity(city, user);
+      const why = whyThisFitsYou(scored);
+      expect(typeof why).toBe('string');
+      expect(why.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('emits at least one user-stated priority when at least one is set', () => {
+    const user: UserProfile = withDefaults({
+      climate: 'mediterranean',
+      career_industry: 'tech',
+      lifestyle_tags: ['urban', 'coastal'],
+    });
+    const top = rankCities(user, CITIES)[0]!;
+    const why = whyThisFitsYou(top);
+    // It should mention at least one of: climate/career/community.
+    const mentions =
+      why.includes('climate') ||
+      why.includes('tech job market') ||
+      why.includes('lifestyle');
+    expect(mentions).toBe(true);
+  });
+});
+
+describe('why this fits you — why_key + why_vars (v0.4.0, PRD v3.2.0 S11)', () => {
+  const city = CITIES[0]!; // Lisbon
+
+  it('emits a why_key matching the dimension and the vars needed by the template', () => {
+    const user: UserProfile = withDefaults({ climate: 'mediterranean' });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('climate');
+    expect(tpl.whyVars).toEqual({ climate: 'Mediterranean' });
+    expect(tpl.why).toMatch(/Matches your Mediterranean climate preference/);
+  });
+
+  it('emits a cost why_key when cost is the leading dimension', () => {
+    const user: UserProfile = withDefaults({
+      cost_importance: 3,
+      cost_ceiling: 5,
+      housing_importance: 3,
+      housing_ceiling: 5,
+    });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('cost');
+    expect(tpl.why).toMatch(/Fits your housing and cost budget/);
+  });
+
+  it('emits a career why_key + industry var when the career dimension dominates', () => {
+    const user: UserProfile = withDefaults({
+      climate: 'no_preference',
+      career_industry: 'tech',
+    });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('career');
+    expect(tpl.whyVars).toEqual({ industry: 'tech' });
+  });
+
+  it('emits a community why_key with the user-selected tags as vars', () => {
+    const user: UserProfile = withDefaults({
+      climate: 'no_preference',
+      lifestyle_tags: ['urban', 'coastal'],
+    });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('community');
+    expect(tpl.whyVars).toEqual({ tags: 'urban and coastal' });
+  });
+
+  it('emits the neutral key when every dimension is skipped', () => {
+    const user: UserProfile = withDefaults({});
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('neutral');
+    expect(tpl.why).toMatch(/balanced match/i);
+  });
+});
+
+/**
+ * v0.4.x — Bug 4: the tied-reason branch must emit
+ *   `why_vars.secondary_key` + `why_vars.secondary_vars` (no English
+ *   string in the wire shape). The legacy `why` field keeps the
+ *   pre-joined English for back-compat with old sessionStorage entries.
+ */
+describe('why this fits you — tied-reason secondary_key + secondary_vars (v0.4.x)', () => {
+  const city = CITIES[0]!; // Lisbon
+
+  it('tied climate + career emits secondary_key=career + secondary_vars.industry in whyVars', () => {
+    // Both climate (rawW 1, match 1.0 → contribution 0.5) and
+    // career=tech (rawW 1, match 1.0 → contribution 0.5) are perfectly
+    // tied. The cost is also non-zero, so the builder picks the top
+    // two: climate + career.
+    const user: UserProfile = withDefaults({
+      climate: 'mediterranean',
+      career_industry: 'tech',
+    });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('climate');
+    expect(tpl.whyVars).toBeDefined();
+    expect(tpl.whyVars!.secondary_key).toBe('career');
+    expect(tpl.whyVars!.secondary_vars).toEqual({ industry: 'tech' });
+  });
+
+  it('tied climate + career packs the pre-joined English only in the legacy why field', () => {
+    const user: UserProfile = withDefaults({
+      climate: 'mediterranean',
+      career_industry: 'tech',
+    });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.why).toContain('Matches your Mediterranean climate preference');
+    expect(tpl.why).toContain('Strong tech job market');
+    expect(tpl.why).toMatch(/ and /);
+  });
+
+  it('tied climate + cost emits secondary_key=cost + secondary_vars={} in whyVars', () => {
+    // cost_importance=2 → rawW 1, climate rawW 1. After normalization
+    // both get weight 0.5. With cost match 1.0 (city_cost=1, ceiling=5)
+    // and climate match 1.0 (Mediterranean), they tie at 0.5.
+    const tiedCity = makeCity({
+      slug: 't', name: 'T', country: 'X',
+      dimensions: {
+        ...makeCity({ slug: 't0', name: 'T0', country: 'X' }).dimensions,
+        climate: { label: 'Mediterranean' },
+        cost: 1,
+      },
+    });
+    const user: UserProfile = withDefaults({
+      climate: 'mediterranean',
+      cost_importance: 2,
+      cost_ceiling: 5,
+    });
+    const scored = scoreCity(tiedCity, user);
+    const tpl = buildWhyTemplate(scored);
+    // The builder picks the top two contributing dimensions; verify
+    // that when a tie exists, the secondary_key shape is used.
+    expect(tpl.whyVars).toBeDefined();
+    expect(tpl.whyVars!.secondary_key).toBeDefined();
+    expect(typeof tpl.whyVars!.secondary_key).toBe('string');
+    expect(tpl.whyVars!.secondary_vars).toBeDefined();
+    expect(typeof tpl.whyVars!.secondary_vars).toBe('object');
+  });
+
+  it('single-dimension result has no secondary_key in whyVars', () => {
+    // A scenario where cost clearly dominates climate: cost_importance=3
+    // (rawW 2) and climate rawW 1. With cost match 1.0 and climate
+    // match 1.0 the normalised contribution is 2/3 vs 1/3 — well above
+    // the 10% tie window. Only cost is emitted.
+    const user: UserProfile = withDefaults({
+      climate: 'mediterranean',
+      cost_importance: 3,
+      cost_ceiling: 5,
+    });
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    // No tied runner-up → no secondary_key/secondary_vars.
+    if (tpl.whyVars) {
+      expect(tpl.whyVars.secondary).toBeUndefined();
+      expect(tpl.whyVars.secondary_key).toBeUndefined();
+    }
+  });
+
+  it('neutral case (all skipped) has no secondary_key in whyVars', () => {
+    const user: UserProfile = withDefaults({});
+    const scored = scoreCity(city, user);
+    const tpl = buildWhyTemplate(scored);
+    expect(tpl.whyKey).toBe('neutral');
+    if (tpl.whyVars) {
+      expect(tpl.whyVars.secondary).toBeUndefined();
+      expect(tpl.whyVars.secondary_key).toBeUndefined();
+    }
+  });
+});

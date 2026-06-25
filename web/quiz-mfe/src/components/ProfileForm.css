@@ -1,0 +1,389 @@
+/**
+ * Claymorphic ProfileForm (8-step wizard).
+ *
+ * Per PRD v3.4.0 FR-22…FR-27 and Visual-Guidelines v1.4.0 §4:
+ *   - Per-step surface is a clay card with 32px radius, 24-32px padding,
+ *     and a multi-layered shadow (FR-23, FR-25).
+ *   - Option cards have 24px radii (or pill for chips) and shift to a
+ *     lavender pastel with an inverted inner-shadow "pressed" state when
+ *     selected (FR-24, AC-23).
+ *   - Bouncy 400ms easing on the selected transition.
+ */
+.profile-form {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+}
+
+.profile-form__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+}
+
+.profile-form__title {
+  font-family: var(--font-headings);
+  font-size: var(--font-h2-size);
+  font-weight: 700;
+  margin: 0;
+}
+
+.profile-form__step {
+  background: var(--color-bg-card);
+  border: none;
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  min-height: 12rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  animation: profile-fade-in 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes profile-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-form__error {
+  background: var(--color-accent-peach);
+  color: var(--color-text-primary);
+  border: none;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  box-shadow: var(--shadow-clay-outer);
+}
+
+.profile-form__healthcare,
+.profile-form__military-safety {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.profile-form__step-legend {
+  font-family: var(--font-headings);
+  font-weight: 600;
+  font-size: var(--font-h3-size);
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.profile-form__step-help {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-ui-size);
+  line-height: 1.5;
+}
+
+.profile-form__levels {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+}
+
+.profile-form__level {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-lg) var(--space-md);
+  border: none;
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-card-alt);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  text-align: center;
+  min-height: 5rem;
+  font-family: var(--font-body);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  transition: var(--transition-bounce);
+}
+
+.profile-form__level:hover {
+  transform: translateY(-2px);
+}
+
+.profile-form__level.is-active {
+  background: var(--color-accent-lavender);
+  box-shadow: var(--shadow-pressed);
+  transform: translateY(1px);
+}
+
+.profile-form__level-num {
+  font-family: var(--font-headings);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.profile-form__level-label {
+  font-size: var(--font-caption-size);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.profile-form__level.is-active .profile-form__level-label {
+  color: var(--color-text-primary);
+}
+
+.profile-form__nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-md) var(--space-lg);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+}
+
+/* Radio group */
+.radio-group {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.radio-group__legend,
+.importance-slider__legend,
+.ceiling-slider__legend,
+.tag-picker__legend {
+  font-family: var(--font-headings);
+  font-weight: 600;
+  font-size: var(--font-h3-size);
+  margin: 0 0 var(--space-xs) 0;
+  padding: 0;
+  color: var(--color-text-primary);
+}
+
+.radio-group__help,
+.importance-slider__help,
+.ceiling-slider__help,
+.tag-picker__help {
+  margin: 0 0 var(--space-md) 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-ui-size);
+  line-height: 1.5;
+}
+
+.radio-group__options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+}
+
+.radio-option {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  border: none;
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-card-alt);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: var(--font-ui-size);
+  font-weight: 600;
+  font-family: var(--font-body);
+  min-height: 64px;
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  transition: var(--transition-bounce);
+}
+
+.radio-option:hover {
+  transform: translateY(-2px);
+}
+
+.radio-option.is-active {
+  background: var(--color-accent-lavender);
+  box-shadow: var(--shadow-pressed);
+  transform: translateY(1px);
+}
+
+.radio-option.is-active strong {
+  color: var(--color-text-primary);
+}
+
+.radio-option__desc {
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  font-size: var(--font-caption-size);
+}
+
+.radio-option.is-active .radio-option__desc {
+  color: var(--color-text-primary);
+}
+
+/* Importance slider */
+.importance-slider {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.importance-slider__levels,
+.ceiling-slider__levels {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+}
+
+.ceiling-slider__levels {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.importance-slider__level,
+.ceiling-slider__level {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-lg) var(--space-md);
+  border: none;
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-card-alt);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  text-align: center;
+  min-height: 5rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  transition: var(--transition-bounce);
+}
+
+.importance-slider__level:hover,
+.ceiling-slider__level:hover {
+  transform: translateY(-2px);
+}
+
+.importance-slider__level.is-active,
+.ceiling-slider__level.is-active {
+  background: var(--color-accent-lavender);
+  box-shadow: var(--shadow-pressed);
+  transform: translateY(1px);
+}
+
+.importance-slider__level input,
+.ceiling-slider__level input,
+.radio-option input,
+.tag-chip input,
+.profile-form__level input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.importance-slider__num,
+.ceiling-slider__num {
+  font-family: var(--font-headings);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.importance-slider__label,
+.ceiling-slider__label {
+  font-size: var(--font-caption-size);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.importance-slider__level.is-active .importance-slider__label,
+.ceiling-slider__level.is-active .ceiling-slider__label {
+  color: var(--color-text-primary);
+}
+
+.importance-slider__desc {
+  margin: var(--space-md) 0 0 0;
+  font-size: var(--font-ui-size);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* Tag picker — chip shape, pill radius */
+.tag-picker {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tag-picker__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.tag-chip {
+  background: var(--color-bg-card-alt);
+  border: none;
+  color: var(--color-text-primary);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-ui-size);
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  min-height: 44px;
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  transition: var(--transition-bounce);
+}
+
+.tag-chip:hover {
+  transform: translateY(-2px);
+}
+
+.tag-chip.is-on {
+  background: var(--color-accent-lavender);
+  box-shadow: var(--shadow-pressed);
+  transform: translateY(1px);
+}
+
+.tag-picker__count {
+  margin: var(--space-md) 0 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-ui-size);
+}
+
+@media (max-width: 600px) {
+  .profile-form__levels,
+  .importance-slider__levels,
+  .ceiling-slider__levels {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

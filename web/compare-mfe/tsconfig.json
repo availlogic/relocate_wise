@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@relocatewise/shared/*": ["../../../shared/src/*"],
+      "@relocatewise/web-container/state/shortlist": ["../container/src/state/shortlist.tsx"],
+      "@relocatewise/web-container/i18n/why": ["../container/src/i18n/why.ts"],
+      "@relocatewise/web-container/api": ["../container/src/api.ts"],
+      "@relocatewise/web-container/state/matchResults": ["../container/src/state/matchResults.ts"],
+      "@relocatewise/web-container/components/ShortlistBar": ["../container/src/components/ShortlistBar.tsx"],
+      "@relocatewise/web-container/components/Toast": ["../container/src/components/Toast.tsx"]
+    }
+  },
+  "include": ["src", "test"]
+}

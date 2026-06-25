@@ -1,0 +1,229 @@
+{
+  "app": {
+    "brand": "RelocateWise",
+    "nav": {
+      "questionnaire": "Questionnaire",
+      "compare": "Compare",
+      "compareAria": "Shortlist with {{count}} of 3 cities",
+      "privacy": "Privacy"
+    },
+    "footer": {
+      "disclaimer": "RelocateWise is decision support, not legal or immigration advice. Verify any visa or residency information with the destination country's official sources.",
+      "dataHandling": "How your data is handled",
+      "source": "Source on GitHub"
+    },
+    "consent": {
+      "text": "We don't collect personal data and don't set tracking cookies. We only remember this choice on this device.",
+      "readPolicy": "Read the privacy notice",
+      "decline": "Decline",
+      "accept": "Accept"
+    },
+    "languageToggle": {
+      "english": "EN",
+      "chinese": "中文"
+    }
+  },
+  "landing": {
+    "title": "Find Your Next Home, Powered by Data.",
+    "sub": "Answer a 5-minute questionnaire and get objective city recommendations tailored to your budget, climate, and lifestyle.",
+    "cta": "Start the questionnaire",
+    "note": "No sign-up, no email, no tracking. Your answers stay on this device.",
+    "values": {
+      "objective": {
+        "title": "Objective matching",
+        "body": "No sponsor bias. Rankings come from primary open data (UN, OECD, Numbeo, government portals)."
+      },
+      "comparisons": {
+        "title": "Deep comparisons",
+        "body": "Compare 2–3 cities side-by-side on 8 dimensions, with the best match in each row highlighted."
+      },
+      "privacy": {
+        "title": "Privacy first",
+        "body": "No account, no tracking cookies, no email capture. The whole experience is state-free on the server."
+      }
+    },
+    "footer": "How your data is handled"
+  },
+  "privacy": {
+    "title": "Your privacy on RelocateWise",
+    "lead": "RelocateWise ranks cities based on your answers. We do not collect personal information. There is no account, no email, and no third-party tracking.",
+    "collectHeading": "What we collect",
+    "collectAnswers": "The answers you give in the questionnaire (climate preference, cost priorities, career industry, etc.).",
+    "collectNothing": "Nothing else. No name, no email, no IP-based profile, no advertising ID.",
+    "useHeading": "What we do with it",
+    "useMatch": "We send your answers to our matching engine, which returns a ranked list of cities.",
+    "useNoStore": "The engine runs in a single request — your answers are not stored on our servers and are not used to train any model.",
+    "useShortlist": "The shortlist you build for comparison lives only in your browser tab. Refreshing the page clears it.",
+    "neverHeading": "What we never do",
+    "never1": "We never sell or share your data.",
+    "never2": "We never set tracking cookies or third-party analytics.",
+    "never3": "We never require you to sign up.",
+    "contactHeading": "Contact",
+    "contact": "If you have a privacy question, open an issue on the public repository that hosts this project. There is no support inbox collecting emails.",
+    "back": "← Back to the homepage"
+  },
+  "wizard": {
+    "back": "← Back",
+    "skip": "Skip",
+    "next": "Next →",
+    "submit": "View matches",
+    "submitting": "Finding matches…",
+    "labels": {
+      "step": "Step {{step}} of {{total}}",
+      "climate": "Climate",
+      "climateHelp": "Pick the climate you'd most like to live in.",
+      "budget": "Housing budget range",
+      "budgetHelp": "Pick a level (1 = very cheap, 5 = very pricey). Skipping means cost doesn't factor in.",
+      "career": "Career industry",
+      "careerHelp": "Pick the industry you'd most like to work in.",
+      "healthcare": "Healthcare priority",
+      "healthcareHelp": "How important is access to good healthcare?",
+      "education": "Education quality",
+      "educationHelp": "How important are schools and universities for you?",
+      "community": "Community & lifestyle fit",
+      "communityHelp": "Pick all that apply — the more you pick, the stricter the filter.",
+      "density": "Location density preference",
+      "densityHelp": "How dense do you want your surroundings?",
+      "militarySafety": "Geopolitical & Conflict Risk",
+      "militarySafetyHelp": "How important is geopolitical stability and physical safety? A higher rating acts as a heavy filter on the overall city match."
+    },
+    "healthcareLevels": ["Skip", "Nice to have", "Important", "Critical"],
+    "militarySafetyLevels": ["Skip", "Nice to have", "Important", "Critical"],
+    "titles": [
+      "What climate would you like?",
+      "How pricey is too pricey?",
+      "What industry are you in?",
+      "How much does healthcare matter?",
+      "How important is education?",
+      "What community vibe fits?",
+      "How dense do you want it?",
+      "How much does geopolitical stability matter?"
+    ],
+    "climateLabels": {
+      "tropical": "Tropical",
+      "temperate": "Temperate",
+      "mediterranean": "Mediterranean",
+      "continental": "Continental",
+      "cold": "Cold / snowy",
+      "arid": "Arid / dry",
+      "no_preference": "No preference"
+    },
+    "industryLabels": {
+      "tech": "Technology",
+      "finance": "Finance & banking",
+      "healthcare": "Healthcare",
+      "creative": "Creative industries",
+      "manufacturing": "Manufacturing"
+    },
+    "educationLabels": {
+      "not_relevant": "Not a priority",
+      "somewhat": "Somewhat important",
+      "important": "Very important"
+    },
+    "lifestyleLabels": {
+      "urban": "Urban / big-city",
+      "suburban": "Suburban",
+      "rural": "Rural",
+      "coastal": "Coastal",
+      "mountain": "Mountain",
+      "arts_culture": "Arts & culture",
+      "family_oriented": "Family-oriented",
+      "expat_friendly": "Expat-friendly"
+    },
+    "densityOptions": {
+      "urban": "Urban / big-city",
+      "suburban": "Suburban",
+      "rural": "Rural"
+    },
+    "budgetLevels": ["Very cheap", "Cheap", "Average", "Pricey", "Very pricey"],
+    "noPreference": "No preference",
+    "noTagsSelected": "No tags selected — dimension treated as \"no preference\".",
+    "tagsSelected": "{{count}} selected.",
+    "error": {
+      "fallback": "Something went wrong. Please try again."
+    }
+  },
+  "results": {
+    "title": "Your top matches",
+    "sub": "{{count}} {{city}} ranked by overall fit.",
+    "subComputed": "Computed {{when}}.",
+    "subCity_one": "city",
+    "subCity_other": "cities",
+    "editPreferences": "← Edit my preferences",
+    "startOver": "Start over",
+    "compareOne": "Compare 1 city →",
+    "compareMany": "Compare {{count}} cities →",
+    "hint": "Pick {{count}} more {{city}} to compare side by side (up to {{max}}).",
+    "hintCity_one": "city",
+    "hintCity_other": "cities",
+    "summary_one": "1 city saved for comparison. Pick at least one more.",
+    "summary_other": "{{count}} cities saved for comparison.",
+    "emptyTitle": "No results yet",
+    "emptyBody": "Submit the questionnaire to see your top matches. We don't keep any of your answers, so a refresh means starting fresh.",
+    "emptyCta": "Back to the questionnaire",
+    "rank": "Rank {{rank}}",
+    "scoreAria": "Match score {{score}} out of 100",
+    "whyLabel": "Why this fits",
+    "viewProfile": "View profile",
+    "inCompare": "In compare set",
+    "addCompare": "Add to compare",
+    "compareMax": " (max 3)",
+    "shortlistFull": "You can compare up to 3 cities. Please remove one first."
+  },
+  "shortlist": {
+    "count": "{{count}} of {{max}} selected",
+    "remove": "Remove {{name}} from comparison",
+    "clear": "Clear all",
+    "compare": "Compare now"
+  },
+  "city": {
+    "back": "← Back to results",
+    "add": "Add to Comparison",
+    "remove": "Remove from Comparison",
+    "addToCompare": "Add to Comparison",
+    "removeFromCompare": "Remove from Comparison",
+    "fullTitle": "Shortlist full (max 3).",
+    "flagAlt": "Flag of {{country}}",
+    "landmarkAlt": "{{name}} skyline",
+    "dimensionsTitle": "Dimension scores",
+    "lastUpdated": "Data last updated:",
+    "coordinates": "Coordinates",
+    "loading": "Loading city profile…",
+    "error": "Couldn’t load this city",
+    "backShort": "Go back",
+    "loadFailFallback": "Could not load the city.",
+    "metaLastUpdated": "Last updated"
+  },
+  "compare": {
+    "title": "Compare cities",
+    "sub": "Comparing {{count}} of {{max}} possible cities. The best match in each row is highlighted.",
+    "clearAll": "Clear all",
+    "backToResults": "Back to results",
+    "remove": "Remove",
+    "dimension": "Dimension",
+    "insufficient": "Please select at least 2 cities to compare.",
+    "dropped": "You now have fewer than 2 cities in your comparison.",
+    "scoreLabel": "{{score}}/100",
+    "why": "\"{{why}}\"",
+    "rows": {
+      "climate": "Climate",
+      "cost": "Cost of living",
+      "housing": "Housing",
+      "career": "Career (avg)",
+      "education": "Education",
+      "healthcare": "Healthcare",
+      "community": "Community (max)",
+      "militarySafety": "Geopolitical & Conflict Risk"
+    }
+  },
+  "why": {
+    "climate": "Matches your {{climate}} climate preference",
+    "cost": "Fits your housing and cost budget",
+    "career": "Strong {{industry}} job market",
+    "education": "Strong schools and education options",
+    "healthcare": "Strong healthcare access",
+    "community": "Matches your {{tags}} lifestyle",
+    "military_safety": "High geopolitical stability and physical safety",
+    "neutral": "A balanced match across all your priorities"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "@relocatewise/web-quiz-mfe",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "pretest": "npm run -w @relocatewise/shared build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "pretypecheck": "npm run -w @relocatewise/shared build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@relocatewise/shared": "*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-i18next": "^17.0.8",
+    "react-router-dom": "^6.26.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "^18.3.10",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^9.39.4",
+    "globals": "^13.24.0",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^8.61.0",
+    "vite": "^5.4.8",
+    "vitest": "^2.1.2"
+  }
+}

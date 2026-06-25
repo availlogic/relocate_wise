@@ -1,0 +1,104 @@
+/**
+ * Claymorphic Floating Compare Bar (PRD FR-9…FR-12,
+ * Visual-Guidelines §4.1 + §5).
+ */
+.shortlist-bar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: var(--space-md);
+  z-index: 140;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding: var(--space-md) var(--space-xl);
+  width: min(960px, calc(100vw - var(--space-xl)));
+  background: var(--color-bg-card);
+  border: none;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+.shortlist-bar__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex: 1;
+  min-width: 0;
+}
+
+.shortlist-bar__count {
+  font-weight: 700;
+  font-size: var(--font-ui-size);
+  white-space: nowrap;
+  color: var(--color-text-primary);
+  font-family: var(--font-headings);
+}
+
+.shortlist-bar__chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.shortlist-bar__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-card-alt);
+  color: var(--color-text-primary);
+  font-size: var(--font-ui-size);
+  font-weight: 600;
+  font-family: var(--font-body);
+  box-shadow: var(--shadow-clay-outer),
+    var(--shadow-clay-inner-light),
+    var(--shadow-clay-inner-dark);
+}
+
+.shortlist-bar__chip-x {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 var(--space-xs);
+  border-radius: var(--radius-pill);
+  transition: var(--transition-fast);
+}
+
+.shortlist-bar__chip-x:hover,
+.shortlist-bar__chip-x:focus-visible {
+  color: var(--color-text-primary);
+  background: var(--color-accent-peach);
+}
+
+.shortlist-bar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+@media (max-width: 720px) {
+  .shortlist-bar {
+    flex-direction: column;
+    align-items: stretch;
+    bottom: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+  }
+  .shortlist-bar__left {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

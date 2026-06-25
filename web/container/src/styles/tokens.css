@@ -1,0 +1,185 @@
+/**
+ * Design tokens for RelocateWise (Phase F — Claymorphic UI redesign).
+ *
+ * Aligned to docs/Visual-Guidelines.md v1.4.0 (2026-06-25) and
+ * docs/PRD.md v3.4.0 FR-22…FR-27:
+ *   - Light-mode-first pastel palette.
+ *   - Quicksand (headings) + Nunito (body) + CJK fallback.
+ *   - 8px spacing scale.
+ *   - Multi-layered clay shadows for the 3D extruded "puffy" look.
+ *   - 24-32px radii for clay cards, 9999px (pill) for buttons.
+ *   - WCAG 2.1 AA contrast targets.
+ */
+:root {
+  /* ------------------------------------------------------------------
+   * Colour (HSL tokens, light-mode-first claymorphic palette)
+   * ------------------------------------------------------------------ */
+  /* Canvas */
+  --color-bg-canvas: hsl(252, 63%, 92%);          /* soft lilac #E2DBF8 */
+  --color-bg-card: hsl(0, 100%, 98.5%);           /* warm cream off-white #FFF9F9 */
+  --color-bg-card-alt: hsl(255, 38%, 97.5%);      /* very light purple-grey #F7F5FC */
+  --color-bg-overlay: hsla(252, 63%, 92%, 0.92);  /* translucent lilac for floating bars */
+
+  /* Typography */
+  --color-text-primary: hsl(258, 30%, 15%);       /* deep midnight purple */
+  --color-text-secondary: hsl(260, 15%, 38%);     /* medium muted purple-grey */
+  --color-text-muted: hsl(263, 16%, 58%);         /* soft purple-grey */
+
+  /* Accent pastels */
+  --color-accent-peach: hsl(12, 100%, 82%);       /* peach/coral #FFB8A6 */
+  --color-accent-yellow: hsl(42, 100%, 82%);      /* butter yellow #FFE5A3 */
+  --color-accent-green: hsl(158, 52%, 78%);       /* mint/sage #A8E6CF */
+  --color-accent-blue: hsl(182, 43%, 76%);        /* sky blue #A8DADC */
+  --color-accent-lavender: hsl(247, 72%, 86%);    /* soft lavender blue #C5BEF7 */
+
+  /* Semantic indicators */
+  --color-success: var(--color-accent-green);
+  --color-warning: var(--color-accent-yellow);
+  --color-danger: var(--color-accent-peach);
+  --color-info: var(--color-accent-blue);
+
+  /* Borders / dividers (kept very soft on the pastel canvas) */
+  --color-border-soft: hsla(258, 30%, 15%, 0.06);
+  --color-border-medium: hsla(258, 30%, 15%, 0.12);
+  --color-border-strong: hsla(258, 30%, 15%, 0.18);
+
+  /* ------------------------------------------------------------------
+   * Typography (Quicksand + Nunito, CJK fallback)
+   * ------------------------------------------------------------------ */
+  --font-headings: 'Quicksand', system-ui, -apple-system, 'PingFang SC',
+    'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+  --font-body: 'Nunito', system-ui, -apple-system, 'PingFang SC',
+    'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+  --font-cjk: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+
+  --font-h1-size: 2.5rem;
+  --font-h1-weight: 700;
+  --font-h1-line: 1.2;
+
+  --font-h2-size: 1.75rem;
+  --font-h2-weight: 700;
+  --font-h2-line: 1.3;
+
+  --font-h3-size: 1.35rem;
+  --font-h3-weight: 600;
+  --font-h3-line: 1.4;
+
+  --font-body-size: 1rem;
+  --font-body-weight: 400;
+  --font-body-line: 1.6;
+
+  --font-ui-size: 0.9rem;
+  --font-ui-weight: 600;
+  --font-ui-line: 1.5;
+
+  --font-caption-size: 0.75rem;
+  --font-caption-weight: 400;
+  --font-caption-line: 1.4;
+
+  /* ------------------------------------------------------------------
+   * Spacing (8px base, generous breathing room for 3D shadows)
+   * ------------------------------------------------------------------ */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+  --space-xxxl: 64px;
+
+  /* ------------------------------------------------------------------
+   * Effects — Claymorphic / Soft 3D Neumorphism
+   *   outer  : diffuse drop shadow (natural light from above)
+   *   inner↑ : subtle white highlight on the top-left bevel
+   *   inner↓ : subtle lavender shadow on the bottom-right bevel
+   *   pressed: inverted (inset) inner shadows for the "pressed" state
+   * ------------------------------------------------------------------ */
+  --shadow-clay-outer: 8px 12px 24px rgba(135, 120, 200, 0.22);
+  --shadow-clay-inner-light: inset 4px 4px 8px rgba(255, 255, 255, 0.85);
+  --shadow-clay-inner-dark: inset -4px -4px 8px rgba(135, 120, 200, 0.12);
+  --shadow-pressed: inset 4px 4px 8px rgba(135, 120, 200, 0.2),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+  --shadow-clay-track: inset 2px 2px 4px rgba(0, 0, 0, 0.1),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+  --shadow-clay-pill: 0 2px 4px rgba(135, 120, 200, 0.25);
+  --shadow-button: 4px 6px 12px rgba(135, 120, 200, 0.15),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.8),
+    inset -2px -2px 4px rgba(135, 120, 200, 0.12);
+  --shadow-button-pressed: inset 4px 4px 8px rgba(135, 120, 200, 0.2),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+
+  /* ------------------------------------------------------------------
+   * Radius — extreme rounding for the clay look
+   * ------------------------------------------------------------------ */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 9999px;
+
+  /* ------------------------------------------------------------------
+   * Animations
+   * ------------------------------------------------------------------ */
+  --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --transition-fast: all 160ms ease-out;
+  --transition-medium: all 240ms ease-out;
+
+  /* ------------------------------------------------------------------
+   * Layout
+   * ------------------------------------------------------------------ */
+  --max-width: 1200px;
+  --max-width-content: 960px;
+  --max-width-narrow: 720px;
+
+  /* ------------------------------------------------------------------
+   * Backwards-compat aliases — older component CSS still references
+   * the v0.4.0 token names. Map them to the new claymorphism tokens so
+   * we don't have to rewrite every selector.
+   * ------------------------------------------------------------------ */
+  --color-bg: var(--color-bg-canvas);
+  --color-surface: var(--color-bg-card);
+  --color-surface-glass: var(--color-bg-card);
+  --color-surface-glass-strong: var(--color-bg-card);
+  --color-text: var(--color-text-primary);
+  --color-text-muted: var(--color-text-secondary);
+  --color-border: var(--color-border-soft);
+  --color-border-glass: var(--color-border-soft);
+  --color-border-glass-hover: var(--color-border-medium);
+  --color-primary: var(--color-accent-lavender);
+  --color-primary-strong: var(--color-accent-lavender);
+  --color-primary-soft: var(--color-accent-lavender);
+  --color-accent: var(--color-accent-lavender);
+  --color-accent-primary: var(--color-accent-lavender);
+  --color-accent-hover: var(--color-accent-lavender);
+  --color-accent-indigo: var(--color-accent-lavender);
+  --color-accent-indigo-hover: var(--color-accent-lavender);
+  --color-highlight: var(--color-accent-yellow);
+  --color-bg-primary: var(--color-bg-canvas);
+  --color-bg-secondary: var(--color-bg-card-alt);
+  --shadow-premium: var(--shadow-clay-outer);
+  --shadow-glow: var(--shadow-clay-pill);
+  --shadow-card: var(--shadow-clay-outer);
+  --shadow-sm: var(--shadow-clay-outer);
+  --shadow-md: var(--shadow-clay-outer);
+  --blur-glass: none;
+  --text-xs: var(--font-caption-size);
+  --text-sm: 0.875rem;
+  --text-base: var(--font-body-size);
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+}
+
+/* Honour the user's reduced-motion preference (WCAG). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

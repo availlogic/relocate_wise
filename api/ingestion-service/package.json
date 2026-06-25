@@ -1,0 +1,38 @@
+{
+  "name": "@relocatewise/ingestion-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "prebuild": "npm run -w @relocatewise/shared build",
+    "build": "tsc -p tsconfig.build.json",
+    "predev": "npm run -w @relocatewise/shared build",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "ingest": "tsx src/cli.ts",
+    "pretest": "npm run -w @relocatewise/shared build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "pretypecheck": "npm run -w @relocatewise/shared build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.ts\""
+  },
+  "dependencies": {
+    "@relocatewise/shared": "*",
+    "node-cron": "^3.0.3",
+    "pg": "^8.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@types/node-cron": "^3.0.11",
+    "@types/pg": "^8.11.6",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.0",
+    "testcontainers": "^10.13.2",
+    "tsx": "^4.19.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
+}
