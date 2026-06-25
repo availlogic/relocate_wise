@@ -762,3 +762,45 @@ The 3 api READMEs (`api/matching-service/README.md`, `api/ingestion-service/READ
 **Items still open after Phase F**
 
 - (none — all FR/AC/Test-Cases from the 2026-06-25 doc update are now implemented)
+
+---
+
+### Phase G — Monorepo redirect markers (2026-06-25)
+
+**Goal:** close a UX / DX gap surfaced by user feedback. Phases B (api/ split into 3 workspaces) and D (web/ split into 4 workspaces) left `api/` and `web/` as bare parent directories with no `package.json`. Users naturally `cd api && npm install` or `cd web && npm run dev` and hit `ENOENT … no such file or directory, open …/api/package.json`. Phase G adds stub `package.json` files in each parent that intercept every common script and print a self-explanatory redirect message, plus a regression test that locks down the contract.
+
+**Workspace impact**
+
+| Layer | Change |
+|---|---|
+| `api/package.json` (new) | Stub: `name: @relocatewise/api-parent`, `private: true`. Every common script (`dev`, `start`, `test`, `build`, `lint`, `typecheck`) routes through `node ./redirect.cjs`. |
+| `api/redirect.cjs` (new) | Lists the 3 sibling workspace names, prints a coloured banner explaining the redirect, names the correct `cd .. && npm -w @relocatewise/<name> run <script>` invocation, and exits 1. |
+| `web/package.json` (new) | Same stub, named `@relocatewise/web-parent`. |
+| `web/redirect.cjs` (new) | Same logic, listing the 4 sibling workspace names. |
+| `README.md` | New "⚠️ Read this first — monorepo layout" section at the very top, with an ASCII tree of the 8 workspaces and an explicit warning that `api/` and `web/` are not workspaces. Quick-start commands rewritten to use `npm -w <workspace>` syntax. All workspace paths in the Repository Layout and Acceptance Criteria tables updated to reflect the new directories. |
+| `web/container/test/monorepo-redirect.test.ts` (new) | 29 regression tests covering: existence + name + `private` flag for both marker `package.json` files; all 6 common scripts route through `redirect.cjs`; spawning `redirect.cjs` with each `npm_lifecycle_event` exits non-zero with the expected message (workspace names, "cannot run from", `-w` flag, `cd ..` hint); the root README documents the layout + lists all 8 workspace names; the root `package.json` `workspaces` array exactly contains the 8 entries (no `api` / `web` parents). |
+
+**Verification (all green)**
+
+- `npm run typecheck` — clean across 8 workspaces.
+- `npm run lint` — clean across 8 workspaces.
+- `npm test` — **426 tests pass** (was 397, **+29** from `monorepo-redirect.test.ts`).
+- `npm run build` — clean; container emits the same 3 MFE chunks plus the shell.
+- Manual smoke test: `cd api && npm run dev` and `cd web && npm run dev` now exit 1 with a coloured message listing the correct `cd .. && npm -w @relocatewise/<workspace> run dev` command.
+
+**Test count change (Phase G)**
+
+| Workspace | Phase F | Phase G | Δ |
+|---|---:|---:|---:|
+| matching-service | 127 | 127 | 0 |
+| ingestion-service | 15 | 15 | 0 |
+| gateway | 15 | 15 | 0 |
+| web-container | 115 | **144** | **+29** |
+| web-quiz-mfe | 64 | 64 | 0 |
+| web-dashboard-mfe | 53 | 53 | 0 |
+| web-compare-mfe | 8 | 8 | 0 |
+| **Total** | **397** | **426** | **+29** |
+
+**Items closed by Phase G**
+
+- **DC-15** — `ENOENT … api/package.json` (and `web/package.json`) when running npm commands from inside `api/` or `web/`. Replaced the cryptic error with a self-explaining redirect.

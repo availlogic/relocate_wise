@@ -8,6 +8,12 @@ documentation and implementation are recorded here. The SSOT rule
 ("Documentation ALWAYS wins") means the code was changed to match the
 docs; no documentation was modified.
 
+## Closed in Phase G (code changed)
+
+| ID | Source of truth | Pre-Phase-G code | Resolution (Phase G) |
+|---|---|---|---|
+| DC-15 | `docs/Architecture.md` v1.4.0 §8 (repository layout) + `docs/Constraints.md` §3 (modular design) | `api/` and `web/` had no `package.json`. Users naturally `cd api && npm install` or `cd web && npm run dev` and got a cryptic `ENOENT … no such file or directory, open …/api/package.json`. The root README was stale (still described the pre-Phase-D layout). | Added stub `package.json` + `redirect.cjs` in both `api/` and `web/`. Every common script (`dev`, `start`, `test`, `build`, `lint`, `typecheck`) now exits 1 with a coloured banner listing the sibling workspace names and the correct `cd .. && npm -w @relocatewise/<workspace> run <script>` invocation. Rewrote the top of `README.md` with a new "⚠️ Read this first — monorepo layout" section that explicitly warns the parent dirs are NOT workspaces. All `cd web` / `cd api` instructions in the Quick-start + Deploy sections converted to `npm -w …` syntax. 29 regression tests in `web/container/test/monorepo-redirect.test.ts` lock down: marker file existence + name + `private` flag; redirect-script spawn returns the expected message; the root README mentions the layout + lists all 8 workspace names; the root `package.json` `workspaces` array exactly contains the 8 entries and excludes `api` / `web` parents. |
+
 ## Closed in Phase F (code changed)
 
 | ID | Source of truth | Pre-Phase-F code | Resolution (Phase F) |

@@ -1,0 +1,14 @@
+{
+  "name": "@relocatewise/api-parent",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Redirect marker. The api/ directory is the parent of 3 sibling npm workspaces, not a workspace itself. See README.md for the monorepo layout.",
+  "scripts": {
+    "dev": "node ./redirect.cjs",
+    "start": "node ./redirect.cjs",
+    "test": "node ./redirect.cjs",
+    "build": "node ./redirect.cjs",
+    "lint": "node ./redirect.cjs",
+    "typecheck": "node ./redirect.cjs"
+  }
+}
