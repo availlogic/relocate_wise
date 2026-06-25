@@ -1,10 +1,10 @@
 ---
 title: "End-to-End Test Scenarios"
-version: "1.2.0"
+version: "1.3.0"
 status: draft
 author: "QA Agent / Antigravity"
 created: "2026-06-10"
-updated: "2026-06-19"
+updated: "2026-06-25"
 related_docs:
   - "docs/PRD.md"
   - "docs/User-Flows.md"
@@ -18,7 +18,7 @@ This document specifies the end-to-end (E2E) test scenarios for RelocateWise. Th
 ---
 
 ## 1. Primary User Journey (Happy Path)
-
+ 
 ### Scenario E2E-1: Landing to Side-by-Side Comparison
 *   **Description**: A new user visits the site, completes the questionnaire, inspects city profiles, constructs a shortlist, and reviews the final side-by-side trade-offs.
 *   **Actor**: Unauthenticated User
@@ -31,7 +31,7 @@ This document specifies the end-to-end (E2E) test scenarios for RelocateWise. Th
         *   Verify current route is `/q`.
     3.  **Complete the 8-Step Quiz**:
         *   *Step 1 (Climate)*: Select "Mediterranean", click "Next".
-        *   *Step 2 (Cost)*: Select card for score "2", click "Next".
+        *   *Step 2 (Cost)*: Verify option cards display a puffy 3D appearance. Select card for score "2" (verify card transitions to a pressed state with inverted shadow), click "Next".
         *   *Step 3 (Career)*: Select "Technology", click "Next".
         *   *Step 4 (Healthcare)*: Select "4" (High), click "Next".
         *   *Step 5 (Education)*: Select "Not Applicable", click "Next".
@@ -40,11 +40,12 @@ This document specifies the end-to-end (E2E) test scenarios for RelocateWise. Th
         *   *Step 8 (Geopolitical and Conflict Risk)*: Select card for score "3" (High importance), click "View Matches".
     4.  **View Ranked Results**:
         *   Verify redirection to `/results`.
-        *   Verify exactly 10 cards load.
-        *   Verify "Lisbon" is Rank #1.
+        *   Verify exactly 10 cards load, styled as claymorphic container blocks.
+        *   Verify "Lisbon" is Rank #1 and its Match Score is displayed inside a soft rounded clay container badge.
     5.  **Inspect City Profile**:
         *   Click "View Profile" on the Lisbon card.
         *   Verify route is `/city/lisbon-pt`.
+        *   Verify progress bars render as hollowed-out clay grooves with sliding rounded pills.
         *   Click "Add to Comparison".
         *   Verify the floating shortlist bar appears with "Lisbon".
         *   Click "Back to Results".
@@ -54,9 +55,9 @@ This document specifies the end-to-end (E2E) test scenarios for RelocateWise. Th
         *   Verify shortlist bar shows "2 of 3 selected".
         *   Click "Compare Now".
     7.  **Inspect Side-by-Side Comparison**:
-        *   Verify route is `/compare`.
+        *   Verify route is `/compare` with columns structured as vertical pillowy columns.
         *   Verify two columns are rendered (Lisbon and Tokyo).
-        *   Verify the "winner" highlighting is applied on the Cost, Climate, and Geopolitical and Conflict Risk rows.
+        *   Verify the "winner" highlighting is applied on the Cost, Climate, and Geopolitical and Conflict Risk rows using the highlighted clay block style (inset/outset border and pastel background).
         *   Click "Back to Results".
         *   Verify return to `/results` with the shortlist intact.
 *   **Pass Criteria**: All navigation transitions happen without layout failure, session state is preserved correctly in client memory, and correct winner cells are highlighted.

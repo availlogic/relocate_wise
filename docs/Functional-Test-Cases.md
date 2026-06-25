@@ -1,10 +1,10 @@
 ---
 title: "Functional Test Cases"
-version: "1.2.0"
+version: "1.3.0"
 status: draft
 author: "QA Agent / Antigravity"
 created: "2026-06-10"
-updated: "2026-06-19"
+updated: "2026-06-25"
 related_docs:
   - "docs/PRD.md"
   - "docs/Screen-Specs.md"
@@ -114,11 +114,21 @@ This document describes the functional test cases for the RelocateWise frontend 
 *   **Preconditions**: User is on the landing page `/`.
 *   **Steps**:
     1. Click "Start Questionnaire" to load step 1.
-    2. Verify progress bar fills to 12.5% and text shows "Step 1 of 8".
+    2. Verify progress bar fills to 12.5%, rendering as a hollowed clay groove, and text shows "Step 1 of 8".
     3. Click "Next" without selecting an option.
     4. Verify progress bar fills to 25.0% and text shows "Step 2 of 8".
     5. Click "Back" button.
 *   **Expected Result**: The UI returns to step 1. Progress bar returns to 12.5% and text shows "Step 1 of 8".
+*   **Priority**: High
+
+#### FTC-3b: Claymorphic Option Card Visual States
+*   **Feature Name**: Multi-Step Questionnaire
+*   **Preconditions**: User is on Step 1 of the questionnaire.
+*   **Steps**:
+    1. Verify that option cards are styled with extreme rounded corners (`24px` to `32px` or pill shape `9999px`) and display a puffy 3D appearance (diffuse outer drop shadows and soft inner highlights).
+    2. Click an option card.
+    3. Verify that the selected card's background shifts to a richer accent pastel (Lavender Blue) and its shadow transitions to a "pressed" state (inverted inner shadow).
+*   **Expected Result**: Selection states and 3D shadows render correctly and follow the specified visual guidelines.
 *   **Priority**: High
 
 #### FTC-4: Skipping Questions
@@ -158,7 +168,7 @@ This document describes the functional test cases for the RelocateWise frontend 
 *   **Preconditions**: Network throttling is set to slow broadband (adding mock network latency to API responses).
 *   **Steps**:
     1. Submit Step 8 of the questionnaire to route to `/results`.
-*   **Expected Result**: The UI renders a skeleton results layout consisting of 10 card blocks with pulsing gradient background. No text content is visible during this phase.
+*   **Expected Result**: The UI renders a skeleton results layout consisting of 10 generic claymorphic card shapes with pulsing gradient background. No text content is visible during this phase.
 *   **Priority**: Medium
 
 #### FTC-7: Display of Match Results
@@ -166,8 +176,8 @@ This document describes the functional test cases for the RelocateWise frontend 
 *   **Preconditions**: Backend API returns the mock dataset matches.
 *   **Steps**:
     1. Wait for results to load on `/results`.
-    2. Verify exactly 10 cards are shown.
-    3. Verify Card #1 displays: rank "1", City Name, Country, Match Score badge, and a non-empty "Why this fits" message.
+    2. Verify exactly 10 cards are shown, styled as claymorphic container blocks.
+    3. Verify Card #1 displays: rank "1", City Name, Country, Match Score displayed inside a soft rounded clay container badge (colored pastel Sage Green for high matches, pastel Peach/Coral for low matches), and a non-empty "Why this fits" message.
 *   **Expected Result**: Card elements match API response values perfectly.
 *   **Priority**: High
 
@@ -200,7 +210,7 @@ This document describes the functional test cases for the RelocateWise frontend 
 *   **Preconditions**: User navigates to `/city/lisbon-pt`.
 *   **Steps**:
     1. Verify the profile page shows the city name "Lisbon" and country "Portugal".
-    2. Verify 8 horizontal progress bars are rendered (Climate, Cost, Housing, Career, Healthcare, Education, Community, Geopolitical and Conflict Risk).
+    2. Verify 8 progress bars are rendered, styled as hollowed-out clay grooves with sliding rounded pills (Climate, Cost, Housing, Career, Healthcare, Education, Community, Geopolitical and Conflict Risk).
     3. Verify Climate shows label "Mediterranean".
     4. Verify Cost, Housing, Career, Healthcare, Education, Community, and Geopolitical and Conflict Risk display ratings matching the mock dataset.
 *   **Expected Result**: Ratings align with database/JSON scores (internal key: `military_safety`).
@@ -236,7 +246,7 @@ This document describes the functional test cases for the RelocateWise frontend 
     1. Navigate to `/compare`.
     2. Verify the Cost row highlights the Lisbon cell (index 2/5) as the winner.
     3. Verify the Career row highlights the Lisbon cell (tech 5/5 vs NYC tech 4/5) as the winner.
-*   **Expected Result**: Winner cells have CSS class applying the accent primary border and background shade.
+*   **Expected Result**: Winner cells have CSS class applying a highlighted clay block with an inset/outset contrast border and soft pastel accent background.
 *   **Priority**: High
 
 ---

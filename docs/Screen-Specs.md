@@ -70,14 +70,14 @@ These elements are rendered globally across all views to maintain structural and
 
 ### Components & User Interactions
 *   **Progress Header**:
-    *   *Progress Bar*: Fills incrementally (12.5% per step for 8 steps).
+    *   *Progress Bar*: Fills incrementally (12.5% per step for 8 steps), styled as a hollowed-out clay groove with a sliding rounded pastel pill.
     *   *Step Indicator*: Text "Step X of 8".
 *   **Question Area**:
     *   *Question Title*: Clear, bold question.
     *   *Instruction Subtext*: Helper text.
 *   **Selection Grid**:
-    *   Grid of clickable visual cards representing choices.
-    *   Cards highlight with active border and background color when selected.
+    *   Grid of clickable, puffy visual claymorphic cards representing choices.
+    *   Cards highlight by changing their background to a richer accent pastel (e.g. Lavender Blue) and inverting the inner shadow to look "pressed" down when selected.
 *   **Action Controls**:
     *   *Back Button*: (Disabled on Step 1) Returns to previous step.
     *   *Skip Button*: Moves to next step without selecting.
@@ -121,7 +121,7 @@ These elements are rendered globally across all views to maintain structural and
 *   **Top 10 Cards List**: A vertical stack of cards. Each card contains:
     *   *Rank Indicator*: Bold number (1 to 10).
     *   *City Name & Country*: Large text.
-    *   *Match Score*: Circular badge displaying "XX% Match" (colored from green to orange depending on score).
+    *   *Match Score*: Oversized, ultra-bold text displayed inside a soft rounded clay container badge (using pastel Sage Green for high matches, pastel Peach/Coral for low matches).
     *   *Match Explanation*: Text string: *"Why this fits: matches your preference for [Dimension A] and [Dimension B]."*
     *   *Secondary CTA*: "View Profile" link.
     *   *Comparison Control*: Checkbox labeled "Compare". Checking it adds the city to the shortlist.
@@ -140,7 +140,7 @@ These elements are rendered globally across all views to maintain structural and
 *   **Matching Results**: Expects exactly 10 city records from the backend API.
 
 ### States
-*   **Loading**: Shows a skeleton layout consisting of 10 generic card shapes with a pulsing gradient background.
+*   **Loading**: Shows a skeleton layout consisting of 10 generic claymorphic card shapes with a pulsing gradient background.
 *   **Empty / Error State**:
     *   If API fails or database is empty, display: *"We couldn't generate matches right now."*
     *   Provide a "Retry" or "Start Over" button.
@@ -170,6 +170,7 @@ These elements are rendered globally across all views to maintain structural and
 *   **Qualitative Summary**: A 2–3 sentence description paragraph explaining the city's character.
 *   **Metrics Grid**: The 8 dimensions displayed as horizontal progress bars:
     *   *Dimensions*: Climate (Label + numeric range), Cost of Living (1-5 scale), Housing Affordability (1-5 scale), Career/Industry Fit (1-5 scale), Healthcare (1-5 scale), Education (1-5 scale), Community & Lifestyle (1-5 scale), and Geopolitical and Conflict Risk (1-5 scale).
+    *   *Styling*: Progress bars are styled as hollowed-out clay grooves with smooth, rounded pastel pill slides sliding through them.
 *   **Metadata Footer**: Shows a "Data last updated: YYYY-MM-DD" label.
 *   **Floating Shortlist Bar**: Persistent at bottom (matches Results screen behavior) to allow quick comparison.
 
@@ -201,7 +202,7 @@ These elements are rendered globally across all views to maintain structural and
 *   **Comparison Matrix (Table)**:
     *   *Columns*: Header contains City Name, Country, and a "Remove" icon button.
     *   *Rows*: Aligns the 8 dimensions.
-    *   *Highlight Cell*: For each row, the cell containing the highest-ranking score is styled with a distinct border and accent color.
+    *   *Highlight Cell*: For each row, the cell containing the highest-ranking score is styled as a highlighted clay block with an inset/outset contrast border and soft pastel accent background.
 
 ### Validation Rules & Data Requirements
 *   Requires a minimum of 2 cities.

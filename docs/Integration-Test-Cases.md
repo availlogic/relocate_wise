@@ -1,10 +1,10 @@
 ---
 title: "Integration Test Cases"
-version: "1.2.0"
+version: "1.3.0"
 status: draft
 author: "QA Agent / Antigravity"
 created: "2026-06-10"
-updated: "2026-06-19"
+updated: "2026-06-25"
 related_docs:
   - "docs/API_Spec.md"
   - "docs/Database.md"

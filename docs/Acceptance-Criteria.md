@@ -1,10 +1,10 @@
 ---
 title: "Acceptance Criteria & Definition of Done"
-version: "1.2.0"
+version: "1.3.0"
 status: draft
 author: "QA Agent / Antigravity"
 created: "2026-06-10"
-updated: "2026-06-19"
+updated: "2026-06-25"
 related_docs:
   - "docs/PRD.md"
   - "docs/Architecture.md"
@@ -29,15 +29,19 @@ This document provides the final acceptance criteria for each major feature area
 ### Feature 2: Preference Questionnaire (Quiz MFE)
 *   **Acceptance Conditions**:
     *   The Quiz MFE must render exactly 8 questionnaire steps sequentially, showing one question per screen.
-    *   A progress bar must dynamically reflect steps (12.5% per step) and preserve state across language toggles.
+    *   A progress bar must dynamically reflect steps (12.5% per step), styled as a hollowed-out clay groove with a sliding rounded pastel pill, and preserve state across language toggles.
     *   "Back" navigation must return the user to the previous step while preserving their chosen option.
     *   "Skip" navigation must be enabled on all steps, advancing the user and recording a neutral weight/default.
+    *   Option cards must be styled as large, clickable, puffy claymorphic cards with extreme rounded corners (`24px`–`32px`).
+    *   Selecting an option card must change its background color to Lavender Blue (or designated accent) and invert the inner shadow to look "pressed" down.
     *   On the final step, the Quiz MFE must dispatch a Custom Event `rw:quiz_completed` with the `UserProfile` data payload. Clicking "View Matches" navigates to `/results`.
 
 ### Feature 3: Ranked Results Matching
 *   **Acceptance Conditions**:
     *   Upon questionnaire submission, exactly 10 ranked cities must return.
-    *   Result cards must display Rank (1-10), City Name, Country, Match Score (%), and a "Why this fits" message.
+    *   Result cards must be styled as claymorphic container blocks.
+    *   Cards must display Rank (1-10), City Name, Country, Match Score (%), and a "Why this fits" message.
+    *   The Match Score (%) must be displayed inside a soft rounded clay container badge (using pastel Sage Green for high matches, pastel Peach/Coral for low matches).
     *   The "Why this fits" message must be generated dynamically from the matching engine's top contribution dimensions.
     *   Clicking the "Compare" checkbox must add the city to the session shortlist.
     *   A "Start Over" button must navigate back to step 1 and reset all state.
@@ -52,8 +56,8 @@ This document provides the final acceptance criteria for each major feature area
 
 ### Feature 5: Side-by-Side Comparison Matrix (Compare MFE)
 *   **Acceptance Conditions**:
-    *   Compare MFE aligns the 8 dimensions row-by-row for 2 or 3 shortlisted cities.
-    *   For each row, the cell containing the highest score must be highlighted with a distinctive border and background.
+    *   Compare MFE aligns the 8 dimensions row-by-row for 2 or 3 shortlisted cities, structured as vertical pillowy columns.
+    *   For each row, the cell containing the highest score must be highlighted as a pressed clay block with an inset/outset contrast border and soft pastel accent background.
     *   If Cost of Living is evaluated, the lower index score (representing cheaper cost) must be treated as the winner. For Geopolitical and Conflict Risk (internal key: `military_safety`, stored in the `matching.city_scores` schema table), the higher index score is the winner.
     *   Removing a city from the comparison must adjust the columns immediately. If columns fall below 2, the user is redirected to the `/results` view.
 
@@ -66,6 +70,7 @@ This document provides the final acceptance criteria for each major feature area
 ### Feature 7: Responsive Mobile Layouts
 *   **Acceptance Conditions**:
     *   All UI screens must be fully functional and fit within mobile viewport widths (320px–375px) without horizontal page overflow.
+    *   Layout padding (`24px`–`32px`) and grid gaps (`20px`–`28px`) must be maintained on mobile viewports without overlapping or clipping 3D neumorphic shadows.
     *   Option cards and buttons must meet mobile accessibility touch targets.
     *   The comparison table must enable horizontal scrolling or column wrapping to prevent clipping on mobile viewports.
 

@@ -1,10 +1,10 @@
 ---
 title: "Product Requirements"
-version: "3.3.0"
+version: "3.4.0"
 status: draft
 author: "Product Agent / Antigravity"
 created: "2026-06-01"
-updated: "2026-06-19"
+updated: "2026-06-25"
 related_docs:
   - "docs/Vision.md"
   - "docs/Constraints.md"
@@ -171,6 +171,12 @@ Numbered for easy reference. Each requirement is testable in a single user actio
 - **FR-19**: The frontend application shall be partitioned into composable Micro-Frontend modules (React) orchestrated by a main container, communicating via APIs or browser Custom Events rather than direct dependencies.
 - **FR-20**: The backend application shall be built as a set of decoupled Microservices (Node.js) that communicate with each other via REST or gRPC API boundaries.
 - **FR-21**: Every microservice and micro-frontend directory shall contain a standard-structured `README.md` file describing its inputs, outputs, API routes, and code structure to support context lazy loading for AI coding agents.
+- **FR-22**: The user interface shall implement a unified **Claymorphic / Soft 3D Neumorphism** visual style across all pages, forms, and components.
+- **FR-23**: Interactive components (buttons, questionnaire cards, input elements) shall feature extreme rounded corners (`24px` to `32px` or pill shape `9999px`) and multi-layered CSS `box-shadow` configurations (diffuse outer drop shadows and subtle inner highlights/shadows) to present a tactile, 3D extruded look.
+- **FR-24**: Questionnaire choice cards shall visually transition when selected, shifting their background color to a richer accent pastel and inverting the inner shadow to simulate a "pressed" state.
+- **FR-25**: The City Recommendation cards, results dashboard, and comparison columns shall be structured as primary clay container blocks with generous spacing (grid gaps of `20px` to `28px`) and thick internal padding (`24px` to `32px`) to prevent visual crowding from 3D shadows.
+- **FR-26**: The application color system shall utilize a soft lilac canvas background (`#E2DBF8`), warm off-white containers (`#FFF9F9` / `#F7F5FC`), deep charcoal/midnight text, and pastel accents (peach/coral, butter yellow, mint/sage green, sky blue) for metrics, states, and highlights.
+- **FR-27**: Progress indicators in the questionnaire shall look like a hollowed-out clay groove with a smooth, rounded pastel pill sliding through it.
 
 ## 9. Data Requirements
 
@@ -234,6 +240,10 @@ The GA v1.0 release is shippable when **all** of the following are true. Each cr
 - **AC-18**: The user interface is fully responsive, passing mobile layout verification (no broken overlaps, horizontal scroll issues, or unclickable elements) on simulated iOS/Android mobile screens.
 - **AC-19**: The codebase consists of decoupled, composable Micro-Frontend modules (React) and distinct Microservice containers (Node.js) with segregated schemas in PostgreSQL.
 - **AC-20**: Every microservice and micro-frontend module directory contains a non-empty, standardized `README.md` file documenting its functions, interfaces, and code structure.
+- **AC-21**: Every interactive questionnaire card, button, and input element exhibits a tactile, puffy 3D appearance utilizing custom CSS properties (multi-layered box-shadows, rounded borders).
+- **AC-22**: The UI uses the specified color palette (lilac background `#E2DBF8`, off-white/cream containers `#FFF9F9` / `#F7F5FC`, and pastel accents) with high-contrast charcoal/midnight text.
+- **AC-23**: Selected questionnaire options visually transition to a "pressed" state by inverting the inner box-shadow.
+- **AC-24**: Layout structures use rounded radii of `24px`–`32px` for main cards and pill shapes for buttons, maintaining grid gaps of at least `20px` and internal padding of at least `24px` to prevent overlap of 3D shadows.
 
 ## 12. Open Questions
 
@@ -273,3 +283,4 @@ A single list. Items are sequenced roughly by expected priority but no dates are
 | 2026-06-17T13:34:00Z | Add | Added Military Safety dimension, automated ingestion pipeline requirements, updated out-of-scope, and updated acceptance criteria. | 1, 2, 3, 5, 6, 8, 9, 11 |
 | 2026-06-17T14:38:00Z | Replace | Added bilingual (EN/ZH) support, mobile responsiveness, rich city profiles (landmark images, SVG flags), Cloudflare Tunnel deployment, and renamed Military Safety to Geopolitical and Conflict Risk. | All |
 | 2026-06-19T05:30:00Z | Replace | Shifted to GA v1.0 scope, removing the 2-week limit, and added microservices and micro-frontend modular architecture requirements, PostgreSQL schema segregation, and module-level README constraints. | All |
+| 2026-06-25T05:15:00Z | Add | Added Claymorphic / Soft 3D Neumorphism UI design requirements and specific component adaptations. | All |

@@ -1,3 +1,15 @@
+---
+title: "Visual Guidelines"
+version: "1.4.0"
+status: draft
+author: "Product UI/UX Designer / Antigravity"
+created: "2026-06-01"
+updated: "2026-06-25"
+related_docs:
+  - "docs/PRD.md"
+  - "docs/Constraints.md"
+---
+
 # RelocateWise — Visual Guidelines
 
 This document defines the brand identity, typography system, color palette, spacing tokens, component styling, and accessibility guidelines for the RelocateWise web application. It is structured to serve as the single source of truth for all CSS properties.
@@ -6,9 +18,9 @@ This document defines the brand identity, typography system, color palette, spac
 
 ## 1. Brand Personality & Design Principles
 
-*   **Trustworthy & Objective**: The visual theme must look professional and authoritative. Recommendations are based on rigorous data, so the interface must reject gimmicky patterns in favor of clean, structural clarity.
-*   **Calm & Focused**: Relocation is stressful. The design uses spacious layouts, a deep, dark color scheme, and clear visual hierarchies to minimize user anxiety and cognitive overload.
-*   **Premium & State-of-the-Art**: Use rich glassmorphism (layered semi-transparency), glowing hover states, and smooth CSS transitions to create a premium, polished user experience.
+*   **Playful & Tactile**: RelocateWise adopts a friendly, tactile interface that invites interaction. Every UI element looks like a physical, tangible object made of soft clay or matte plastic.
+*   **Friendly & Welcoming**: By rejecting clinical, dark-mode flat patterns, we use warm pastel tones, rounded corners, and soft, cushiony spacing to lower relocation anxiety and offer a welcoming experience.
+*   **Claymorphic 3D Depth**: Using multi-layered CSS shadows (diffuse outer drop shadows and soft inner highlights), we create a "puffy", 3D extruded neumorphic look, complete with smooth, bouncy transitions.
 
 ---
 
@@ -16,142 +28,143 @@ This document defines the brand identity, typography system, color palette, spac
 
 ### Color Palette (HSL Tokens)
 
-We employ a dark-mode-first color scheme leveraging high-contrast visual layers.
+We employ a light-mode-first pastel color scheme leveraging soft clay layers.
 
 ```css
 :root {
-  /* Background Layers */
-  --color-bg-primary: hsl(224, 25%, 10%);     /* Deep space charcoal */
-  --color-bg-secondary: hsl(224, 25%, 15%);   /* Slightly lighter background block */
-  --color-surface-glass: hsla(224, 25%, 20%, 0.65); /* Glass card background */
-  --color-border-glass: hsla(0, 0%, 100%, 0.08);    /* Subtle light border */
-
-  /* Brand Accents */
-  --color-accent-primary: hsl(171, 100%, 41%); /* Glowing Neon Teal */
-  --color-accent-hover: hsl(171, 100%, 35%);   /* Active Teal hover state */
-  --color-accent-indigo: hsl(234, 89%, 74%);  /* Secondary brand Indigo (shortlist bar) */
-  --color-accent-indigo-hover: hsl(234, 89%, 68%);
-
+  /* Canvas Background */
+  --color-bg-canvas: hsl(252, 63%, 92%);       /* Soft, muted pastel lavender/lilac (#E2DBF8) */
+  
+  /* Card/Container Backgrounds */
+  --color-bg-card: hsl(0, 100%, 98.5%);        /* Warm cream off-white (#FFF9F9) */
+  --color-bg-card-alt: hsl(255, 38%, 97.5%);   /* Extremely light purple-grey (#F7F5FC) */
+  
   /* Typography Colors */
-  --color-text-primary: hsl(0, 0%, 98%);       /* High-contrast near white */
-  --color-text-secondary: hsl(215, 20%, 65%);   /* Soft slate gray */
-  --color-text-muted: hsl(215, 12%, 45%);       /* Muted placeholder/inactive text */
+  --color-text-primary: hsl(258, 30%, 15%);    /* Deep midnight purple for primary text */
+  --color-text-secondary: hsl(260, 15%, 38%);  /* Medium muted purple-grey for subtext */
+  --color-text-muted: hsl(263, 16%, 58%);      /* Soft purple-grey for inactive text */
+
+  /* Accent Pastels */
+  --color-accent-peach: hsl(12, 100%, 82%);    /* Soft Peach/Coral for high-priority highlights (#FFB8A6) */
+  --color-accent-yellow: hsl(42, 100%, 82%);   /* Muted Butter Yellow for badges/stars (#FFE5A3) */
+  --color-accent-green: hsl(158, 52%, 78%);    /* Mint/Sage Green for positive metrics (#A8E6CF) */
+  --color-accent-blue: hsl(182, 43%, 76%);     /* Sky Blue for secondary choices (#A8DADC) */
+  --color-accent-lavender: hsl(247, 72%, 86%); /* Soft Lavender Blue for selected states (#C5BEF7) */
 
   /* Semantic Indicators */
-  --color-success: hsl(142, 72%, 45%);         /* Emerald green (high match / good cost) */
-  --color-warning: hsl(38, 92%, 50%);          /* Amber orange (moderate warning) */
-  --color-danger: hsl(0, 84%, 60%);            /* Crimson red (low match / high cost) */
+  --color-success: var(--color-accent-green);
+  --color-warning: var(--color-accent-yellow);
+  --color-danger: var(--color-accent-peach);
 
-  /* Shadows & Blurs */
-  --blur-glass: blur(12px);
-  --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --shadow-glow: 0 0 16px hsla(171, 100%, 41%, 0.25);
+  /* Shadows (Claymorphic / Soft 3D Neumorphism) */
+  /* Outer shadows reflect natural light drop; Inner shadows create the rounded, puffy bevel */
+  --shadow-clay-outer: 8px 12px 24px rgba(135, 120, 200, 0.22);
+  --shadow-clay-inner-light: inset 4px 4px 8px rgba(255, 255, 255, 0.85);
+  --shadow-clay-inner-dark: inset -4px -4px 8px rgba(135, 120, 200, 0.12);
+  --shadow-pressed: inset 4px 4px 8px rgba(135, 120, 200, 0.2), inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+  
+  /* Animations */
+  --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 ```
 
 ### Typography System
 
-Typography must use premium, modern fonts loaded from Google Fonts.
+Typography must use rounded, friendly fonts loaded from Google Fonts to match the visual identity.
 
-*   **Headings Font**: `'Outfit', sans-serif` (Provides a geometric, clean, modern feel).
-*   **Body & UI Font**: `'Inter', sans-serif` (Provides extreme readability at small font sizes).
-*   **Bilingual Chinese Font Stack**: `system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif` (Ensures legibility and matches line heights in Chinese Simplified).
+*   **Headings Font**: `'Quicksand', sans-serif` (Rounded terminals, friendly geometry).
+*   **Body & UI Font**: `'Nunito', sans-serif` (Rounded, highly legible and soft).
+*   **Bilingual Chinese Font Stack**: `"PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif` (Maintains line heights in Chinese Simplified).
 
 | Token Name | Font Family | Size | Weight | Line Height | Use Case |
 |---|---|---|---|---|---|
-| `--font-h1` | Outfit | `2.5rem` (40px) | Bold (700) | `1.2` | Hero headlines / Landing |
-| `--font-h2` | Outfit | `1.75rem` (28px) | Semi-Bold (600) | `1.3` | Screen titles (Results, Compare) |
-| `--font-h3` | Outfit | `1.25rem` (20px) | Medium (500) | `1.4` | Card titles / Question text |
-| `--font-body` | Inter | `1.0rem` (16px) | Regular (400) | `1.6` | Narrative descriptions / Labels |
-| `--font-ui` | Inter | `0.875rem` (14px) | Medium (500) | `1.5` | Buttons / Metadata / Form fields |
-| `--font-caption`| Inter | `0.75rem` (12px) | Regular (400) | `1.4` | Small legends / Timestamps |
+| `--font-h1` | Quicksand | `2.5rem` (40px) | Bold (700) | `1.2` | Hero headlines / Landing |
+| `--font-h2` | Quicksand | `1.75rem` (28px) | Bold (700) | `1.3` | Screen titles (Results, Compare) |
+| `--font-h3` | Quicksand | `1.35rem` (22px) | Bold (600) | `1.4` | Card titles / Question text |
+| `--font-body` | Nunito | `1.0rem` (16px) | Regular (400) | `1.6` | Narrative descriptions / Labels |
+| `--font-ui` | Nunito | `0.9rem` (14.4px) | Semi-Bold (600) | `1.5` | Buttons / Metadata / Form fields |
+| `--font-caption`| Nunito | `0.75rem` (12px) | Regular (400) | `1.4` | Small legends / Timestamps |
 
 ---
 
 ## 3. Spacing & Layout Principles
 
-We enforce an **8px grid system** for consistent rhythm and alignment.
+We enforce an **8px grid system** with generous breathing room to accommodate 3D shadow extrusions.
 
 *   **Base Unit**: `8px`
 *   **Spacing Scale**:
     *   `--space-xs`: `4px`
     *   `--space-sm`: `8px`
     *   `--space-md`: `16px`
-    *   `--space-lg`: `24px`
-    *   `--space-xl`: `32px`
+    *   `--space-lg`: `24px` (Thick padding for cards)
+    *   `--space-xl`: `32px` (Grid gaps)
     *   `--space-xxl`: `48px`
-    *   `--space-xxxl`: `64px`
 *   **Layout Grid Rules**:
-    *   *Grid Gap*: Use `--space-lg` (24px) for major card layouts.
+    *   *Grid Gap*: Use `20px` to `28px` between components. Shadows require space so elements do not overlap.
     *   *Container Max-Width*: `1200px` centered via `margin: 0 auto`.
-    *   *Section Padding*: `--space-xxl` (48px) top and bottom.
+    *   *Section Padding*: `24px` to `32px` internal padding.
 
 ---
 
 ## 4. Component Styling Rules
 
-### 1. Glassmorphism Cards
-*   **Background**: `var(--color-surface-glass)`
-*   **Border**: `1px solid var(--color-border-glass)`
-*   **Border Radius**: `12px` (`0.75rem`)
-*   **Blur**: `backdrop-filter: var(--blur-glass)`
-*   **Shadow**: `box-shadow: var(--shadow-premium)`
+### 1. Claymorphic Cards
+*   **Background**: `var(--color-bg-card)` or `var(--color-bg-card-alt)`
+*   **Border**: `none` (styled entirely by shadow bevels)
+*   **Border Radius**: `24px` to `32px` (extreme rounded corners)
+*   **Shadow**: `box-shadow: var(--shadow-clay-outer), var(--shadow-clay-inner-light), var(--shadow-clay-inner-dark)`
 *   **Hover Interaction**:
-    *   Add border color shift: `border-color: rgba(255, 255, 255, 0.15)`
     *   Translate upwards: `transform: translateY(-4px)`
-    *   Transition duration: `transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)`
+    *   Scale slightly: `transform: scale(1.01)`
+    *   Transition: `transition: var(--transition-bounce)`
 
-### 2. Primary Buttons
-*   **Background**: `var(--color-accent-primary)`
-*   **Text Color**: `hsl(224, 25%, 10%)` (dark charcoal for contrast)
-*   **Border Radius**: `8px` (`0.5rem`)
+### 2. Pill Buttons (Primary & Secondary)
+*   **Border Radius**: `9999px` (fully rounded pill shape)
 *   **Typography**: `--font-ui`, Bold (700)
-*   **Hover State**:
-    *   `background-color: var(--color-accent-hover)`
-    *   `box-shadow: var(--shadow-glow)`
-*   **Active State**: Scale down slightly `transform: scale(0.98)`
+*   **Primary Button**:
+    *   *Background*: `var(--color-accent-lavender)` or `var(--color-accent-peach)`
+    *   *Shadow*: `box-shadow: 4px 6px 12px rgba(135, 120, 200, 0.15), var(--shadow-clay-inner-light), var(--shadow-clay-inner-dark)`
+    *   *Hover State*: `transform: translateY(-2px);`
+    *   *Active State*: Invert shadow to look sunken: `box-shadow: var(--shadow-pressed); transform: translateY(1px);`
+*   **Secondary Button**:
+    *   *Background*: `var(--color-bg-card-alt)`
+    *   *Border*: `1px solid rgba(135, 120, 200, 0.2)`
 
-### 3. Secondary / Outlined Buttons
-*   **Background**: Transparent
-*   **Border**: `1px solid var(--color-text-secondary)`
-*   **Text Color**: `var(--color-text-secondary)`
-*   **Hover State**:
-    *   `background-color: hsla(215, 20%, 65%, 0.1)`
-    *   `color: var(--color-text-primary)`
+### 3. Clickable Questionnaire Options
+*   Styled as large puffy clay cards.
+*   **Default State**: Standard Claymorphic Card.
+*   **Selected State**:
+    *   *Background*: `var(--color-accent-lavender)`
+    *   *Shadow*: `box-shadow: var(--shadow-pressed)` (simulates a pressed button)
+    *   *Transition*: Smooth, bouncy toggle easing.
 
-### 4. Progress Bars (Metrics representation)
-*   **Track**: Height `8px`, border-radius `9999px`, background `var(--color-bg-secondary)`.
-*   **Fill**: Border-radius `9999px`, background `var(--color-accent-primary)`.
-*   **Scale**: Color indicator shifting (1-2 fill is red/danger, 3 is yellow/warning, 4-5 is teal/success).
+### 4. Progress Bars
+*   **Track (Clay Groove)**: Height `12px`, border-radius `9999px`, background `var(--color-bg-card-alt)`, with inner shadow: `box-shadow: inset 2px 2px 4px rgba(0,0,0,0.1), inset -2px -2px 4px rgba(255,255,255,0.8)`.
+*   **Sliding Pill**: Height `100%`, border-radius `9999px`, background `var(--color-accent-lavender)` (or semantic accent based on score), with outer lift.
 
-### 5. Country Flag Graphic
-*   **Format**: Rendered via SVG or high-resolution PNG image (bypassing raw text emoji for cross-device consistency).
-*   **Dimensions**: Width `24px` (aspect ratio 3:2), inline with text, featuring a `border-radius: 2px` and a border wrapper `1px solid var(--color-border-glass)` to prevent blending into the dark charcoal background.
+### 5. Metric Badges (Scores/Match %)
+*   Oversized, ultra-bold typography centered in a mini soft rounded clay container (`border-radius: 16px`).
+*   Uses a light pastel background (e.g. Sage Green for high matches, Peach for low matches).
 
-### 6. Landmark Image Box
-*   **Layout**: 16:9 aspect ratio container (`aspect-ratio: 16 / 9`).
-*   **Styling**: Border radius `8px` (`0.5rem`), `object-fit: cover`, and lazy loaded (`loading="lazy"`).
+### 6. Country Flag & Landmark Containers
+*   **Flag SVG**: Aspect ratio 3:2, inline, housed in a squircle container with a `12px` border-radius and a light outer drop shadow.
+*   **Landmark Photo**: Aspect ratio 16:9, border-radius `20px` to `24px` to match card corners, featuring a subtle outer drop shadow.
 
 ---
 
 ## 5. Accessibility & Responsive Design Guidelines
 
 ### Accessibility (WCAG 2.1 AA Compliance)
-*   **Contrast Ratio**: All body copy and interactive labels must maintain a contrast ratio of >= 4.5:1 against their backgrounds. Text using `--color-text-secondary` must only be rendered over `--color-bg-primary` or `--color-surface-glass`.
-*   **Keyboard Accessibility**: All buttons, cards, and checkboxes must have a visible focus ring when navigated via `tab`.
-    *   `focus-visible` outline: `2px solid var(--color-accent-indigo)`.
-*   **Interactive Targets**: Touch targets must be at least `44px x 44px`.
+*   **Contrast Ratio**: Text colors must maintain a contrast ratio of >= 4.5:1. Primary charcoal text (`var(--color-text-primary)`) complies across all pastel and card backgrounds.
+*   **Keyboard Focus**: Active components must render a visible focus border:
+    *   `focus-visible` outline: `3px solid var(--color-accent-lavender)`.
+*   **Touch Targets**: Touch targets must remain at least `44px x 44px`.
 
 ### Responsive Breakpoints
-We design mobile-first to ensure optimal responsiveness:
-
-1.  **Mobile (Portrait/Landscape)**: `< 768px`
-    *   Layouts collapse to a single column.
-    *   Padding shrinks (grid gaps use `--space-md` or 16px).
-    *   Shortlist bar floats as a fixed full-width bottom sheet.
+1.  **Mobile**: `< 768px`
+    *   Single-column layouts. Gaps shrink to `16px` to fit smaller viewports.
+    *   Shortlist bar transitions to a full-width bottom drawer/sheet.
 2.  **Tablet**: `768px - 1023px`
-    *   Columns expand to 2-column grids (results list or comparison view).
-    *   Headers adjust to `--font-h2` scale.
+    *   Double-column grids. Headers adjust to `--font-h2`.
 3.  **Desktop**: `>= 1024px`
-    *   Standard grid layout (3-column comparison view, full results layout).
-    *   Shortlist bar docks as a side panel or sticky overlay banner.
+    *   Full-width comparison columns, card lists, and header layouts.

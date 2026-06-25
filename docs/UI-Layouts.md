@@ -127,7 +127,7 @@ Shows the top 10 matched cities along with a floating shortlist.
 *   **Main Wrapper**: `display: grid; grid-template-columns: 1fr; gap: var(--space-md); padding-bottom: 100px;` (prevents floating shortlist bar from overlaying content).
 *   **Result Card**: `display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-md)`.
     *   *Mobile Adaptation*: Stack vertically: Rank and Header, Body, then Action Row (View Profile next to Compare checkbox).
-*   **Shortlist Bar Layout**: `position: fixed; bottom: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: var(--space-md) var(--space-lg); background: var(--color-surface-glass); backdrop-filter: var(--blur-glass)`.
+*   **Shortlist Bar Layout**: `position: fixed; bottom: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: var(--space-md) var(--space-lg); background: var(--color-bg-card); box-shadow: var(--shadow-clay-outer)`.
 
 ---
 
@@ -220,5 +220,5 @@ Responsive matrix layout matching columns to shortlisted cities.
 *   **Comparison Matrix (Table)**: `display: grid; grid-template-columns: 200px repeat(var(--shortlist-count), 1fr); gap: var(--space-sm)`.
     *   *Tablet Adaptation*: Set column widths to scale proportionally.
     *   *Mobile Adaptation*: If width < 600px, matrix converts to horizontal scroll (`overflow-x: auto`) for city columns, preserving the frozen left "Dimension" column (`position: sticky; left: 0`).
-*   **Winner Highlight Cells**: Box-shadow overlay `inset 0 0 0 2px var(--color-accent-primary)` and background color `hsla(171, 100%, 41%, 0.1)`.
+*   **Winner Highlight Cells**: Box-shadow overlay `var(--shadow-pressed)` and background color `var(--color-accent-lavender)` (or other matching pastel accent).
 ```
