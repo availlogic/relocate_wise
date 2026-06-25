@@ -1,7 +1,8 @@
 # RelocateWise — Deployment Report
 
-> v0.4.0 (PRD v3.2.0 / Architecture v1.3.0 alignment).
+> v1.0.0 GA (PRD v3.4.0 / Architecture v1.4.0 / Visual-Guidelines v1.4.0 alignment).
 > v0.4.0 migration: **Netlify → Cloudflare Pages + Cloudflare Tunnel**.
+> Phase F migration: **Dark glassmorphism → light claymorphism** (visual only; no deploy-topology change).
 
 ## Project Overview
 

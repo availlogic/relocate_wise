@@ -216,7 +216,29 @@ npm test           # all workspaces (api + web)
 
 The `api` workspace includes a testcontainers-based integration test that spins up a real `postgis/postgis:16-3.4-alpine` container per run. It is **skipped** when the Docker socket at `/var/run/docker.sock` is absent (CI runners without Docker, or contributors on hosts without Docker). On a developer machine with Docker installed the suite takes ~10 s longer; in CI on a GitHub-hosted runner it's already a normal step.
 
-A small drift check (`cities.seed-sync.test.ts`) keeps the in-memory TS array and the versioned `db/seeds/cities.json` byte-identical. Re-run `npm -w @relocatewise/api run db:export` after any edit to `cities.seed.ts`.
+A small drift check (`cities.seed-sync.test.ts`) keeps the in-memory TS array and the versioned `db/seeds/cities.json` byte-identical. Re-run `npm -w @relocatewise/matching-service run db:export` after any edit to `cities.seed.ts`.
+
+### Backend workspace layout (Phase B, v1.0.0 GA)
+
+The `api/` directory is split into three sibling npm workspaces (per `docs/Architecture.md` v1.4.0 §8):
+
+| Workspace | Role |
+| --- | --- |
+| `@relocatewise/matching-service` | Owns the `matching` schema, the public REST surface, and the bearer-token-gated internal sync endpoint. |
+| `@relocatewise/ingestion-service` | Owns the `ingestion` schema, the cron scheduler, and the HTTP-backed scores writer that PUTs to the matching service's internal endpoint. |
+| `@relocatewise/gateway` | The only service on the public ingress. Refuses to forward `/api/internal/*` from any source (ITC-9 step 3). |
+
+The shared `@relocatewise/shared` package holds the types and climate tables that both services consume.
+
+Run any workspace's tests in isolation:
+
+```bash
+npm -w @relocatewise/matching-service test
+npm -w @relocatewise/ingestion-service test
+npm -w @relocatewise/gateway test
+```
+
+Each workspace has its own `Dockerfile` and README; see the workspace-level docs for inputs/outputs/API surface.
 
 ---
 

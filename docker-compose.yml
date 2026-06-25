@@ -1,24 +1,41 @@
 # Docker Compose for local development of the RelocateWise backend.
 #
-# One command: `docker compose up` brings up Postgres + PostGIS, the
-# Node API, and a Caddy reverse proxy. The first boot applies both
-# migrations and seeds the 40-city dataset automatically.
+# Topology (Phase B, v1.0.0 GA — Architecture v1.4.0 §2):
+#
+#     browser → Cloudflare Edge (TLS, WAF) → Cloudflare Tunnel
+#            → gateway (port 3000, internal-only)
+#            → matching-service (port 3000, internal-only)
+#            → db (Postgres + PostGIS, port 5432, internal-only)
+#
+#     ingestion-service (cron worker, no HTTP listener)
+#            → db (ingestion_service role: SELECT on matching.*, R/W on ingestion.*)
+#            → matching-service (PUT /api/internal/cities/:slug/scores via bearer)
+#
+# All services are reachable only on the internal Docker network
+# `relocatewise_relocatewise`. The only ingress is the gateway,
+# reachable via Cloudflare Tunnel in production.
+#
+# Phase A (v1.0.0 GA): the database enforces schema segregation
+# (Architecture §5.1, Database §1.4). `POSTGRES_USER` is a superuser
+# used only by the migration runner / seed CLI. The matching service
+# connects as `matching_service` (R/W on `matching.*`), the ingestion
+# service connects as `ingestion_service` (R/W on `ingestion.*`,
+# SELECT-only on `matching.*`).
 #
 # Production deploys use the Cloudflare Pages + Tunnel topology
-# described in Architecture v1.3.0 §3 and `artifacts/Deployment_Report.md`:
+# described in `artifacts/Deployment_Report.md`:
 #   - The SPA is built and deployed to Cloudflare Pages.
 #   - The backend is exposed via the `cloudflared` daemon defined in
 #     `docker-compose.cloudflared.yml` (overlay).
-#   - The `caddy` container listens only on the internal Docker
-#     network (no host port mappings). All public traffic enters via
-#     the outbound tunnel, so no inbound ports need to be opened.
+#   - The tunnel now targets the `gateway` service (not `api`).
 #
-# For local development with no Docker, the API falls back to the
-# in-memory seed (`npm -w @relocatewise/api run dev`). See the
-# README "Quick start" section.
+# For local development without Docker, the matching service falls
+# back to the in-memory seed (`npm -w @relocatewise/matching-service
+# run dev`). See the README "Quick start" section.
 #
-# Architecture references: §2 (topology), §4.4 (DB), §10.1 (local dev),
-# §10.3 (production deploy), §11 (secrets & CORS).
+# Architecture references: §2 (topology), §4 (services), §5 (schema
+# segregation), §10.1 (local dev), §10.3 (production deploy), §11
+# (secrets & CORS).
 
 services:
   db:
@@ -39,47 +56,68 @@ services:
     networks:
       - relocatewise
 
-  api:
+  matching:
     build:
       context: .
-      dockerfile: api/Dockerfile
-    container_name: relocatewise-api
+      dockerfile: api/matching-service/Dockerfile
+    container_name: relocatewise-matching
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://${POSTGRES_USER:-relocatewise}:${POSTGRES_PASSWORD:-relocatewise}@db:5432/${POSTGRES_DB:-relocatewise}
+      ADMIN_DATABASE_URL: postgres://${POSTGRES_USER:-relocatewise}:${POSTGRES_PASSWORD:-relocatewise}@db:5432/${POSTGRES_DB:-relocatewise}
+      MATCHING_DATABASE_URL: postgres://matching_service:matching_service@db:5432/${POSTGRES_DB:-relocatewise}
+      API_SECRET: ${API_SECRET:-local-dev-secret}
       PORT: 3000
       HOST: 0.0.0.0
-      # Allowed CORS origin. In production this is the Cloudflare Pages
-      # domain (e.g. https://relocatewise.pages.dev or a custom domain).
-      # In dev it can be the Vite dev server.
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
       GIT_SHA: ${GIT_SHA:-dev}
     networks:
       - relocatewise
 
-  caddy:
-    image: caddy:2-alpine
-    container_name: relocatewise-caddy
+  ingestion:
+    build:
+      context: .
+      dockerfile: api/ingestion-service/Dockerfile
+    container_name: relocatewise-ingestion
     restart: unless-stopped
     depends_on:
-      - api
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    # No host port mappings in production — cloudflared talks to
-    # Caddy over the internal Docker network. Local dev can expose
-    # ports via a docker-compose.override.yml.
+      matching:
+        condition: service_started
+    environment:
+      INGESTION_DATABASE_URL: postgres://ingestion_service:ingestion_service@db:5432/${POSTGRES_DB:-relocatewise}
+      INGESTION_TARGET_URL: http://matching:3000
+      INGESTION_TARGET_TOKEN: ${API_SECRET:-local-dev-secret}
+      INGESTION_CRON: ${INGESTION_CRON:-0 3 1 * *}
+      INGESTION_DISABLED: ${INGESTION_DISABLED:-0}
+    networks:
+      - relocatewise
+
+  gateway:
+    build:
+      context: .
+      dockerfile: api/gateway/Dockerfile
+    container_name: relocatewise-gateway
+    restart: unless-stopped
+    depends_on:
+      matching:
+        condition: service_started
+    environment:
+      MATCHING_URL: http://matching:3000
+      PORT: 3000
+      HOST: 0.0.0.0
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+      API_PUBLIC_SECRET: ${API_SECRET:-local-dev-secret}
+    # The gateway is the only service that listens on the public
+    # ingress in production. Local dev can map it to host:3000.
+    ports:
+      - "3000:3000"
     networks:
       - relocatewise
 
 volumes:
   pgdata:
-  caddy_data:
-  caddy_config:
 
 networks:
   relocatewise:

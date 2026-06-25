@@ -37,6 +37,9 @@
 #      `cloudflared_config` secret below.
 #
 # The CEO's domain is configured in `cloudflared/CONFIG.example.yml`.
+# Phase B (v1.0.0 GA): the tunnel now targets the `gateway` service
+# (was `api` / `caddy` in v0.4.0). The matching service is reachable
+# only via the gateway on the internal Docker network.
 services:
   cloudflared:
     image: cloudflare/cloudflared:2026.6.1
@@ -58,8 +61,7 @@ services:
       retries: 3
       start_period: 15s
     depends_on:
-      - caddy
-      - api
+      - gateway
 
 networks:
   relocatewise:

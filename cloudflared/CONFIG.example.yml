@@ -5,23 +5,29 @@
 # then mount it as a Docker secret in
 # `docker-compose.cloudflared.yml`. cloudflared then exposes:
 #
-#   https://<DOMAIN>         → http://caddy:80  (the SPA shell)
-#   https://api.<DOMAIN>     → http://caddy:80  (API path is forwarded
-#                                              inside the SPA via the
-#                                              Pages Functions routing
-#                                              rule).
+#   https://<DOMAIN>     → http://gateway:3000  (the API gateway; the
+#                                          SPA is served by Cloudflare
+#                                          Pages, not by the gateway)
+#   https://api.<DOMAIN> → http://gateway:3000  (forwarded transparently
+#                                          to the matching service)
 #
-# Per Architecture §11 / API_Spec §3.2 the Cloudflare Edge tier
-# enforces a 60 req / 10 min per-IP rate limit via WAF rules (set up
-# in the Cloudflare dashboard, not in this config file).
+# Per Architecture v1.4.0 §4.3 the gateway is the **only** service
+# that listens on the public ingress. The matching service and the
+# ingestion service are reachable only on the internal Docker network.
+# The gateway refuses to forward `/api/internal/*` from any source
+# (ITC-9 step 3).
+#
+# Per API_Spec §3.2 the Cloudflare Edge tier enforces a 60 req /
+# 10 min per-IP rate limit via WAF rules (set up in the Cloudflare
+# dashboard, not in this config file).
 tunnel: <TUNNEL-UUID>
 credentials-file: /etc/cloudflared/<TUNNEL-UUID>.json
 
 ingress:
   - hostname: <DOMAIN>
-    service: http://caddy:80
+    service: http://gateway:3000
   - hostname: api.<DOMAIN>
-    service: http://caddy:80
+    service: http://gateway:3000
   - service: http_status:404
 
 # Optional: enable Cloudflare Warp routing / metrics scraping.
