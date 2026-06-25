@@ -8,6 +8,12 @@ documentation and implementation are recorded here. The SSOT rule
 ("Documentation ALWAYS wins") means the code was changed to match the
 docs; no documentation was modified.
 
+## Closed in Phase H (code changed)
+
+| ID | Source of truth | Pre-Phase-H state | Resolution (Phase H) |
+|---|---|---|---|
+| DC-16 | `docs/Architecture.md` v1.4.0 §8 (repository layout) + `docs/Architecture.md` v1.4.0 §2 (3-tier topology) + Phase A–G changes | `artifacts/Deployment_Report.md` had drifted from reality: still described the pre-Phase-B monolithic `api/Dockerfile`, the pre-Phase-D `cd web && npm run dev` quick-start, the Phase-B-removed Caddy proxy, the pre-Phase-F visual system, the `INGESTION_TARGET_*` env vars on the matching container (they actually live on the ingestion container), and the pre-Phase-G absence of redirect warnings. The CI workflow's "Docker smoke build" step also still referenced `api/Dockerfile` (no longer exists) — so the step would fail on every push. | Rewrote `artifacts/Deployment_Report.md` end-to-end. Now describes the actual v1.0.0 GA topology: 3 Fastify microservices (matching / ingestion / gateway) on Cloudflare Pages + Tunnel; the 8 npm workspaces; the 3 individual api Dockerfiles; the schema-segregated database URLs; the Phase-F claymorphism visual; the Phase-G redirect warnings. Rewrote the CI workflow's smoke-build step to build all 3 api Dockerfiles. Rewrote the E2E step's web commands. 14 drift-guard tests in `web/container/test/deployment-report.test.ts` lock down the contract: forbidden content (the monolith `api/Dockerfile`, `web/Dockerfile`, `Caddy`/`Caddyfile`, the obsolete `@relocatewise/api` and `@relocatewise/web` workspaces); required content (all 8 current workspace names, the 3 api Dockerfiles, the gateway + cloudflared overlay, `matching.city_scores`, "claymorphism", the `npm -w` syntax in quick-start, the `cd api` / `cd web` redirect warnings). |
+
 ## Closed in Phase G (code changed)
 
 | ID | Source of truth | Pre-Phase-G code | Resolution (Phase G) |

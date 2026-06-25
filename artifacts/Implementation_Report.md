@@ -804,3 +804,42 @@ The 3 api READMEs (`api/matching-service/README.md`, `api/ingestion-service/READ
 **Items closed by Phase G**
 
 - **DC-15** — `ENOENT … api/package.json` (and `web/package.json`) when running npm commands from inside `api/` or `web/`. Replaced the cryptic error with a self-explaining redirect.
+
+---
+
+### Phase H — Deployment_Report refresh + CI smoke-build fix (2026-06-25)
+
+**Goal:** close **DC-16** — the Deployment_Report had drifted from reality across Phases A–G (still described the pre-Phase-B monolithic `api/Dockerfile`, the pre-Phase-D `cd web` quick-start, the Phase-B-removed Caddy proxy, and the pre-Phase-F visual system). The CI workflow also still referenced `api/Dockerfile` (which no longer exists), so the smoke-build step would fail on every push.
+
+**What changed**
+
+| File | Change |
+|---|---|
+| `artifacts/Deployment_Report.md` | **rewrite**. Now describes the actual v1.0.0 GA topology: 3 Fastify microservices (matching / ingestion / gateway) on Cloudflare Pages + Tunnel; the 8 npm workspaces; the 3 individual api Dockerfiles; the schema-segregated database URLs (`MATCHING_DATABASE_URL` / `INGESTION_DATABASE_URL`); the Phase-F claymorphism visual; the Phase-G `api/` / `web/` redirect warnings; corrected env var scope (`INGESTION_TARGET_*` lives on the ingestion container, not on the matching container); corrected Option A/B quick-start using `npm -w <workspace> run dev` from the repo root; the gateway replaces Caddy; the rollback procedure covers all 3 services instead of one. |
+| `.github/workflows/ci.yml` | The "Docker smoke build" step referenced `api/Dockerfile` (no longer exists). Replaced with three explicit builds of `api/{matching,ingestion,gateway}/Dockerfile` so a Dockerfile regression in any of the 3 api services fails CI. The `e2e` step's `npm -w @relocatewise/web run build` / `run e2e` references updated to `npm -w @relocatewise/web-container run build` and `cd web && npx playwright test`. |
+| `web/container/test/deployment-report.test.ts` (new) | 14 drift-guard tests. Forbidden-content assertions: `api/Dockerfile` (the monolith), `web/Dockerfile` (never existed), `Caddy` / `Caddyfile` (replaced by gateway), the obsolete single `@relocatewise/api` and `@relocatewise/web` workspaces. Required-content assertions: all 8 current workspaces are named, the 3 api Dockerfiles are mentioned, the gateway service + cloudflared overlay are referenced, `matching.city_scores` is named, "claymorphism" appears, quick-start uses `npm -w @relocatewise/<ws> run dev`, and `cd api` / `cd web` are flagged as not workspaces. |
+
+**Verification (all green)**
+
+- `npm run typecheck` — clean across 8 workspaces.
+- `npm run lint` — clean across 8 workspaces.
+- `npm test` — **440 tests pass** (was 426, **+14** from `deployment-report.test.ts`).
+- `npm run build` — clean; container emits the same 3 MFE chunks plus the shell.
+- The new CI Docker smoke-build step will now build all 3 api service images.
+
+**Test count change (Phase H)**
+
+| Workspace | Phase G | Phase H | Δ |
+|---|---:|---:|---:|
+| matching-service | 127 | 127 | 0 |
+| ingestion-service | 15 | 15 | 0 |
+| gateway | 15 | 15 | 0 |
+| web-container | 144 | **158** | **+14** |
+| web-quiz-mfe | 64 | 64 | 0 |
+| web-dashboard-mfe | 53 | 53 | 0 |
+| web-compare-mfe | 8 | 8 | 0 |
+| **Total** | **426** | **440** | **+14** |
+
+**Items closed by Phase H**
+
+- **DC-16** — Deployment_Report no longer matches the v1.0.0 GA reality; CI smoke-build step references an obsolete `api/Dockerfile`.

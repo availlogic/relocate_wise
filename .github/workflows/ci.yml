@@ -45,12 +45,14 @@ jobs:
         run: npm run build
 
       - name: Docker smoke build
-        # The api image build also re-runs `npm run -w @relocatewise/shared
-        # typecheck` and `npm run -w @relocatewise/api build` internally,
-        # so this doubles as a second build gate. The Dockerfile copies
-        # `db/` and `shared/` from the repo root, so the build context
-        # is the root, not `./api`.
-        run: docker build -f api/Dockerfile -t relocatewise-api:ci-smoke .
+        # The 3 api service images share a build context (the repo
+        # root). Each Dockerfile copies `db/`, `shared/`, and its own
+        # workspace from the root. We smoke-build all three so a
+        # Dockerfile regression in any of the api services fails CI.
+        run: |
+          docker build -f api/matching-service/Dockerfile -t relocatewise-matching:ci-smoke .
+          docker build -f api/ingestion-service/Dockerfile -t relocatewise-ingestion:ci-smoke .
+          docker build -f api/gateway/Dockerfile -t relocatewise-gateway:ci-smoke .
 
   e2e:
     name: Playwright E2E
@@ -71,9 +73,9 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Build web bundle
-        run: npm -w @relocatewise/web run build
+        run: npm -w @relocatewise/web-container run build
 
       - name: Run Playwright E2E
-        run: npm -w @relocatewise/web run e2e
+        run: cd web && npx playwright test
         env:
           CI: 'true'
